@@ -34,9 +34,10 @@ Frontend:
 Backend:
 
     cd backend
-    python3.11 -m venv .venv
+    export PATH="$HOME/.local/bin:$PATH"
+    uv venv --python 3.11 .venv
     source .venv/bin/activate
-    pip install -r requirements.txt
+    uv pip install --python .venv/bin/python -r requirements.txt
     uvicorn app.main:app --reload --port 8001
 
 The frontend runs at http://127.0.0.1:5174 and backend API documentation is
