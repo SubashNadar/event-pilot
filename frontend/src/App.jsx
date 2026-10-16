@@ -10,6 +10,230 @@ import { toUiPlan } from './api/planAdapter';
 const money = value => `₹${new Intl.NumberFormat('en-IN').format(value)}`;
 const formatDate = date => new Date(`${date}T00:00:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
+function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState }) {
+  const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
+  const pageWidth = 210;
+  const pageHeight = 297;
+  const margin = 18;
+  const navy = [14, 30, 49];
+  const ink = [25, 43, 55];
+  const teal = [20, 111, 105];
+  const amber = [224, 166, 66];
+  const paper = [248, 246, 240];
+  const muted = [93, 108, 115];
+  const shares = reduced ? plan.reducedShares : plan.budgetShares;
+  const reserve = event.budget - forecast;
+  const allocationColors = [[20, 111, 105], [224, 166, 66], [202, 102, 82], [74, 119, 168], [110, 150, 129], [132, 99, 158]];
+  const cleanText = value => String(value || '').replace(/[–—]/g, '-');
+  const title = cleanText(event.name);
+  const footer = page => {
+    pdf.setDrawColor(210, 214, 208);
+    pdf.line(margin, 283, pageWidth - margin, 283);
+    pdf.setTextColor(...muted);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(8);
+    pdf.text('EVENTPILOT  |  APPROVED EVENT BLUEPRINT', margin, 289);
+    pdf.text(`PAGE ${page}`, pageWidth - margin, 289, { align: 'right' });
+  };
+  const wrapped = (text, width, size = 10) => {
+    pdf.setFontSize(size);
+    return pdf.splitTextToSize(cleanText(text), width);
+  };
+
+  // Cover: deliberately spacious, so the event remains the first thing a reader sees.
+  pdf.setFillColor(...navy);
+  pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+  pdf.setFillColor(...amber);
+  pdf.circle(188, 25, 31, 'F');
+  pdf.setDrawColor(55, 76, 98);
+  pdf.setLineWidth(.45);
+  pdf.circle(188, 25, 39, 'S');
+  pdf.circle(188, 25, 47, 'S');
+  pdf.setTextColor(...amber);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(9);
+  pdf.text('APPROVED EVENT BLUEPRINT  |  EVENTPILOT', margin, 31);
+  pdf.setTextColor(226, 234, 236);
+  pdf.setFont('times', 'bold');
+  pdf.setFontSize(39);
+  const titleLines = wrapped(title, 152, 39);
+  pdf.text(titleLines, margin, 82);
+  const titleEnd = 82 + (titleLines.length - 1) * 14;
+  pdf.setTextColor(183, 202, 209);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(12);
+  pdf.text(wrapped(event.objective, 135, 12), margin, titleEnd + 21);
+  pdf.setDrawColor(94, 123, 140);
+  pdf.line(margin, 180, pageWidth - margin, 180);
+  const facts = [
+    ['DATE', formatDate(event.date)],
+    ['CITY', event.location],
+    ['ATTENDEES', `${event.attendees} invited guests`],
+  ];
+  facts.forEach(([label, value], index) => {
+    const x = margin + index * 58;
+    pdf.setTextColor(...amber);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(8);
+    pdf.text(label, x, 197);
+    pdf.setTextColor(238, 242, 243);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(11);
+    pdf.text(wrapped(value, 50, 11), x, 208);
+  });
+  pdf.setTextColor(183, 202, 209);
+  pdf.setFontSize(9);
+  pdf.text('Prepared by the EventPilot autonomous planning team', margin, 267);
+  pdf.text('READY FOR EXECUTION', pageWidth - margin, 267, { align: 'right' });
+
+  // Page two gives budget decisions a visual, review-friendly story.
+  pdf.addPage();
+  pdf.setFillColor(...paper);
+  pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+  pdf.setTextColor(...teal);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(9);
+  pdf.text('01  |  STRATEGY AND INVESTMENT', margin, 25);
+  pdf.setTextColor(...ink);
+  pdf.setFont('times', 'bold');
+  pdf.setFontSize(29);
+  pdf.text('Where every rupee goes', margin, 42);
+  pdf.setTextColor(...muted);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(10.5);
+  pdf.text(wrapped('A practical allocation built around the approved event budget, with a visible contingency reserve.', 145, 10.5), margin, 53);
+  const statY = 81;
+  [
+    ['APPROVED BUDGET', money(event.budget)],
+    ['FINAL FORECAST', money(forecast)],
+    [reserve >= 0 ? 'RESERVE' : 'OVER BUDGET', money(Math.abs(reserve))],
+  ].forEach(([label, value], index) => {
+    const x = margin + index * 58;
+    pdf.setTextColor(...teal);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(8);
+    pdf.text(label, x, statY);
+    pdf.setTextColor(...ink);
+    pdf.setFont('times', 'bold');
+    pdf.setFontSize(19);
+    pdf.text(value, x, statY + 12);
+  });
+  pdf.setDrawColor(214, 218, 210);
+  pdf.line(margin, 104, pageWidth - margin, 104);
+  let barY = 121;
+  plan.budgetLabels.forEach((label, index) => {
+    const share = shares[index] || 0;
+    const amount = Math.round(forecast * share / 100);
+    pdf.setTextColor(...ink);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(10);
+    pdf.text(cleanText(label), margin, barY);
+    pdf.setTextColor(...muted);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`${money(amount)}  |  ${share}%`, pageWidth - margin, barY, { align: 'right' });
+    pdf.setFillColor(224, 226, 220);
+    pdf.roundedRect(margin, barY + 5, 174, 5, 2, 2, 'F');
+    pdf.setFillColor(...allocationColors[index % allocationColors.length]);
+    pdf.roundedRect(margin, barY + 5, Math.max(7, 174 * share / 100), 5, 2, 2, 'F');
+    barY += 22;
+  });
+  pdf.setFillColor(230, 239, 232);
+  pdf.roundedRect(margin, 259, 174, 15, 2, 2, 'F');
+  pdf.setTextColor(...teal);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(9.5);
+  pdf.text(reserve >= 0 ? `${money(reserve)} remains available for approved contingencies.` : `${money(Math.abs(reserve))} requires a final budget adjustment before vendor confirmation.`, margin + 7, 268);
+  footer(2);
+
+  // Page three is the execution handoff: venue, timed agenda, risks, and human approval.
+  pdf.addPage();
+  pdf.setFillColor(...paper);
+  pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+  pdf.setTextColor(...teal);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(9);
+  pdf.text('02  |  EXECUTION HANDOFF', margin, 25);
+  pdf.setTextColor(...ink);
+  pdf.setFont('times', 'bold');
+  pdf.setFontSize(28);
+  pdf.text('The plan in motion', margin, 42);
+  pdf.setDrawColor(214, 218, 210);
+  pdf.line(margin, 52, pageWidth - margin, 52);
+  pdf.setTextColor(...teal);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.text('VENUE AND LOGISTICS', margin, 66);
+  pdf.setTextColor(...ink);
+  pdf.setFont('times', 'bold');
+  pdf.setFontSize(17);
+  pdf.text(wrapped(`${plan.venue.name}, ${plan.venue.area}`, 82, 17), margin, 77);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9.5);
+  pdf.setTextColor(...muted);
+  pdf.text(wrapped(plan.logistics.join('. ') + '.', 82, 9.5), margin, 95);
+  pdf.setTextColor(...teal);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.text('MARKETING READINESS', 112, 66);
+  pdf.setTextColor(...ink);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(12);
+  pdf.text(wrapped(plan.marketing.title, 80, 12), 112, 77);
+  pdf.setTextColor(...muted);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9.5);
+  pdf.text(wrapped(plan.marketing.description, 80, 9.5), 112, 94);
+  pdf.setDrawColor(214, 218, 210);
+  pdf.line(margin, 114, pageWidth - margin, 114);
+  pdf.setTextColor(...teal);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.text('EVENT-DAY AGENDA', margin, 128);
+  let agendaY = 140;
+  plan.agenda.slice(0, 5).forEach(row => {
+    pdf.setTextColor(...teal);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(9);
+    pdf.text(cleanText(row[0]), margin, agendaY);
+    pdf.setTextColor(...ink);
+    pdf.setFontSize(10);
+    pdf.text(cleanText(row[1]), 47, agendaY);
+    pdf.setTextColor(...muted);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(8.5);
+    pdf.text(wrapped(row[2], 90, 8.5), 103, agendaY);
+    agendaY += 14;
+  });
+  pdf.setDrawColor(214, 218, 210);
+  pdf.line(margin, 214, pageWidth - margin, 214);
+  pdf.setTextColor(...teal);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.text('RISK DECISIONS', margin, 228);
+  let riskY = 240;
+  plan.risks.slice(0, 2).forEach((risk, index) => {
+    const recorded = index === 0 ? riskState.fallback : riskState.monitoring;
+    pdf.setFillColor(...(recorded ? [219, 236, 225] : [252, 231, 212]));
+    pdf.roundedRect(margin, riskY - 5, 21, 7, 1.5, 1.5, 'F');
+    pdf.setTextColor(...(recorded ? teal : [168, 88, 31]));
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(7.5);
+    pdf.text(recorded ? 'RECORDED' : 'ACTION', margin + 10.5, riskY, { align: 'center' });
+    pdf.setTextColor(...ink);
+    pdf.setFontSize(9.5);
+    pdf.text(cleanText(risk.title), 45, riskY);
+    riskY += 13;
+  });
+  pdf.setFillColor(...navy);
+  pdf.roundedRect(margin, 263, 174, 13, 2, 2, 'F');
+  pdf.setTextColor(242, 246, 245);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(9);
+  pdf.text('APPROVED BY THE EVENT OWNER  |  READY FOR CONTROLLED EXECUTION', margin + 7, 271.5);
+  footer(3);
+  pdf.save(`${title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-approved-blueprint.pdf`);
+}
+
 function Overview({ event, plan, forecast, setPlanTab, setView, activities, approved, openRiskCount, riskState, onApprove, onExport }) {
   const under = event.budget - forecast;
   const primaryRisk = plan.risks[0];
@@ -36,7 +260,7 @@ export default function App() {
   const resolveRisk = () => { if (riskState.fallback) return; setRiskState(state => ({ ...state, fallback: true })); addActivity('Risk & Operations', `Recorded a fallback for: ${plan.risks[0].title}.`, 'R'); notify('Risk fallback recorded.'); };
   const monitorRisk = () => { if (riskState.monitoring) return; setRiskState(state => ({ ...state, monitoring: true })); addActivity('Risk & Operations', `Started monitoring: ${plan.risks[1].title}.`, 'R'); notify('Risk monitoring is active.'); };
   const approve = () => { if (openRiskCount) { selectPlanTab('risks'); notify('Complete the remaining risk actions before approval.'); return; } setApproved(true); addActivity('Event Manager', 'Plan approved by the event owner and marked ready for execution.'); notify('Plan approved. Your final blueprint is ready to export.'); };
-  const exportPlan = () => { if (!approved) return notify('Approve the plan before exporting.'); const pdf = new jsPDF({ unit: 'mm', format: 'a4' }); let y = 22; const pageWidth = 210; const margin = 18; const addPage = () => { pdf.addPage(); y = 20; }; const heading = text => { if (y > 265) addPage(); pdf.setTextColor(20, 75, 67); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(14); pdf.text(text, margin, y); y += 8; }; const body = (text, color = [38, 59, 54]) => { pdf.setTextColor(...color); pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9.5); const lines = pdf.splitTextToSize(text, 174); if (y + lines.length * 5 > 280) addPage(); pdf.text(lines, margin, y); y += lines.length * 5 + 3; }; pdf.setFillColor(20, 75, 67); pdf.rect(0, 0, pageWidth, 44, 'F'); pdf.setFillColor(207, 238, 103); pdf.roundedRect(margin, 12, 13, 13, 2, 2, 'F'); pdf.setTextColor(20, 75, 67); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(15); pdf.text('E', 22.2, 21.4); pdf.setTextColor(255, 255, 255); pdf.setFontSize(20); pdf.text('EventPilot', 36, 19); pdf.setFontSize(10); pdf.setFont('helvetica', 'normal'); pdf.text('APPROVED EVENT BLUEPRINT', 36, 27); y = 57; pdf.setTextColor(20, 75, 67); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(21); pdf.text(event.name, margin, y); y += 9; body(`${formatDate(event.date)}  |  ${event.location}  |  ${event.attendees} attendees`, [87, 113, 108]); body(`Approved budget: ${money(event.budget)}    Final forecast: ${money(forecast)}    Reserve: ${money(event.budget - forecast)}`); heading('Event objective'); body(event.objective); heading('Venue and logistics'); body(`${plan.venue.name} — ${plan.venue.area}. ${plan.logistics.join('. ')}.`); heading('Budget allocation'); plan.budgetLabels.forEach((label, index) => body(`${label}: ${money(Math.round(forecast * (reduced ? plan.reducedShares[index] : plan.budgetShares[index]) / 100))} (${reduced ? plan.reducedShares[index] : plan.budgetShares[index]}%)`)); heading('Event-day agenda'); plan.agenda.forEach(row => body(`${row[0]}  |  ${row[1]}  |  ${row[2]}`)); heading('Marketing readiness'); body(`${plan.marketing.title}. ${plan.marketing.description}`); plan.marketing.steps.forEach(row => body(`${row[0]}: ${row[1]}`, [87, 113, 108])); heading('Risk decisions'); plan.risks.forEach((risk, index) => body(`${risk.level} — ${risk.title}: ${index === 0 ? (riskState.fallback ? 'Fallback recorded.' : 'Action required.') : (riskState.monitoring ? 'Monitoring active.' : 'Action required.')} ${risk.detail}`)); heading('Approval record'); body('Approved by the event owner in EventPilot. This blueprint is ready for controlled execution, vendor confirmation, and final stakeholder communication.'); pdf.setTextColor(87, 113, 108); pdf.setFontSize(8); pdf.text('Generated by EventPilot autonomous planning workflow', margin, 288); pdf.save(`${event.name.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-approved-blueprint.pdf`); notify('Approved blueprint PDF downloaded.'); };
+  const exportPlan = () => { if (!approved) return notify('Approve the plan before exporting.'); createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState }); notify('Designed blueprint PDF downloaded.'); };
   const createNewEvent = () => { if (!newEventName.trim()) return notify('Add an event name to continue.'); const created = { ...initialEvent, name: newEventName.trim(), objective: 'Create a practical event plan covering venue, budget, schedule, communications, and operational risks.' }; const createdPlan = buildEventPlan(created); setEvent(created); setEventId(null); setApiPlan(null); setForecast(Math.round(created.budget * .928)); setActivities([['Now', 'Event Manager', `Created a ${createdPlan.type} planning brief for ${created.name}.`, 'M'], ...createdPlan.activity]); setReduced(false); setBudgetBeforeReduction(null); setRiskState({ fallback: false, monitoring: false }); setApproved(false); setNewEvent(false); setNewEventName(''); setView('brief'); notify('New event created. Complete the event brief.'); };
   return <div className="app-shell"><Sidebar view={view} setView={setView} setPlanTab={selectPlanTab} onNewEvent={() => setNewEvent(true)} /><main className="main-content"><header className="topbar"><div className="crumb"><span>Events</span><b>/</b><strong>{event.name}</strong></div><div className="topbar-actions"><span className="saved-state">All changes saved</span><button className="icon-button" aria-label="Notifications" onClick={() => notify(`${openRiskCount} risk action${openRiskCount === 1 ? '' : 's'} require attention.`)}>♧<span className="notification-dot" /></button><button className="avatar" aria-label="Account">BI</button></div></header>{view === 'overview' && <Overview event={event} plan={plan} forecast={forecast} setPlanTab={selectPlanTab} setView={setView} activities={activities} approved={approved} openRiskCount={openRiskCount} riskState={riskState} onApprove={approve} onExport={exportPlan} />}{view === 'brief' && <EventBrief event={event} onSave={saveEvent} />}{view === 'plan' && <PlanWorkspace tab={planTab} setTab={setPlanTab} event={event} plan={plan} forecast={forecast} reduced={reduced} onReduce={reduceBudget} onRestore={restoreBudget} riskState={riskState} onResolveRisk={resolveRisk} onMonitorRisk={monitorRisk} money={money} />}{view === 'activity' && <Activity activities={activities} />}</main>{newEvent && <div className="modal-backdrop" role="presentation"><section className="modal" role="dialog" aria-modal="true" aria-label="Start a new event plan"><button className="dialog-close" onClick={() => setNewEvent(false)} aria-label="Close">×</button><p className="eyebrow">NEW EVENT</p><h2>Start an event plan</h2><p>Create a fresh working brief. The planning team will use it as the shared source of truth.</p><label>Event name<input value={newEventName} onChange={e => setNewEventName(e.target.value)} placeholder="e.g. Ananya's birthday celebration" autoFocus /></label><div className="modal-actions"><button className="button secondary" onClick={() => setNewEvent(false)}>Cancel</button><button className="button primary" onClick={createNewEvent}>Create event</button></div></section></div>}<div className={`toast ${toast ? 'show' : ''}`} role="status">{toast}</div></div>;
 }
