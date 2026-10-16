@@ -2,7 +2,9 @@
 
 EventPilot is a full-stack multi-agent event-planning application. The React
 frontend collects an event brief, presents an event-specific plan, manages
-budget revisions and risk actions, and exports the final plan. The FastAPI
+budget revisions and risk actions, and exports the final plan. It also offers
+a conversational planner that collects and validates a complete event brief
+before using the same generation workflow. The FastAPI
 backend runs a LangGraph workflow with MCP-backed specialists, manager review,
 one reflection retry, SQLite persistence, and Langfuse tracing.
 
@@ -54,6 +56,14 @@ event. Use **Your events** in the sidebar to open another saved event, then
 continue editing its brief, revising its budget, previewing its blueprint, or
 approving it. Risk decisions and approval status are stored per event in the
 browser, so they also survive a refresh on the same browser.
+
+## Conversational Planner
+
+Select **Plan with AI** in the sidebar to create a new event through a guided
+conversation. EventPilot asks for event type, name, date, location, attendee
+count, budget, and objective. Each step offers common choices plus a custom
+answer field. After reviewing the collected brief, select **Generate event
+plan** to save the event and run the existing multi-agent workflow.
 
 ---
 

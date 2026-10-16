@@ -1,4 +1,5 @@
 const navigation = [
+  ['chat', '✦', 'Plan with AI'],
   ['overview', '◫', 'Overview'],
   ['brief', '⌁', 'Event brief'],
   ['plan', '▦', 'Plan workspace'],
