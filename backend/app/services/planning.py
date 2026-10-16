@@ -28,6 +28,8 @@ def build_demo_plan(event: EventBrief) -> EventPlan:
             ("High", "Weather disruption for an outdoor venue", "Reserve covered space or an indoor fallback.", "Set venue fallback"),
             ("Medium", "RSVP count changes close to the event", "Confirm final catering three days before the event.", "Monitor RSVP count"),
         ]
+        if event.attendees >= 100:
+            risks.append(("Medium", "Cake or catering delivery delay", "Confirm delivery windows and assign a vendor contact.", "Monitor vendor confirmation"))
         venue = "Private celebration venue"
         venue_detail = f"{event.location} · accommodates {event.attendees} guests"
         plan_type = "birthday"
@@ -47,6 +49,10 @@ def build_demo_plan(event: EventBrief) -> EventPlan:
             ("High", "Key contributor availability", "Confirm a substitute or remote fallback.", "Set fallback"),
             ("Medium", "Attendance below target", "Review registrations and activate outreach.", "Monitor registrations"),
         ]
+        if event.attendees >= 150:
+            risks.append(("High", "Crowd-flow congestion", "Assign registration, entry, and floor coordinators.", "Set operations fallback"))
+        if event.attendees >= 300:
+            risks.append(("Medium", "AV or power interruption", "Complete a technical rehearsal and hold backup equipment.", "Monitor technical readiness"))
         venue = "Recommended venue"
         venue_detail = f"{event.location} · supports {event.attendees} attendees"
         plan_type = "standard"

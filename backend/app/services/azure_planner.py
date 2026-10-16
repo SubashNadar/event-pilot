@@ -46,8 +46,9 @@ Create a practical, concise event plan from this brief:
 
 Return a complete structured plan. Use only 12-hour time labels with AM or PM.
 Keep the budget forecast at or below the budget. Include six budget lines whose
-amounts add up to the forecast, five agenda items, two practical risks, and
-three concise agent activity entries. Use birthday-appropriate details when
+amounts add up to the forecast, five agenda items, and between two and five
+practical risks scaled to the event size and complexity. Include three concise
+agent activity entries. Use birthday-appropriate details when
 the event is a birthday or celebration.
 """
     if specialist_context:

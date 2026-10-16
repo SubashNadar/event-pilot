@@ -16,7 +16,8 @@ export function toUiPlan(apiPlan, fallbackPlan) {
       level: risk.level,
       title: risk.title,
       detail: risk.detail,
-      resolved: `Action recorded: ${risk.recommended_action}.`
+      resolved: `Action recorded: ${risk.recommended_action}.`,
+      recommendedAction: risk.recommended_action
     })),
     activity: apiPlan.activity.map(item => [item.timestamp, item.agent, item.detail, item.agent.charAt(0)]),
     confidence: apiPlan.confidence,

@@ -39,5 +39,8 @@ const standardPlan = event => ({
 });
 
 export function buildEventPlan(event) {
-  return /birthday|celebration|party/i.test(`${event.name} ${event.objective}`) ? birthdayPlan(event) : standardPlan(event);
+  const plan = /birthday|celebration|party/i.test(`${event.name} ${event.objective}`) ? birthdayPlan(event) : standardPlan(event);
+  if (event.attendees >= 150) plan.risks.push({ level: 'High', title: 'Crowd-flow congestion', detail: 'Assign entry, registration, and floor coordinators before event day.', resolved: 'Guest-flow fallback and on-site coordinators are assigned.', recommendedAction: 'Set fallback' });
+  if (event.attendees >= 300) plan.risks.push({ level: 'Medium', title: 'AV or power interruption', detail: 'Complete a technical rehearsal and keep backup equipment ready.', resolved: 'Technical readiness monitoring is active.', recommendedAction: 'Monitor' });
+  return plan;
 }

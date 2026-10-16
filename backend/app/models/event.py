@@ -50,7 +50,7 @@ class AiPlanDraft(BaseModel):
     budget_forecast: int
     budget_lines: list[BudgetLine]
     agenda: list[AgendaItem]
-    risks: list[RiskItem]
+    risks: list[RiskItem] = Field(min_length=2, max_length=5)
     activity: list[AgentActivity]
     confidence: int = Field(ge=0, le=100)
 
@@ -63,7 +63,7 @@ class EventPlan(BaseModel):
     budget_forecast: int
     budget_lines: list[BudgetLine]
     agenda: list[AgendaItem]
-    risks: list[RiskItem]
+    risks: list[RiskItem] = Field(min_length=2, max_length=5)
     activity: list[AgentActivity]
     confidence: int
     source: str = "deterministic"
