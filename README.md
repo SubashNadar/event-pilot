@@ -1,93 +1,256 @@
-# Course - 4 - Autonomous Event Planning Team
+# EventPilot: Autonomous Event Planning Team
 
+EventPilot is a full-stack multi-agent event-planning application. The React
+frontend collects an event brief, presents an event-specific plan, manages
+budget revisions and risk actions, and exports the final plan. The FastAPI
+backend runs a LangGraph workflow with MCP-backed specialists, manager review,
+one reflection retry, SQLite persistence, and Langfuse tracing.
 
+## Project Structure
 
-## Getting started
+    .
+    ├── frontend/             React and Vite application
+    │   ├── src/components/   Dashboard UI components
+    │   ├── src/data/         Frontend demo plan generator
+    │   └── .openai/          Existing private Site hosting configuration
+    ├── backend/
+    │   ├── app/api/          FastAPI route handlers
+    │   ├── app/core/         Environment configuration
+    │   ├── app/graphs/       LangGraph workflow entry point
+    │   ├── app/models/       Pydantic request and response models
+    │   └── app/services/     Planning service
+    ├── backend/.env.example  Azure OpenAI environment template
+    ├── docs/ARCHITECTURE.md   Workflow diagram and design trade-offs
+    └── README.md
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Run Locally
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Frontend:
 
-## Add your files
+    cd frontend
+    npm install
+    npm run dev
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+Backend:
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/bhargavbcs/course-4-autonomous-event-planning-team.git
-git branch -M main
-git push -uf origin main
-```
+    cd backend
+    python3.11 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    uvicorn app.main:app --reload --port 8001
 
-## Integrate with your tools
+The frontend runs at http://127.0.0.1:5174 and backend API documentation is
+available at http://127.0.0.1:8001/docs.
+Copy backend/.env.example to backend/.env before adding Azure OpenAI
+credentials. The API falls back to a deterministic planner when Azure OpenAI
+is unavailable.
 
-* [Set up project integrations](https://gitlab.com/bhargavbcs/course-4-autonomous-event-planning-team/-/settings/integrations)
+---
 
-## Collaborate with your team
+# Original Project Requirements
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+# Autonomous Event Planning Team: Multi-Agent Event Orchestration System
 
-## Test and Deploy
+## 📌 Problem Statement
 
-Use the built-in continuous integration in GitLab.
+Planning events such as workshops, conferences, college fests, or meetups requires coordination across logistics, budgeting, scheduling, promotions, and risk management. Decisions made by one team often impact others, making collaboration essential.
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+Traditional tools assist with isolated tasks, but successful event execution depends on structured coordination between multiple roles working toward a shared objective.
 
-***
+------------------------------------------------------------------------
 
-# Editing this README
+## 🌍 Context
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+The Autonomous Event Planning Team simulates an organizing committee where specialized AI agents collaborate under an **Event Manager (Manager Agent)** to design, refine, and finalize a complete event execution plan.
 
-## Suggestions for a good README
+------------------------------------------------------------------------
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## 🚧 Key Real-World Challenges
 
-## Name
-Choose a self-explaining name for your project.
+- Event planning involves multiple interdependent tasks.
+- Budget, logistics, and promotion decisions influence each other.
+- Planning requires iterative refinement and coordination.
+- Miscommunication leads to scheduling conflicts or resource issues.
+- Final execution demands unified decision synthesis.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+------------------------------------------------------------------------
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## 🎯 Project Goal
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Build an **Autonomous Multi-Agent System** that:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+- Breaks event planning into specialized agent roles.
+- Coordinates collaboration through hierarchical delegation.
+- Uses structured reasoning workflows.
+- Applies reflection to refine planning decisions.
+- Produces a complete event execution strategy.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+------------------------------------------------------------------------
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## 🧠 Problem Description
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+This project focuses on engineering a **Stateful Multi-Agent Event Planning System** that:
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+- Defines role-based planning responsibilities.
+- Models workflows using state machines (LangGraph).
+- Enables collaboration between planning agents.
+- Applies reflection to improve plans iteratively.
+- Synthesizes outputs into a unified event blueprint.
+- Optimizes workflow efficiency and coordination.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Example prompts:
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+- *"Plan a one-day AI workshop for 200 participants."*
+- *"Adjust the event plan within a reduced budget."*
+- *"Review risks and improve execution readiness."*
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+------------------------------------------------------------------------
 
-## License
-For open source projects, say how it is licensed.
+## ⚙️ Functional Requirements
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Your system must support:
+
+### 🧩 Role-Based Agents
+
+- Logistics Planning Agent
+- Budget & Finance Agent
+- Marketing & Promotion Agent
+- Schedule Coordination Agent
+- Risk & Operations Agent
+
+### 🧭 Manager-Led Delegation
+
+- Event Manager coordinating tasks
+- Structured delegation and synthesis logic
+
+### 🔄 Iterative Reasoning
+
+- ReAct or Plan–Act–Check loops
+- Reflection and refinement cycles
+
+### 🔗 Multi-Agent Coordination
+
+- Collaboration across planning roles
+- Conflict resolution and dependency handling
+
+### 📊 Optimization
+
+- Reduced redundant planning steps
+- Improved workflow efficiency and clarity
+
+------------------------------------------------------------------------
+
+## 🧪 Technical Details
+
+### 🧑‍💻 Programming Language
+
+- **Python**
+
+### 🏗️ Core Framework
+
+- **LangGraph**
+
+### 🧰 Libraries & Tools
+
+| Tool / Library | Purpose |
+|----------------|---------|
+| langgraph | Stateful workflow orchestration |
+| langchain | Agent abstractions and tools |
+| openai / anthropic | LLM APIs |
+| pydantic | Structured outputs |
+| fastapi | Backend API (optional) |
+| uvicorn | API server |
+| dotenv | Environment configuration |
+
+------------------------------------------------------------------------
+
+## 🔐 Environment Variables
+
+| Variable | Purpose |
+|-----------|---------|
+| OPENAI_API_KEY | LLM authentication |
+| ANTHROPIC_API_KEY | Optional LLM provider |
+| MODEL_NAME | Selected LLM |
+| DEBUG_MODE | Workflow debugging flag |
+
+------------------------------------------------------------------------
+
+## 🏗️ Infrastructure Requirements
+
+- Python environment
+- LLM API access
+- Optional backend service (FastAPI)
+- Local or cloud deployment setup
+
+------------------------------------------------------------------------
+
+## 📚 Sample Inputs
+
+- Event type and objective
+- Expected audience size
+- Budget constraints
+- Venue or timeline preferences
+
+------------------------------------------------------------------------
+
+## 📦 Project Deliverables
+
+### 1️⃣ Functional Multi-Agent System
+
+- Role-based planning agents
+- Manager-led coordination
+- Reflection loop integration
+- End-to-end event planning workflow
+
+### 2️⃣ Architecture & Workflow Design
+
+- State machine diagram
+- Delegation logic documentation
+- Planning workflow explanation
+
+### 3️⃣ Optimization & Refactoring
+
+- Modular code structure
+- Performance improvement analysis
+- Error handling strategy
+
+### 4️⃣ Demonstration
+
+- Event planning workflow walkthrough
+- Iterative refinement example
+
+### 5️⃣ Documentation
+
+- Architecture diagram
+- Agent role definitions
+- Workflow explanation
+- Design trade-offs summary
+
+------------------------------------------------------------------------
+
+## 🧪 Evaluation Criteria
+
+The system will be evaluated on:
+
+- Multi-agent coordination quality
+- Delegation effectiveness
+- Reflection and self-correction capability
+- Workflow clarity and state modeling
+- System optimization and performance
+- Code quality and modularity
+- Documentation clarity
+
+------------------------------------------------------------------------
+
+## 🚀 Getting Started
+
+1. Define event planning roles and responsibilities
+2. Design workflow using LangGraph
+3. Implement base agents
+4. Add manager delegation logic
+5. Integrate reflection loop
+6. Optimize workflow
+7. Test with multiple event scenarios
+8. Document architecture and reasoning flow
+
+> **Note:** Focus on coordinated planning and decision orchestration rather than generating a static event checklist.
