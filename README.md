@@ -40,11 +40,20 @@ Backend:
     uv pip install --python .venv/bin/python -r requirements.txt
     uvicorn app.main:app --reload --port 8001
 
-The frontend runs at http://127.0.0.1:5174 and backend API documentation is
+The frontend runs at http://127.0.0.1:5173 and backend API documentation is
 available at http://127.0.0.1:8001/docs.
 Copy backend/.env.example to backend/.env before adding Azure OpenAI
 credentials. The API falls back to a deterministic planner when Azure OpenAI
 is unavailable.
+
+## Saved Event Workspace
+
+Every saved event brief and its latest generated plan are retained in local
+SQLite storage. On refresh, EventPilot loads the most recently created saved
+event. Use **Your events** in the sidebar to open another saved event, then
+continue editing its brief, revising its budget, previewing its blueprint, or
+approving it. Risk decisions and approval status are stored per event in the
+browser, so they also survive a refresh on the same browser.
 
 ---
 

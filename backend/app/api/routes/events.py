@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 
 from app.models.event import BudgetRevisionRequest, EventBrief, EventBriefCreate, EventPlan
 from app.services.planning import build_event_plan
-from app.services.storage import load_event, load_plan, save_event, save_plan
+from app.services.storage import list_events, load_event, load_plan, save_event, save_plan
 
 router = APIRouter(prefix="/events", tags=["events"])
 @router.post("", response_model=EventBrief, status_code=status.HTTP_201_CREATED)
@@ -14,11 +14,24 @@ def create_event(payload: EventBriefCreate) -> EventBrief:
     return event
 
 
+@router.get("", response_model=list[EventBrief])
+def get_events() -> list[EventBrief]:
+    return list_events()
+
+
 @router.get("/{event_id}", response_model=EventBrief)
 def get_event(event_id: UUID) -> EventBrief:
     event = load_event(event_id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
+    return event
+
+
+@router.put("/{event_id}", response_model=EventBrief)
+def update_event(event_id: UUID, payload: EventBriefCreate) -> EventBrief:
+    existing = get_event(event_id)
+    event = EventBrief(**payload.model_dump(), id=existing.id, created_at=existing.created_at)
+    save_event(event)
     return event
 
 

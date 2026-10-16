@@ -31,6 +31,16 @@ def load_event(event_id: UUID) -> EventBrief | None:
     return EventBrief.model_validate_json(row[0]) if row else None
 
 
+def list_events() -> list[EventBrief]:
+    with _connection() as connection:
+        rows = connection.execute("SELECT payload FROM events").fetchall()
+    return sorted(
+        (EventBrief.model_validate_json(row[0]) for row in rows),
+        key=lambda event: event.created_at,
+        reverse=True,
+    )
+
+
 def save_plan(plan: EventPlan) -> None:
     with _connection() as connection:
         connection.execute("INSERT OR REPLACE INTO plans (event_id, payload) VALUES (?, ?)", (str(plan.event_id), plan.model_dump_json()))

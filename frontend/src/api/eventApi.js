@@ -27,6 +27,34 @@ export function createEvent(event) {
   });
 }
 
+const toPayload = event => ({
+  name: event.name,
+  event_date: event.date,
+  location: event.location,
+  attendees: Number(event.attendees),
+  budget: Number(event.budget),
+  objective: event.objective
+});
+
+export function listEvents() {
+  return request('/events');
+}
+
+export function getEvent(eventId) {
+  return request(`/events/${eventId}`);
+}
+
+export function updateEvent(eventId, event) {
+  return request(`/events/${eventId}`, {
+    method: 'PUT',
+    body: JSON.stringify(toPayload(event))
+  });
+}
+
+export function getPlan(eventId) {
+  return request(`/events/${eventId}/plan`);
+}
+
 export function generatePlan(eventId) {
   return request(`/events/${eventId}/plan`, { method: 'POST' });
 }
