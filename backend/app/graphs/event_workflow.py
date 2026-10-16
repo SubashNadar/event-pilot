@@ -86,11 +86,21 @@ async def event_manager_agent(state: EventPlanningState, config: RunnableConfig)
         name: state.get(name, {})
         for name in ("logistics", "finance", "schedule", "requirements", "marketing", "risks")
     }
+    return {
+        "final_plan": build_azure_plan(
+            state["event"],
+            operation=state["operation"],
+            specialist_context=specialist_context,
+            tracing_config=config,
+        )
+    }
 
 
 def review_plan(state: EventPlanningState) -> dict[str, Any]:
     event = state["event"]
-    plan = state["final_plan"]
+    plan = state.get("final_plan")
+    if plan is None:
+        return {"review": {"approved": False, "issues": ["Event Manager did not produce a final plan."]}, "revision_count": state.get("revision_count", 0)}
     issues: list[str] = []
     if plan.budget_forecast > event.budget:
         issues.append("Budget forecast exceeds the approved budget.")
@@ -122,14 +132,6 @@ def route_after_review(state: EventPlanningState) -> str:
     if not state["review"]["approved"] and state.get("revision_count", 0) < 1:
         return "reflection_agent"
     return END
-    return {
-        "final_plan": build_azure_plan(
-            state["event"],
-            operation=state["operation"],
-            specialist_context=specialist_context,
-            tracing_config=config,
-        )
-    }
 
 
 def run_event_workflow(event: EventBrief, operation: str) -> EventPlan:
