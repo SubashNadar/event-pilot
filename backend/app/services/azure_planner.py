@@ -26,6 +26,24 @@ def validate_azure_connection() -> None:
     get_azure_model().invoke("Reply with exactly: ready")
 
 
+def event_type_guidance(event: EventBrief) -> tuple[str, str]:
+    """Return concise domain guidance so the manager prompt matches the brief."""
+    details = f"{event.name} {event.objective}".lower()
+    if any(term in details for term in ("wedding", "marriage", "reception", "engagement")):
+        return "wedding", "Prioritize family coordination, ceremony and stage timing, guest hospitality, dining flow, photography, parking, and crowd management."
+    if any(term in details for term in ("birthday", "celebration", "party")):
+        return "birthday or celebration", "Use birthday-appropriate details such as guest welcome, decor, cake, entertainment, photography, dining, and return gifts where relevant."
+    if any(term in details for term in ("workshop", "training", "bootcamp", "seminar")):
+        return "workshop or training", "Prioritize registration, facilitators, attendee materials, practical sessions, breakout capacity, AV readiness, and feedback collection."
+    if any(term in details for term in ("conference", "summit", "conclave")):
+        return "conference", "Prioritize speaker management, session transitions, multi-track scheduling, registration, sponsors, AV, attendee navigation, and crowd flow."
+    if any(term in details for term in ("college", "fest", "festival", "cultural")):
+        return "college event", "Prioritize student coordination, permissions, performer and volunteer management, campus logistics, security, crowd flow, and communications."
+    if any(term in details for term in ("meetup", "networking")):
+        return "meetup or networking event", "Prioritize venue accessibility, check-in, networking flow, refreshments, community communication, and attendee follow-up."
+    return "general event", "Prioritize a practical balance of venue fit, attendee experience, schedule flow, communication, budget control, and operational readiness."
+
+
 def build_azure_plan(
     event: EventBrief,
     operation: str = "plan-generation",
@@ -33,6 +51,7 @@ def build_azure_plan(
     tracing_config: RunnableConfig | None = None,
 ) -> EventPlan:
     structured_model = get_azure_model().with_structured_output(AiPlanDraft, method="function_calling")
+    event_type, domain_guidance = event_type_guidance(event)
     prompt = f"""
 You are the Event Manager in an autonomous event-planning team.
 Create a practical, concise event plan from this brief:
@@ -43,13 +62,13 @@ Create a practical, concise event plan from this brief:
 - Attendees: {event.attendees}
 - Budget in INR: {event.budget}
 - Objective: {event.objective}
+- Event focus: {event_type}
 
 Return a complete structured plan. Use only 12-hour time labels with AM or PM.
 Keep the budget forecast at or below the budget. Include six budget lines whose
 amounts add up to the forecast, five agenda items, and between two and five
 practical risks scaled to the event size and complexity. Include three concise
-agent activity entries. Use birthday-appropriate details when
-the event is a birthday or celebration.
+agent activity entries. {domain_guidance}
 """
     if specialist_context:
         prompt += "\nVerified specialist planning context:\n"
