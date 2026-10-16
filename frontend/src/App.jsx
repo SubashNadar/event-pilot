@@ -10,7 +10,7 @@ import { toUiPlan } from './api/planAdapter';
 const money = value => `₹${new Intl.NumberFormat('en-IN').format(value)}`;
 const formatDate = date => new Date(`${date}T00:00:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState }) {
+function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState, isApproved, preview = false }) {
   const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
   const pageWidth = 210;
   const pageHeight = 297;
@@ -23,6 +23,7 @@ function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState 
   const muted = [93, 108, 115];
   const shares = reduced ? plan.reducedShares : plan.budgetShares;
   const reserve = event.budget - forecast;
+  const blueprintLabel = isApproved ? 'APPROVED EVENT BLUEPRINT' : 'DRAFT EVENT BLUEPRINT';
   const allocationColors = [[20, 111, 105], [224, 166, 66], [202, 102, 82], [74, 119, 168], [110, 150, 129], [132, 99, 158]];
   const cleanText = value => String(value || '').replace(/[–—]/g, '-');
   const title = cleanText(event.name);
@@ -32,7 +33,7 @@ function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState 
     pdf.setTextColor(...muted);
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(8);
-    pdf.text('EVENTPILOT  |  APPROVED EVENT BLUEPRINT', margin, 289);
+    pdf.text(`EVENTPILOT  |  ${blueprintLabel}`, margin, 289);
     pdf.text(`PAGE ${page}`, pageWidth - margin, 289, { align: 'right' });
   };
   const wrapped = (text, width, size = 10) => {
@@ -52,7 +53,7 @@ function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState 
   pdf.setTextColor(...amber);
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(9);
-  pdf.text('APPROVED EVENT BLUEPRINT  |  EVENTPILOT', margin, 31);
+  pdf.text(`${blueprintLabel}  |  EVENTPILOT`, margin, 31);
   pdf.setTextColor(226, 234, 236);
   pdf.setFont('times', 'bold');
   pdf.setFontSize(39);
@@ -84,7 +85,7 @@ function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState 
   pdf.setTextColor(183, 202, 209);
   pdf.setFontSize(9);
   pdf.text('Prepared by the EventPilot autonomous planning team', margin, 267);
-  pdf.text('READY FOR EXECUTION', pageWidth - margin, 267, { align: 'right' });
+  pdf.text(isApproved ? 'READY FOR EXECUTION' : 'PREVIEW - AWAITING APPROVAL', pageWidth - margin, 267, { align: 'right' });
 
   // Page two gives budget decisions a visual, review-friendly story.
   pdf.addPage();
@@ -229,15 +230,19 @@ function createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState 
   pdf.setTextColor(242, 246, 245);
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(9);
-  pdf.text('APPROVED BY THE EVENT OWNER  |  READY FOR CONTROLLED EXECUTION', margin + 7, 271.5);
+  pdf.text(isApproved ? 'APPROVED BY THE EVENT OWNER  |  READY FOR CONTROLLED EXECUTION' : 'PREVIEW ONLY  |  COMPLETE RISK DECISIONS BEFORE APPROVAL', margin + 7, 271.5);
   footer(3);
+  if (preview) {
+    window.open(pdf.output('bloburl'), '_blank', 'noopener,noreferrer');
+    return;
+  }
   pdf.save(`${title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-approved-blueprint.pdf`);
 }
 
-function Overview({ event, plan, forecast, setPlanTab, setView, activities, approved, openRiskCount, riskState, onApprove, onExport }) {
+function Overview({ event, plan, forecast, setPlanTab, setView, activities, approved, openRiskCount, riskState, onApprove, onPreview, onExport }) {
   const under = event.budget - forecast;
   const primaryRisk = plan.risks[0];
-  return <section className="view active"><div className="title-row"><div><p className="eyebrow">EVENT #EP-2048</p><h1>{event.name}</h1><p className="event-meta">{formatDate(event.date)} <span /> {event.location} <span /> {event.attendees} attendees</p></div><div className="title-actions"><button className="button secondary" disabled={!approved} onClick={onExport}>↓ Export PDF</button><button className="button primary" disabled={approved} onClick={onApprove}>{approved ? 'Approved ✓' : 'Approve plan'}</button></div></div>
+  return <section className="view active"><div className="title-row"><div><p className="eyebrow">EVENT #EP-2048</p><h1>{event.name}</h1><p className="event-meta">{formatDate(event.date)} <span /> {event.location} <span /> {event.attendees} attendees</p></div><div className="title-actions"><button className="button secondary" onClick={onPreview}>Preview PDF</button><button className="button secondary" disabled={!approved} onClick={onExport}>↓ Export PDF</button><button className="button primary" disabled={approved} onClick={onApprove}>{approved ? 'Approved ✓' : 'Approve plan'}</button></div></div>
     <div className="status-strip"><span className="status-icon">✓</span><div><strong>{approved ? 'Plan is approved for execution' : openRiskCount ? 'Plan is ready for review' : 'Plan is ready for approval'}</strong><span>{approved ? 'The final blueprint is ready to export.' : openRiskCount ? `${openRiskCount} decision${openRiskCount === 1 ? '' : 's'} need your attention before approval.` : 'All risk actions are complete. You can approve the plan.'}</span></div>{!approved && openRiskCount > 0 && <button onClick={() => setPlanTab('risks')}>Review decisions <span>→</span></button>}</div>
     <div className="metric-grid"><article className="metric-card"><p>Planning status</p><strong className="status-ready">{approved ? 'Approved' : openRiskCount ? 'Ready for review' : 'Ready to approve'}</strong><small>Last agent update 2 min ago</small></article><article className="metric-card"><p>Budget forecast</p><strong>{money(forecast)}</strong><small>{money(Math.abs(under))} {under >= 0 ? 'under target' : 'over target'}</small></article><article className="metric-card"><p>Plan confidence</p><strong>{plan.confidence}<span>%</span></strong><div className="confidence-bar"><i style={{ width: `${plan.confidence}%` }} /></div><small>Based on current event assumptions</small></article><article className="metric-card"><p>Open risks</p><strong className="risk-number">{openRiskCount}</strong><small>{openRiskCount ? 'Actions required' : 'All actions recorded'}</small></article></div>
     <div className="content-grid"><section className="panel plan-health"><div className="panel-heading"><div><p className="eyebrow">PLAN HEALTH</p><h2>Cross-team readiness</h2></div><button className="text-button" onClick={() => setView('plan')}>Open workspace →</button></div><div className="health-list"><div><span className="health-symbol good">✓</span><div><strong>Venue and capacity</strong><small>{plan.venue.name} supports {event.attendees} guests</small></div><em>{plan.venue.status}</em></div><div><span className="health-symbol good">✓</span><div><strong>Budget allocation</strong><small>Contingency reserve is included in the plan</small></div><em>On target</em></div><div><span className={`health-symbol ${riskState.fallback ? 'good' : 'warn'}`}>{riskState.fallback ? '✓' : '!'}</span><div><strong>{primaryRisk.title}</strong><small>{riskState.fallback ? primaryRisk.resolved : primaryRisk.detail}</small></div><button className="small-action" onClick={() => setPlanTab('risks')}>{riskState.fallback ? 'View' : 'Review'}</button></div><div><span className="health-symbol info">↗</span><div><strong>{plan.marketing.title}</strong><small>{plan.marketing.checks[0]}</small></div><button className="small-action" onClick={() => setPlanTab('marketing')}>View</button></div></div></section><section className="panel agent-panel"><div className="panel-heading"><div><p className="eyebrow">MULTI-AGENT TEAM</p><h2>Live planning activity</h2></div><button className="text-button" onClick={() => setView('activity')}>View all →</button></div><ol className="agent-feed">{activities.slice(0, 3).map((activity, index) => <li key={`${activity[0]}-${index}`}><span className={`feed-avatar ${['finance','manager','logistics'][index]}`}>{activity[3]}</span><div><strong>{activity[1]}</strong><p>{activity[2]}</p><small>{index === 0 ? '2 min ago' : index === 1 ? '8 min ago' : '14 min ago'}</small></div></li>)}</ol></section></div>
@@ -260,7 +265,8 @@ export default function App() {
   const resolveRisk = () => { if (riskState.fallback) return; setRiskState(state => ({ ...state, fallback: true })); addActivity('Risk & Operations', `Recorded a fallback for: ${plan.risks[0].title}.`, 'R'); notify('Risk fallback recorded.'); };
   const monitorRisk = () => { if (riskState.monitoring) return; setRiskState(state => ({ ...state, monitoring: true })); addActivity('Risk & Operations', `Started monitoring: ${plan.risks[1].title}.`, 'R'); notify('Risk monitoring is active.'); };
   const approve = () => { if (openRiskCount) { selectPlanTab('risks'); notify('Complete the remaining risk actions before approval.'); return; } setApproved(true); addActivity('Event Manager', 'Plan approved by the event owner and marked ready for execution.'); notify('Plan approved. Your final blueprint is ready to export.'); };
-  const exportPlan = () => { if (!approved) return notify('Approve the plan before exporting.'); createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState }); notify('Designed blueprint PDF downloaded.'); };
+  const previewPlan = () => { createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState, isApproved: approved, preview: true }); notify('Blueprint preview opened in a new tab.'); };
+  const exportPlan = () => { if (!approved) return notify('Approve the plan before exporting.'); createApprovedBlueprintPdf({ event, plan, forecast, reduced, riskState, isApproved: true }); notify('Designed blueprint PDF downloaded.'); };
   const createNewEvent = () => { if (!newEventName.trim()) return notify('Add an event name to continue.'); const created = { ...initialEvent, name: newEventName.trim(), objective: 'Create a practical event plan covering venue, budget, schedule, communications, and operational risks.' }; const createdPlan = buildEventPlan(created); setEvent(created); setEventId(null); setApiPlan(null); setForecast(Math.round(created.budget * .928)); setActivities([['Now', 'Event Manager', `Created a ${createdPlan.type} planning brief for ${created.name}.`, 'M'], ...createdPlan.activity]); setReduced(false); setBudgetBeforeReduction(null); setRiskState({ fallback: false, monitoring: false }); setApproved(false); setNewEvent(false); setNewEventName(''); setView('brief'); notify('New event created. Complete the event brief.'); };
-  return <div className="app-shell"><Sidebar view={view} setView={setView} setPlanTab={selectPlanTab} onNewEvent={() => setNewEvent(true)} /><main className="main-content"><header className="topbar"><div className="crumb"><span>Events</span><b>/</b><strong>{event.name}</strong></div><div className="topbar-actions"><span className="saved-state">All changes saved</span><button className="icon-button" aria-label="Notifications" onClick={() => notify(`${openRiskCount} risk action${openRiskCount === 1 ? '' : 's'} require attention.`)}>♧<span className="notification-dot" /></button><button className="avatar" aria-label="Account">BI</button></div></header>{view === 'overview' && <Overview event={event} plan={plan} forecast={forecast} setPlanTab={selectPlanTab} setView={setView} activities={activities} approved={approved} openRiskCount={openRiskCount} riskState={riskState} onApprove={approve} onExport={exportPlan} />}{view === 'brief' && <EventBrief event={event} onSave={saveEvent} />}{view === 'plan' && <PlanWorkspace tab={planTab} setTab={setPlanTab} event={event} plan={plan} forecast={forecast} reduced={reduced} onReduce={reduceBudget} onRestore={restoreBudget} riskState={riskState} onResolveRisk={resolveRisk} onMonitorRisk={monitorRisk} money={money} />}{view === 'activity' && <Activity activities={activities} />}</main>{newEvent && <div className="modal-backdrop" role="presentation"><section className="modal" role="dialog" aria-modal="true" aria-label="Start a new event plan"><button className="dialog-close" onClick={() => setNewEvent(false)} aria-label="Close">×</button><p className="eyebrow">NEW EVENT</p><h2>Start an event plan</h2><p>Create a fresh working brief. The planning team will use it as the shared source of truth.</p><label>Event name<input value={newEventName} onChange={e => setNewEventName(e.target.value)} placeholder="e.g. Ananya's birthday celebration" autoFocus /></label><div className="modal-actions"><button className="button secondary" onClick={() => setNewEvent(false)}>Cancel</button><button className="button primary" onClick={createNewEvent}>Create event</button></div></section></div>}<div className={`toast ${toast ? 'show' : ''}`} role="status">{toast}</div></div>;
+  return <div className="app-shell"><Sidebar view={view} setView={setView} setPlanTab={selectPlanTab} onNewEvent={() => setNewEvent(true)} /><main className="main-content"><header className="topbar"><div className="crumb"><span>Events</span><b>/</b><strong>{event.name}</strong></div><div className="topbar-actions"><span className="saved-state">All changes saved</span><button className="icon-button" aria-label="Notifications" onClick={() => notify(`${openRiskCount} risk action${openRiskCount === 1 ? '' : 's'} require attention.`)}>♧<span className="notification-dot" /></button><button className="avatar" aria-label="Account">BI</button></div></header>{view === 'overview' && <Overview event={event} plan={plan} forecast={forecast} setPlanTab={selectPlanTab} setView={setView} activities={activities} approved={approved} openRiskCount={openRiskCount} riskState={riskState} onApprove={approve} onPreview={previewPlan} onExport={exportPlan} />}{view === 'brief' && <EventBrief event={event} onSave={saveEvent} />}{view === 'plan' && <PlanWorkspace tab={planTab} setTab={setPlanTab} event={event} plan={plan} forecast={forecast} reduced={reduced} onReduce={reduceBudget} onRestore={restoreBudget} riskState={riskState} onResolveRisk={resolveRisk} onMonitorRisk={monitorRisk} money={money} />}{view === 'activity' && <Activity activities={activities} />}</main>{newEvent && <div className="modal-backdrop" role="presentation"><section className="modal" role="dialog" aria-modal="true" aria-label="Start a new event plan"><button className="dialog-close" onClick={() => setNewEvent(false)} aria-label="Close">×</button><p className="eyebrow">NEW EVENT</p><h2>Start an event plan</h2><p>Create a fresh working brief. The planning team will use it as the shared source of truth.</p><label>Event name<input value={newEventName} onChange={e => setNewEventName(e.target.value)} placeholder="e.g. Ananya's birthday celebration" autoFocus /></label><div className="modal-actions"><button className="button secondary" onClick={() => setNewEvent(false)}>Cancel</button><button className="button primary" onClick={createNewEvent}>Create event</button></div></section></div>}<div className={`toast ${toast ? 'show' : ''}`} role="status">{toast}</div></div>;
 }
