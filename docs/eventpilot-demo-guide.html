@@ -26,7 +26,12 @@
 <h2>6. Demonstrate MCP Independently</h2>
 <p>Use the MCP Inspector for a short technical proof:</p>
 <ol><li>Run <code>npx -y @modelcontextprotocol/inspector</code>.</li><li>Connect using Streamable HTTP at <code>http://127.0.0.1:8000/mcp</code>.</li><li>Call <code>venue_search</code> with Whitefield, 350 attendees, and ₹1,500,000.</li><li>Show returned venue capacity, rental, and features.</li></ol>
-<h2>7. Closing Statement</h2>
+<h2>7. Demonstrate Human Approval</h2>
+<ol><li>In the Plan workspace, open <strong>Risks</strong>.</li><li>Click <strong>Set fallback</strong> for the first risk and <strong>Monitor</strong> for the second risk.</li><li>Explain that the system records human decisions; it does not book venues, send communications, or take external actions automatically.</li><li>Return to Overview. The open-risk count should become zero and the status should change to <strong>Ready to approve</strong>.</li><li>Click <strong>Approve plan</strong>. The plan is marked approved and can be exported.</li><li>Click <strong>Export plan</strong> to demonstrate the final user-owned blueprint.</li></ol>
+<div class="callout"><strong>Approval message:</strong> Agents can research, validate, recommend, and draft. A human remains responsible for risk decisions, final approval, vendor booking, and external communication.</div>
+<h2>8. Complete Flow Verification Checklist</h2>
+<table><tr><th>Checkpoint</th><th>Expected evidence</th></tr><tr><td>Frontend</td><td>Event brief saves and generated plan displays in all tabs.</td></tr><tr><td>MCP</td><td>Inspector lists six tools and returns structured tool output.</td></tr><tr><td>Backend</td><td><code>/health</code> returns <code>{"status":"ok","provider":"azure"}</code>.</td></tr><tr><td>Langfuse</td><td>Plan-generation, MCP tool observations, Azure generation, latency, tokens, and cost are visible.</td></tr><tr><td>Revision</td><td>Budget reduction produces <code>eventpilot-budget-revision</code> with the revised budget.</td></tr><tr><td>Approval</td><td>Risk actions are recorded; approval is enabled only after open risks are resolved.</td></tr><tr><td>Persistence</td><td>After FastAPI restart, the saved event and latest plan remain retrievable.</td></tr></table>
+<h2>9. Closing Statement</h2>
 <p><em>“EventPilot demonstrates a manager-led, stateful event-planning workflow. Specialist agents use controlled MCP tools, the manager synthesizes a structured plan, a review loop guards basic constraints, SQLite preserves outputs, and Langfuse provides traceability for every significant AI and tool operation.”</em></p>
 <div class="footer">EventPilot Demo Guide | Generated for course presentation</div>
 </body></html>
