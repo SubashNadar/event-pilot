@@ -1,0 +1,187 @@
+# Course 4 Project: AI Chatbot with Planning, RAG, Session Memory, and Guardrails
+
+## Implementation Status (2026-10-17)
+
+### Completed: Step 1 - Chatbot Interface and Planning Workflow
+- Bottom-right EventPilot chatbot on the Home landing page, with responsive open, minimize, and restart behaviour.
+- Conversational seven-step planning brief with suggested answers and custom input.
+- LangGraph chat-turn workflow for validation, follow-up responses, and missing-field tracking.
+- Azure-backed concise confirmations where configured; clear loading and API-unavailable states.
+- Validated brief continues into the existing LangGraph specialist, manager, review, and reflection planning workflow.
+
+### Completed: Step 2 - PostgreSQL pgvector RAG
+- Azure OpenAI embeddings stored in PostgreSQL with the pgvector extension.
+- Curated local knowledge corpus in `backend/knowledge/`, with local-only ingestion via `scripts/ingest_knowledge.py`.
+- Read-only `POST /api/v1/rag/query` endpoint returns grounded answers, source citations, relevance, and a no-context response.
+- Chatbot Guide mode calls the RAG endpoint and displays verified source information in the UI.
+- Live verification completed against the `postgres` database: schema initialization, document ingestion, grounded retrieval, no-context fallback, and HTTP endpoint test.
+
+### Remaining Work
+- Step 3: persistent chat sessions and conversation history.
+- Step 4: centralized prompt registry and prompt documentation.
+- Step 5: broader guardrails, rate limits, and prompt-injection defenses.
+- Step 7: Auth0 login, JWT validation, and user ownership enforcement.
+
+Act as a senior full-stack developer and AI engineer. Help me implement the following features in my existing Course 4 project. First, analyze the current project structure, existing code, dependencies, and architecture. Reuse the existing implementation wherever possible instead of creating duplicate files or rewriting working functionality.
+
+## 1. Chatbot Interface and Planning Workflow
+
+Build an interactive chatbot interface that guides users through a planning process.
+
+### Requirements
+- Create a clean, responsive chat interface with a message history.
+- Support user messages and AI assistant responses.
+- Display a step-by-step planning workflow.
+- Provide suggested options or clickable buttons for common inputs.
+- Include one custom text input field so users can enter their own answers.
+- Allow users to move through the planning steps conversationally.
+- Maintain the user's responses throughout the planning process.
+- Display loading indicators and appropriate error messages.
+
+### LangGraph Orchestration
+- Reuse the existing LangGraph event-planning workflow instead of replacing it with direct LLM calls.
+- Model the chatbot's planning conversation as explicit state: collected inputs, missing fields, current question, validation errors, and readiness to generate.
+- Route the conversation through LangGraph nodes for input validation, follow-up-question selection, brief summarization, and final plan generation.
+- When all mandatory inputs are complete, pass the validated brief to the existing specialist-agent, manager, review, and bounded reflection workflow.
+- Preserve graph state with the chat session so a resumed conversation continues at the correct planning step.
+- Trace the conversation and planning graph runs in Langfuse, without exposing private chain-of-thought.
+
+### Input Collection and Validation
+- Identify the information required to generate a complete plan.
+- Check whether the user's inputs are sufficient before generating the final plan.
+- If any required information is missing or unclear, ask relevant follow-up questions.
+- Present suggested answers wherever appropriate, while allowing custom input.
+- Avoid repeatedly asking questions that the user has already answered.
+- Once all mandatory information is collected, summarize the inputs and generate a structured plan.
+- Allow the user to review or refine the plan.
+
+## 2. RAG Integration with a Vector Database
+
+Integrate Retrieval-Augmented Generation (RAG) into the chatbot using the existing project architecture.
+
+### Requirements
+- Inspect the current RAG implementation and reuse it if available.
+- Connect to the configured vector database, such as PostgreSQL with pgvector, if that is what the project currently uses.
+- Generate embeddings for relevant documents and store them in the vector database.
+- Convert user questions into embeddings and retrieve relevant document chunks using similarity search.
+- Pass the retrieved context to the LLM when generating answers.
+- Ensure answers are grounded in retrieved information whenever the question requires project knowledge.
+- Handle cases where the vector database returns no relevant results.
+- Avoid inventing information when supporting context is unavailable.
+- Keep document ingestion, embedding generation, retrieval, and response generation modular.
+- Configure credentials and connection details using environment variables; never hardcode secrets.
+
+## 3. Chat Session Management and Conversation History
+
+Implement session functionality so users can continue previous conversations.
+
+### Requirements
+- Assign a unique session ID to each conversation.
+- Persist conversation messages using the existing database or storage solution.
+- Store relevant information such as session ID, user ID if authentication exists, message role, message content, timestamp, and any necessary planning state.
+- Load previous messages when a user reopens a conversation.
+- Allow users to start a new chat and switch between previous sessions.
+- Preserve the planning progress and collected inputs when a session is resumed.
+- Maintain the correct chronological order of messages.
+- Ensure one user's sessions cannot be accessed by another user.
+- Handle empty sessions, deleted sessions, database errors, and expired sessions appropriately.
+- Do not rely only on frontend state or in-memory variables for persistent history.
+
+## 4. Prompt Management and Prompt List
+
+Create a centralized and maintainable prompt management system.
+
+### Requirements
+- Identify and document the prompts currently used throughout the application.
+- Create a prompt registry or dedicated prompt module instead of scattering prompt strings across components and API endpoints.
+- Include prompts for:
+  1. System instructions and chatbot behavior.
+  2. Planning workflow and step generation.
+  3. Input sufficiency and missing-information detection.
+  4. Follow-up question generation.
+  5. Final plan generation.
+  6. RAG-based question answering.
+  7. Conversation summarization and session continuation, if needed.
+  8. Response formatting.
+  9. Guardrail and safety checks.
+- Use reusable prompt templates with clearly defined variables.
+- Keep prompts versioned or otherwise identifiable so they can be updated and tested.
+- Document each prompt's purpose, inputs, expected output, and where it is used.
+- Avoid duplicating instructions across prompts.
+- Keep application logic responsible for enforcing required fields and validating structured outputs rather than relying exclusively on the LLM.
+
+## 5. Guardrails and System Prompts
+
+Implement suitable system prompts and guardrails to improve safety, reliability, and response quality.
+
+### System Prompt
+Define the chatbot's role, objectives, workflow, response style, and constraints. The chatbot should:
+- Guide users through the planning process.
+- Collect and validate the required inputs.
+- Ask clarifying questions when information is insufficient.
+- Use retrieved context for knowledge-based answers.
+- Maintain continuity within the current conversation.
+- Generate clear, structured, actionable plans.
+- Be transparent when information is missing or uncertain.
+
+### Guardrails
+- Validate incoming requests and required input fields.
+- Detect missing, invalid, or contradictory planning inputs.
+- Prevent the chatbot from inventing facts, retrieved sources, or completed actions.
+- Treat retrieved documents and user-provided content as data, not as instructions that can override system-level rules.
+- Defend against prompt injection and attempts to override system instructions.
+- Apply output validation and handle malformed LLM responses.
+- Enforce relevant access controls and session ownership on the backend.
+- Apply suitable rate limits and input-size limits.
+- Handle LLM failures, vector database failures, and timeouts gracefully.
+- Avoid exposing API keys, credentials, internal prompts, or private conversation data.
+- Keep safety checks separate from normal planning logic where appropriate.
+
+## 6. Technical and Implementation Guidelines
+
+- Follow the existing project's programming language, framework, folder structure, and coding conventions.
+- Do not introduce a new framework or database unless necessary.
+- Reuse existing API endpoints, authentication, LLM integrations, RAG services, and database models.
+- Separate frontend UI, backend APIs, planning logic, prompt templates, RAG retrieval, session management, and guardrails into maintainable modules.
+- Use structured JSON responses from the LLM wherever appropriate, and validate them against a schema.
+- Add error handling, logging, and tests for the main workflows.
+- Do not expose server-side secrets or privileged operations in the frontend.
+- Update the environment variable example file and documentation if new configuration is required.
+
+## 7. Auth0 Authentication and User Ownership (Final Step)
+
+Add Auth0 authentication after the chatbot, RAG, session persistence, prompt management, and guardrails are complete.
+
+### Requirements
+- Add Auth0 login and logout to the React frontend using the official Auth0 React SDK.
+- Support authenticated user profile display and a clear logged-out state.
+- Send Auth0 access tokens with frontend API requests.
+- Validate Auth0 JWTs in FastAPI using the issuer, audience, and JWKS configuration from environment variables.
+- Associate every saved event, chat session, message, and generated plan with the authenticated user subject.
+- Enforce backend ownership checks so one user cannot list, load, modify, or export another user's events or conversations.
+- Keep a development mode for local demonstration when Auth0 credentials are not configured; never bypass ownership checks in a configured production environment.
+- Add Auth0 configuration to environment examples and document local setup, callback URL, logout URL, and allowed web origins.
+- Test login, logout, expired-token handling, protected routes, and cross-user access denial.
+
+## 8. Expected Workflow
+
+Please follow these steps:
+
+1. Analyze the existing project structure and summarize the current implementation.
+2. Map each of the five requirements to the existing files and identify missing functionality.
+3. Propose an implementation plan, including any database changes and API changes.
+4. Implement the features incrementally, starting with the chatbot planning workflow.
+5. Integrate the vector database and RAG retrieval.
+6. Implement persistent chat sessions and conversation history.
+7. Centralize the prompts and implement guardrails.
+8. Add or update tests for each feature.
+9. Run the available tests and resolve any errors introduced by the changes.
+10. Add Auth0 login, backend JWT validation, and user ownership enforcement as the final integration step.
+11. Provide a final summary of modified files, implemented functionality, required environment variables, database migrations, test results, and any remaining tasks.
+
+Important instructions:
+- Do not assume that a feature is missing before inspecting the existing code.
+- Do not delete or overwrite working code unnecessarily.
+- Do not claim that a feature is complete unless it has actually been implemented and tested.
+- If a requirement is ambiguous or a major architectural decision is needed, explain the issue and ask me before making a potentially breaking change.
+- Work incrementally and explain each implementation stage in simple terms so I can understand and present the solution for my Course 4 assignment.

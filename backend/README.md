@@ -55,3 +55,14 @@ agents.
 
 Replace build_demo_plan() with a compiled LangGraph workflow that delegates to
 logistics, finance, schedule, marketing, and risk agents.
+# EventPilot Backend
+
+## RAG Knowledge Base
+
+Step 2 uses PostgreSQL with the `pgvector` extension for curated planning knowledge. Add the Azure embedding and PostgreSQL variables from `.env.example` to `.env`, then run this local-only ingestion command from `backend/`:
+
+```bash
+.venv/bin/python scripts/ingest_knowledge.py
+```
+
+The command reads `knowledge/*.md` and `knowledge/*.txt`, embeds their chunks with Azure OpenAI, and replaces chunks for each matching source. The public API intentionally exposes only `POST /api/v1/rag/query`; document ingestion will become owner-scoped after Auth0 is implemented.

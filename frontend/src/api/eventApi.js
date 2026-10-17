@@ -65,3 +65,17 @@ export function reviseBudget(eventId, budget) {
     body: JSON.stringify({ budget })
   });
 }
+
+export function validatePlanningChatTurn(field, value, answers) {
+  return request('/chat/planning-turn', {
+    method: 'POST',
+    body: JSON.stringify({ field, value: String(value), answers })
+  });
+}
+
+export function queryKnowledge(question) {
+  return request('/rag/query', {
+    method: 'POST',
+    body: JSON.stringify({ question })
+  });
+}

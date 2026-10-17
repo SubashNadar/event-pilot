@@ -1,5 +1,5 @@
 const navigation = [
-  ['chat', '✦', 'Plan with AI'],
+  ['home', '⌂', 'Home'],
   ['overview', '◫', 'Overview'],
   ['brief', '⌁', 'Event brief'],
   ['plan', '▦', 'Plan workspace'],
@@ -8,7 +8,7 @@ const navigation = [
 
 export function Sidebar({ view, setView, setPlanTab, onNewEvent, events, activeEventId, onSelectEvent }) {
   return <aside className="sidebar" aria-label="Event navigation">
-    <a className="brand" href="#overview" onClick={() => setView('overview')}><span className="brand-mark">E</span><span>EventPilot</span></a>
+    <a className="brand" href="#home" onClick={() => setView('home')}><span className="brand-mark">E</span><span>EventPilot</span></a>
     <button className="new-event" onClick={onNewEvent}><span>+</span> New event</button>
     <nav className="primary-nav">
       {navigation.map(([id, icon, label]) => <button key={id} className={`nav-item ${view === id ? 'active' : ''}`} onClick={() => setView(id)}><span>{icon}</span> {label}</button>)}

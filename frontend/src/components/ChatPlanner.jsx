@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react';
+import { validatePlanningChatTurn } from '../api/eventApi';
+import { KnowledgeGuide } from './KnowledgeGuide';
+import './chatbotDock.css';
 
 const steps = [
   { field: 'eventType', label: 'Event type', prompt: 'What kind of event are you planning?', options: ['Wedding reception', 'Workshop', 'Conference', 'Birthday celebration'] },
@@ -13,33 +16,47 @@ const steps = [
 const displayValue = (field, value) => field === 'budget' ? `₹${new Intl.NumberFormat('en-IN').format(Number(value || 0))}` : value;
 
 export function ChatPlanner({ onGenerate, onCancel }) {
+  const [isOpen, setIsOpen] = useState(true);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [draft, setDraft] = useState('');
   const [error, setError] = useState('');
+  const [assistantReplies, setAssistantReplies] = useState({});
+  const [isChecking, setIsChecking] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const complete = stepIndex === steps.length;
   const step = steps[stepIndex];
   const messages = useMemo(() => steps.slice(0, Math.min(stepIndex + 1, steps.length)).flatMap((item, index) => {
     const result = [{ role: 'assistant', text: item.prompt }];
-    if (index < stepIndex) result.push({ role: 'user', text: displayValue(item.field, answers[item.field]) });
+    if (index < stepIndex) { result.push({ role: 'user', text: displayValue(item.field, answers[item.field]) }); if (assistantReplies[index]) result.push({ role: 'assistant', text: assistantReplies[index] }); }
     return result;
-  }), [answers, stepIndex]);
+  }), [answers, assistantReplies, stepIndex]);
 
-  const submitAnswer = value => {
+  const submitAnswer = async value => {
     const answer = String(value ?? draft).trim();
     if (!answer) return setError(`Please provide ${step.label.toLowerCase()} to continue.`);
-    if ((step.field === 'attendees' || step.field === 'budget') && (!Number.isFinite(Number(answer)) || Number(answer) <= 0)) return setError(`Enter a valid ${step.label.toLowerCase()}.`);
-    if (step.field === 'date' && Number.isNaN(new Date(`${answer}T00:00:00`).getTime())) return setError('Choose a valid event date.');
-    setAnswers(current => ({ ...current, [step.field]: answer }));
-    setDraft('');
-    setError('');
-    setStepIndex(current => current + 1);
+    setIsChecking(true);
+    try {
+      const result = await validatePlanningChatTurn(step.field, answer, answers);
+      if (!result.accepted) return setError(result.clarification || result.reply);
+      setAnswers(current => ({ ...current, [step.field]: answer }));
+      setAssistantReplies(current => ({ ...current, [stepIndex]: result.reply }));
+      setDraft('');
+      setError('');
+      setStepIndex(current => current + 1);
+    } catch {
+      setError('The planning assistant is unavailable. Check that the API is running, then try again.');
+    } finally {
+      setIsChecking(false);
+    }
   };
 
   const editAnswer = index => {
     setDraft(answers[steps[index].field] || '');
+    setAnswers(current => Object.fromEntries(Object.entries(current).filter(([field]) => steps.findIndex(step => step.field === field) < index)));
     setStepIndex(index);
+    setAssistantReplies(current => Object.fromEntries(Object.entries(current).filter(([key]) => Number(key) < index)));
     setError('');
   };
 
@@ -59,11 +76,13 @@ export function ChatPlanner({ onGenerate, onCancel }) {
     }
   };
 
-  return <section className="view active chat-planner-view">
-    <div className="view-heading"><p className="eyebrow">CONVERSATIONAL PLANNING</p><h1>Plan with EventPilot</h1><p>Answer a few focused questions. The planning team will turn your brief into a reviewed event plan.</p></div>
-    <div className="chat-layout"><aside className="chat-steps" aria-label="Planning progress"><p className="eyebrow">PLAN INPUTS</p>{steps.map((item, index) => <div key={item.field} className={`chat-step ${index < stepIndex ? 'done' : index === stepIndex ? 'active' : ''}`}><span>{index < stepIndex ? '✓' : index + 1}</span><strong>{item.label}</strong></div>)}</aside>
+  return <aside className={`chatbot-dock ${isOpen ? 'is-open' : ''}`} aria-label="Event planning chatbot">
+    {isOpen && <section className={`chatbot-window ${guideOpen ? 'guide-open' : ''}`}>
+    <div className="chatbot-topline"><div><span>EP</span><div><strong>EventPilot Planner</strong><small>{guideOpen ? 'Verified planning knowledge' : complete ? 'Brief ready to generate' : `Question ${stepIndex + 1} of ${steps.length}`}</small></div></div><div className="chatbot-header-actions"><button className="chatbot-guide-toggle" onClick={() => setGuideOpen(open => !open)}>{guideOpen ? 'Brief' : 'Guide'}</button><button onClick={() => setIsOpen(false)} aria-label="Minimize planner">-</button></div></div>
+    <div className="chatbot-progress"><i style={{ width: `${stepIndex / steps.length * 100}%` }} /></div>{guideOpen && <KnowledgeGuide onClose={() => setGuideOpen(false)} />}<div className="chat-layout">
       <section className="chat-panel" aria-label="Planning conversation"><div className="chat-history">{messages.map((message, index) => <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}><span>{message.role === 'assistant' ? 'EP' : 'You'}</span><p>{message.text}</p></div>)}{complete && <div className="chat-message assistant"><span>EP</span><p>I have everything needed. Review the brief below, then generate the plan.</p></div>}</div>
-        {complete ? <div className="chat-summary"><div className="chat-summary-heading"><div><p className="eyebrow">READY TO GENERATE</p><h2>Planning brief</h2></div><button className="text-button" onClick={() => editAnswer(0)}>Edit answers</button></div>{steps.map((item, index) => <div key={item.field}><span>{item.label}</span><strong>{displayValue(item.field, answers[item.field])}</strong><button aria-label={`Edit ${item.label}`} onClick={() => editAnswer(index)}>Edit</button></div>)}<button className="button primary" disabled={isGenerating} onClick={generate}>{isGenerating ? 'Generating multi-agent plan...' : 'Generate event plan'}</button></div> : <div className="chat-composer"><div className="suggestion-row">{step.options?.map(option => <button key={option} onClick={() => submitAnswer(option)}>{step.field === 'budget' ? displayValue('budget', option) : option}</button>)}</div><form onSubmit={event => { event.preventDefault(); submitAnswer(); }}><input type={step.type || 'text'} value={draft} onChange={event => setDraft(event.target.value)} placeholder={step.placeholder || 'Type your answer'} autoFocus /><button className="button primary" type="submit">Continue</button></form>{error && <p className="chat-error">{error}</p>}</div>}
+        {complete ? <div className="chat-summary"><div className="chat-summary-heading"><div><p className="eyebrow">READY TO GENERATE</p><h2>Planning brief</h2></div><button className="text-button" onClick={() => editAnswer(0)}>Edit answers</button></div>{steps.map((item, index) => <div key={item.field}><span>{item.label}</span><strong>{displayValue(item.field, answers[item.field])}</strong><button aria-label={`Edit ${item.label}`} onClick={() => editAnswer(index)}>Edit</button></div>)}<button className="button primary" disabled={isGenerating} onClick={generate}>{isGenerating ? 'Generating multi-agent plan...' : 'Generate event plan'}</button></div> : <div className="chat-composer"><p className="chat-composer-label">Suggested replies</p><div className="suggestion-row">{step.options?.map(option => <button disabled={isChecking} key={option} onClick={() => submitAnswer(option)}>{step.field === 'budget' ? displayValue('budget', option) : option}</button>)}</div><form onSubmit={event => { event.preventDefault(); submitAnswer(); }}><input disabled={isChecking} type={step.type || 'text'} value={draft} onChange={event => setDraft(event.target.value)} placeholder={step.placeholder || 'Type your answer'} autoFocus /><button className="button primary" disabled={isChecking} type="submit">{isChecking ? 'Checking...' : 'Continue'}</button></form>{error && <p className="chat-error">{error}</p>}</div>}
       </section></div><button className="text-button chat-cancel" onClick={onCancel}>Return to workspace</button>
-  </section>;
+    </section>}<button className="chatbot-launcher" onClick={() => setIsOpen(open => !open)} aria-expanded={isOpen}>{isOpen ? '×' : <><span>EP</span> Plan an event</>}</button>
+  </aside>;
 }
