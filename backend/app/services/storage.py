@@ -4,9 +4,10 @@ import sqlite3
 from pathlib import Path
 from uuid import UUID
 
+from app.core.config import settings
 from app.models.event import EventBrief, EventPlan
 
-DB_PATH = Path("data/eventpilot.db")
+DB_PATH = Path(settings.data_dir) / "eventpilot.db"
 
 
 def _connection() -> sqlite3.Connection:

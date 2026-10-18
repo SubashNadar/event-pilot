@@ -5,7 +5,7 @@ export function toUiPlan(apiPlan, fallbackPlan) {
     venue: {
       name: apiPlan.venue,
       area: apiPlan.venue_detail,
-      status: apiPlan.source === 'azure' ? 'AI generated' : 'Generated'
+      status: apiPlan.source === 'azure' ? 'AI generated' : apiPlan.source === 'rules' ? 'From agent tools' : 'Generated'
     },
     budgetLabels: apiPlan.budget_lines.map(line => line.category),
     budgetShares: apiPlan.budget_lines.map(line => line.share_percent),
@@ -21,6 +21,9 @@ export function toUiPlan(apiPlan, fallbackPlan) {
     })),
     activity: apiPlan.activity.map(item => [item.timestamp, item.agent, item.detail, item.agent.charAt(0)]),
     confidence: apiPlan.confidence,
-    source: apiPlan.source
+    source: apiPlan.source,
+    recommendations: apiPlan.recommendations || null,
+    generatedAt: apiPlan.generated_at || null,
+    runId: apiPlan.run_id || null
   };
 }

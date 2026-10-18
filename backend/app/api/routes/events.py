@@ -3,8 +3,8 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, status
 
 from app.models.event import BudgetRevisionRequest, EventBrief, EventBriefCreate, EventPlan
-from app.services.planning import build_event_plan
-from app.services.storage import list_events, load_event, load_plan, save_event, save_plan
+from app.runs.manager import run_manager
+from app.services.storage import list_events, load_event, load_plan, save_event
 
 router = APIRouter(prefix="/events", tags=["events"])
 @router.post("", response_model=EventBrief, status_code=status.HTTP_201_CREATED)
@@ -36,11 +36,11 @@ def update_event(event_id: UUID, payload: EventBriefCreate) -> EventBrief:
 
 
 @router.post("/{event_id}/plan", response_model=EventPlan)
-def generate_plan(event_id: UUID) -> EventPlan:
+async def generate_plan(event_id: UUID) -> EventPlan:
+    """Blocking variant kept for older clients: runs the workflow to the end,
+    skipping (not pausing on) failed steps. New clients use POST /events/{id}/runs."""
     event = get_event(event_id)
-    plan = build_event_plan(event)
-    save_plan(plan)
-    return plan
+    return await run_manager.run_to_completion(event, "plan-generation")
 
 
 @router.get("/{event_id}/plan", response_model=EventPlan)
@@ -52,10 +52,8 @@ def get_plan(event_id: UUID) -> EventPlan:
 
 
 @router.post("/{event_id}/revisions/budget", response_model=EventPlan)
-def revise_budget(event_id: UUID, payload: BudgetRevisionRequest) -> EventPlan:
+async def revise_budget(event_id: UUID, payload: BudgetRevisionRequest) -> EventPlan:
     event = get_event(event_id)
     revised_event = event.model_copy(update={"budget": payload.budget})
     save_event(revised_event)
-    plan = build_event_plan(revised_event, operation="budget-revision")
-    save_plan(plan)
-    return plan
+    return await run_manager.run_to_completion(revised_event, "budget-revision")

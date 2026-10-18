@@ -1,14 +1,28 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes.events import router as events_router
 from app.api.routes.chat import router as chat_router
+from app.api.routes.events import router as events_router
 from app.api.routes.rag import router as rag_router
+from app.api.routes.runs import router as runs_router
 from app.core.config import settings
-from app.services.storage import initialize_storage
+from app.runs.manager import run_manager
 from app.services.rag import initialize_rag_storage
+from app.services.storage import initialize_storage
 
-app = FastAPI(title=settings.app_name, version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    initialize_storage()
+    initialize_rag_storage()
+    await run_manager.startup()
+    yield
+    await run_manager.shutdown()
+
+
+app = FastAPI(title=settings.app_name, version="0.2.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
@@ -19,14 +33,9 @@ app.add_middleware(
 app.include_router(events_router, prefix=settings.api_prefix)
 app.include_router(chat_router, prefix=settings.api_prefix)
 app.include_router(rag_router, prefix=settings.api_prefix)
-
-
-@app.on_event("startup")
-def startup() -> None:
-    initialize_storage()
-    initialize_rag_storage()
+app.include_router(runs_router, prefix=settings.api_prefix)
 
 
 @app.get("/health", tags=["health"])
 def health() -> dict[str, str]:
-    return {"status": "ok", "provider": settings.llm_provider}
+    return {"status": "ok", "provider": settings.llm_provider, "llm": "azure" if settings.azure_openai_enabled else "rules"}

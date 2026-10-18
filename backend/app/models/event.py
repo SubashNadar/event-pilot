@@ -67,6 +67,8 @@ class EventPlan(BaseModel):
     activity: list[AgentActivity]
     confidence: int
     source: str = "deterministic"
+    recommendations: str | None = None
+    run_id: str | None = None
     generated_at: datetime = Field(default_factory=datetime.utcnow)
 
 

@@ -79,3 +79,10 @@ export function queryKnowledge(question) {
     body: JSON.stringify({ question })
   });
 }
+
+export function briefTurn(body) {
+  return request('/chat/brief', {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
+}

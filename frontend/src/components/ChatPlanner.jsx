@@ -1,64 +1,91 @@
-import { useMemo, useState } from 'react';
-import { validatePlanningChatTurn } from '../api/eventApi';
+import { useEffect, useRef, useState } from 'react';
+import { briefTurn } from '../api/eventApi';
 import { KnowledgeGuide } from './KnowledgeGuide';
 import './chatbotDock.css';
 
-const steps = [
-  { field: 'eventType', label: 'Event type', prompt: 'What kind of event are you planning?', options: ['Wedding reception', 'Workshop', 'Conference', 'Birthday celebration'] },
-  { field: 'name', label: 'Event name', prompt: 'Great. What should we call this event?', placeholder: 'e.g. Meera and Karthik Wedding Reception' },
-  { field: 'date', label: 'Event date', prompt: 'When will it take place?', type: 'date' },
-  { field: 'location', label: 'Location', prompt: 'Where will it be held?', options: ['Bengaluru', 'Mumbai', 'Delhi NCR', 'Hyderabad'], placeholder: 'City or neighbourhood' },
-  { field: 'attendees', label: 'Attendees', prompt: 'How many guests or attendees are you expecting?', options: ['50', '100', '200', '350'], placeholder: 'Enter a number', type: 'number' },
-  { field: 'budget', label: 'Budget', prompt: 'What is the total budget in INR?', options: ['250000', '500000', '1000000', '1500000'], placeholder: 'Enter total INR budget', type: 'number' },
-  { field: 'objective', label: 'Objective', prompt: 'Finally, what outcome should the plan prioritize?', options: ['Guest experience and smooth operations', 'Learning and attendee engagement', 'Elegant celebration and hospitality'], placeholder: 'Describe the event outcome' },
-];
+const TOTAL_FIELDS = 7;
+const EXAMPLE = 'Wedding reception in Bandra for 200 guests on 14 Feb 2027, budget ₹10 lakh';
 
-const displayValue = (field, value) => field === 'budget' ? `₹${new Intl.NumberFormat('en-IN').format(Number(value || 0))}` : value;
-
+/**
+ * Planning chat with dynamic questions. The user can describe the whole event in
+ * one sentence; the backend (/chat/brief) extracts what it can, checks it against
+ * planning benchmarks, and asks only for what is missing, with options that fit
+ * the event type, city and guest count.
+ */
 export function ChatPlanner({ onGenerate, onCancel }) {
   const [isOpen, setIsOpen] = useState(true);
   const [guideOpen, setGuideOpen] = useState(false);
-  const [stepIndex, setStepIndex] = useState(0);
+  const [messages, setMessages] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [brief, setBrief] = useState([]);
+  const [next, setNext] = useState(null);
+  const [warnings, setWarnings] = useState([]);
+  const [dismissed, setDismissed] = useState([]);
+  const [ready, setReady] = useState(false);
   const [draft, setDraft] = useState('');
   const [error, setError] = useState('');
-  const [assistantReplies, setAssistantReplies] = useState({});
-  const [isChecking, setIsChecking] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const complete = stepIndex === steps.length;
-  const step = steps[stepIndex];
-  const messages = useMemo(() => steps.slice(0, Math.min(stepIndex + 1, steps.length)).flatMap((item, index) => {
-    const result = [{ role: 'assistant', text: item.prompt }];
-    if (index < stepIndex) { result.push({ role: 'user', text: displayValue(item.field, answers[item.field]) }); if (assistantReplies[index]) result.push({ role: 'assistant', text: assistantReplies[index] }); }
-    return result;
-  }), [answers, assistantReplies, stepIndex]);
+  const historyRef = useRef(null);
+  const inputRef = useRef(null);
 
-  const submitAnswer = async value => {
-    const answer = String(value ?? draft).trim();
-    if (!answer) return setError(`Please provide ${step.label.toLowerCase()} to continue.`);
-    setIsChecking(true);
+  const apply = (result, { userText, withPrompt = true } = {}) => {
+    setAnswers(result.answers);
+    setBrief(result.brief);
+    setNext(result.next);
+    setWarnings(result.warnings);
+    setReady(result.ready);
+    const prompt = withPrompt && result.next ? result.next.prompt : '';
+    const text = [result.reply, prompt].filter(Boolean).join('\n');
+    setMessages(current => [...current, ...(userText ? [{ role: 'user', text: userText }] : []), { role: 'assistant', text }]);
+  };
+
+  const send = async (body, userText) => {
+    setBusy(true);
+    setError('');
     try {
-      const result = await validatePlanningChatTurn(step.field, answer, answers);
-      if (!result.accepted) return setError(result.clarification || result.reply);
-      setAnswers(current => ({ ...current, [step.field]: answer }));
-      setAssistantReplies(current => ({ ...current, [stepIndex]: result.reply }));
-      setDraft('');
-      setError('');
-      setStepIndex(current => current + 1);
+      const result = await briefTurn({ answers, dismissed, ...body });
+      apply(result, { userText });
+      return result;
     } catch {
       setError('The planning assistant is unavailable. Check that the API is running, then try again.');
+      return null;
     } finally {
-      setIsChecking(false);
+      setBusy(false);
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
   };
 
-  const editAnswer = index => {
-    setDraft(answers[steps[index].field] || '');
-    setAnswers(current => Object.fromEntries(Object.entries(current).filter(([field]) => steps.findIndex(step => step.field === field) < index)));
-    setStepIndex(index);
-    setAssistantReplies(current => Object.fromEntries(Object.entries(current).filter(([key]) => Number(key) < index)));
-    setError('');
+  useEffect(() => {
+    briefTurn({ message: '', answers: {} })
+      .then(result => {
+        setNext(result.next);
+        setMessages([{ role: 'assistant', text: `Tell me about your event: type, city, guests, budget and date. One sentence is fine, and I'll ask only for what's missing.\n${result.next?.prompt || ''}` }]);
+      })
+      .catch(() => setError('The planning assistant is unavailable. Check that the API is running, then try again.'));
+  }, []);
+
+  useEffect(() => {
+    historyRef.current?.scrollTo({ top: historyRef.current.scrollHeight, behavior: 'smooth' });
+  }, [messages, warnings]);
+
+  const submitText = event => {
+    event.preventDefault();
+    const text = draft.trim();
+    if (!text || busy) return;
+    setDraft('');
+    send({ message: text, ask: next?.field && answers[next.field] ? next.field : undefined }, text);
   };
+
+  const chooseOption = option => send({ field: next.field, value: option.value }, option.label);
+  const applyFix = (warning, option) => send({ patch: option.patch }, option.label);
+  const keepAsIs = async warning => {
+    const nextDismissed = [...dismissed, warning.id];
+    setDismissed(nextDismissed);
+    setWarnings(current => current.filter(w => w.id !== warning.id));
+    setMessages(current => [...current, { role: 'user', text: 'Keep it as it is' }, { role: 'assistant', text: 'Noted. The plan will flag it as a risk.' }]);
+  };
+  const editField = field => send({ ask: field }, `Change ${brief.find(item => item.field === field)?.label.toLowerCase() || field}`);
 
   const generate = async () => {
     setIsGenerating(true);
@@ -76,13 +103,37 @@ export function ChatPlanner({ onGenerate, onCancel }) {
     }
   };
 
+  const filled = brief.length;
+  const status = guideOpen ? 'Verified planning knowledge' : ready ? 'Brief ready to generate' : `${filled} of ${TOTAL_FIELDS} details`;
+
   return <aside className={`chatbot-dock ${isOpen ? 'is-open' : ''}`} aria-label="Event planning chatbot">
     {isOpen && <section className={`chatbot-window ${guideOpen ? 'guide-open' : ''}`}>
-    <div className="chatbot-topline"><div><span>EP</span><div><strong>EventPilot Planner</strong><small>{guideOpen ? 'Verified planning knowledge' : complete ? 'Brief ready to generate' : `Question ${stepIndex + 1} of ${steps.length}`}</small></div></div><div className="chatbot-header-actions"><button className="chatbot-guide-toggle" onClick={() => setGuideOpen(open => !open)}>{guideOpen ? 'Brief' : 'Guide'}</button><button onClick={() => setIsOpen(false)} aria-label="Minimize planner">-</button></div></div>
-    <div className="chatbot-progress"><i style={{ width: `${stepIndex / steps.length * 100}%` }} /></div>{guideOpen && <KnowledgeGuide onClose={() => setGuideOpen(false)} />}<div className="chat-layout">
-      <section className="chat-panel" aria-label="Planning conversation"><div className="chat-history">{messages.map((message, index) => <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}><span>{message.role === 'assistant' ? 'EP' : 'You'}</span><p>{message.text}</p></div>)}{complete && <div className="chat-message assistant"><span>EP</span><p>I have everything needed. Review the brief below, then generate the plan.</p></div>}</div>
-        {complete ? <div className="chat-summary"><div className="chat-summary-heading"><div><p className="eyebrow">READY TO GENERATE</p><h2>Planning brief</h2></div><button className="text-button" onClick={() => editAnswer(0)}>Edit answers</button></div>{steps.map((item, index) => <div key={item.field}><span>{item.label}</span><strong>{displayValue(item.field, answers[item.field])}</strong><button aria-label={`Edit ${item.label}`} onClick={() => editAnswer(index)}>Edit</button></div>)}<button className="button primary" disabled={isGenerating} onClick={generate}>{isGenerating ? 'Generating multi-agent plan...' : 'Generate event plan'}</button></div> : <div className="chat-composer"><p className="chat-composer-label">Suggested replies</p><div className="suggestion-row">{step.options?.map(option => <button disabled={isChecking} key={option} onClick={() => submitAnswer(option)}>{step.field === 'budget' ? displayValue('budget', option) : option}</button>)}</div><form onSubmit={event => { event.preventDefault(); submitAnswer(); }}><input disabled={isChecking} type={step.type || 'text'} value={draft} onChange={event => setDraft(event.target.value)} placeholder={step.placeholder || 'Type your answer'} autoFocus /><button className="button primary" disabled={isChecking} type="submit">{isChecking ? 'Checking...' : 'Continue'}</button></form>{error && <p className="chat-error">{error}</p>}</div>}
-      </section></div><button className="text-button chat-cancel" onClick={onCancel}>Return to workspace</button>
-    </section>}<button className="chatbot-launcher" onClick={() => setIsOpen(open => !open)} aria-expanded={isOpen}>{isOpen ? '×' : <><span>EP</span> Plan an event</>}</button>
+      <div className="chatbot-topline"><div><span>EP</span><div><strong>EventPilot Planner</strong><small>{status}</small></div></div><div className="chatbot-header-actions"><button className="chatbot-guide-toggle" onClick={() => setGuideOpen(open => !open)}>{guideOpen ? 'Brief' : 'Guide'}</button><button onClick={() => setIsOpen(false)} aria-label="Minimize planner">-</button></div></div>
+      <div className="chatbot-progress"><i style={{ width: `${filled / TOTAL_FIELDS * 100}%` }} /></div>
+      {guideOpen && <KnowledgeGuide onClose={() => setGuideOpen(false)} />}
+      <div className="chat-layout">
+        <section className="chat-panel" aria-label="Planning conversation">
+          <div className="chat-history" ref={historyRef} aria-live="polite">
+            {messages.map((message, index) => <div className={`chat-message ${message.role}`} key={index}><span>{message.role === 'assistant' ? 'EP' : 'You'}</span><p className="chat-text">{message.text}</p></div>)}
+            {messages.length === 1 && !filled && <button className="brief-example" onClick={() => { setDraft(EXAMPLE); inputRef.current?.focus(); }}>Try: “{EXAMPLE}”</button>}
+            {warnings.map(warning => <div className="brief-warning" role="status" key={warning.id}><p>{warning.message}</p><div>{warning.options.map(option => <button key={option.label} disabled={busy} onClick={() => applyFix(warning, option)}>{option.label}</button>)}<button className="ghost" disabled={busy} onClick={() => keepAsIs(warning)}>Keep as is</button></div></div>)}
+          </div>
+
+          {filled > 0 && !ready && <div className="brief-strip" aria-label="Brief so far">{brief.map(item => <button key={item.field} title={`Change ${item.label.toLowerCase()}`} onClick={() => editField(item.field)} disabled={busy}><small>{item.label}</small>{item.display}</button>)}</div>}
+
+          {ready ? <div className="chat-summary">
+            <div className="chat-summary-heading"><div><p className="eyebrow">READY TO GENERATE</p><h2>Planning brief</h2></div></div>
+            {brief.map(item => <div key={item.field}><span>{item.label}</span><strong>{item.display}</strong><button aria-label={`Edit ${item.label}`} onClick={() => editField(item.field)}>Edit</button></div>)}
+            <button className="button primary" disabled={isGenerating || busy} onClick={generate}>{isGenerating ? 'Starting the planning team...' : 'Generate event plan'}</button>
+          </div> : <div className="chat-composer">
+            {next?.options?.length > 0 && <><p className="chat-composer-label">Suggested · {next.label}</p><div className="suggestion-row">{next.options.map(option => <button disabled={busy} key={option.value} title={option.hint || option.label} onClick={() => chooseOption(option)}>{option.label}{option.hint && <small>{option.hint}</small>}</button>)}</div></>}
+            <form onSubmit={submitText}><input ref={inputRef} disabled={busy} value={draft} onChange={event => setDraft(event.target.value)} placeholder={next?.placeholder || 'Describe your event'} aria-label={next?.prompt || 'Describe your event'} autoFocus /><button className="button primary" disabled={busy || !draft.trim()} type="submit">{busy ? 'Checking...' : 'Send'}</button></form>
+            {error && <p className="chat-error">{error}</p>}
+          </div>}
+        </section>
+      </div>
+      <button className="text-button chat-cancel" onClick={onCancel}>Return to workspace</button>
+    </section>}
+    <button className="chatbot-launcher" onClick={() => setIsOpen(open => !open)} aria-expanded={isOpen}>{isOpen ? '×' : <><span>EP</span> Plan an event</>}</button>
   </aside>;
 }

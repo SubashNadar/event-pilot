@@ -1,0 +1,534 @@
+{
+ "_note": "Approximate coordinates (city centres, catalogue areas and main transport hubs) and rule-of-thumb climate notes. Used when the free map and weather services can't be reached. Verify before relying on them.",
+ "cities": {
+  "Bengaluru": {
+   "lat": 12.9716,
+   "lon": 77.5946,
+   "hubs": [
+    {
+     "name": "Kempegowda International Airport",
+     "kind": "airport",
+     "lat": 13.1986,
+     "lon": 77.7066
+    },
+    {
+     "name": "KSR Bengaluru City Junction",
+     "kind": "railway station",
+     "lat": 12.9781,
+     "lon": 77.5695
+    }
+   ],
+   "areas": {
+    "Whitefield": [
+     12.9698,
+     77.75
+    ],
+    "Koramangala": [
+     12.9352,
+     77.6245
+    ],
+    "Indiranagar": [
+     12.9784,
+     77.6408
+    ],
+    "Electronic City": [
+     12.8452,
+     77.6602
+    ],
+    "Hebbal": [
+     13.0358,
+     77.597
+    ],
+    "Yelahanka": [
+     13.1007,
+     77.5963
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "risk": "Medium",
+     "note": "South-west monsoon: evening showers are common, so plan cover for any open-air area."
+    },
+    {
+     "months": [
+      3,
+      4,
+      5
+     ],
+     "risk": "Low",
+     "note": "Warm afternoons; schedule outdoor parts after 5 PM."
+    }
+   ]
+  },
+  "Mumbai": {
+   "lat": 19.076,
+   "lon": 72.8777,
+   "hubs": [
+    {
+     "name": "Chhatrapati Shivaji Maharaj International Airport",
+     "kind": "airport",
+     "lat": 19.0896,
+     "lon": 72.8656
+    },
+    {
+     "name": "Chhatrapati Shivaji Maharaj Terminus",
+     "kind": "railway station",
+     "lat": 18.9402,
+     "lon": 72.8356
+    }
+   ],
+   "areas": {
+    "Andheri East": [
+     19.1136,
+     72.8697
+    ],
+    "Bandra West": [
+     19.0596,
+     72.8295
+    ],
+    "Juhu": [
+     19.1075,
+     72.8263
+    ],
+    "Lower Parel": [
+     18.9953,
+     72.8301
+    ],
+    "Navi Mumbai": [
+     19.0771,
+     72.9986
+    ],
+    "Powai": [
+     19.1176,
+     72.906
+    ],
+    "Thane": [
+     19.2183,
+     72.9781
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain and waterlogging are likely, so avoid open lawns and allow extra travel time."
+    },
+    {
+     "months": [
+      10,
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry season; the best months for outdoor events."
+    }
+   ]
+  },
+  "Delhi NCR": {
+   "lat": 28.6139,
+   "lon": 77.209,
+   "hubs": [
+    {
+     "name": "Indira Gandhi International Airport",
+     "kind": "airport",
+     "lat": 28.5562,
+     "lon": 77.1
+    },
+    {
+     "name": "New Delhi Railway Station",
+     "kind": "railway station",
+     "lat": 28.643,
+     "lon": 77.2194
+    }
+   ],
+   "areas": {
+    "Aerocity": [
+     28.55,
+     77.12
+    ],
+    "Chhatarpur": [
+     28.5062,
+     77.175
+    ],
+    "Dwarka": [
+     28.5921,
+     77.046
+    ],
+    "Gurugram": [
+     28.4595,
+     77.0266
+    ],
+    "Hauz Khas": [
+     28.5494,
+     77.2001
+    ],
+    "Malviya Nagar": [
+     28.5355,
+     77.21
+    ],
+    "Noida": [
+     28.5355,
+     77.391
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      4,
+      5,
+      6
+     ],
+     "risk": "High",
+     "note": "Peak heat, often above 40 °C; keep the event indoors or after sunset."
+    },
+    {
+     "months": [
+      7,
+      8,
+      9
+     ],
+     "risk": "Medium",
+     "note": "Monsoon showers; plan cover for open-air areas."
+    },
+    {
+     "months": [
+      12,
+      1
+     ],
+     "risk": "Medium",
+     "note": "Cold nights and morning fog can delay flights and road travel; give outstation guests buffer time."
+    }
+   ]
+  },
+  "Hyderabad": {
+   "lat": 17.385,
+   "lon": 78.4867,
+   "hubs": [
+    {
+     "name": "Rajiv Gandhi International Airport",
+     "kind": "airport",
+     "lat": 17.2403,
+     "lon": 78.4294
+    },
+    {
+     "name": "Secunderabad Junction",
+     "kind": "railway station",
+     "lat": 17.4337,
+     "lon": 78.5016
+    }
+   ],
+   "areas": {
+    "Banjara Hills": [
+     17.4156,
+     78.4347
+    ],
+    "Gachibowli": [
+     17.4401,
+     78.3489
+    ],
+    "HITEC City": [
+     17.4435,
+     78.3772
+    ],
+    "Jubilee Hills": [
+     17.4325,
+     78.4073
+    ],
+    "Shamshabad": [
+     17.2603,
+     78.3969
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      4,
+      5
+     ],
+     "risk": "Medium",
+     "note": "Hot afternoons; schedule outdoor parts after sunset."
+    },
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "Medium",
+     "note": "Monsoon showers; plan cover for open-air areas."
+    }
+   ]
+  },
+  "Chennai": {
+   "lat": 13.0827,
+   "lon": 80.2707,
+   "hubs": [
+    {
+     "name": "Chennai International Airport",
+     "kind": "airport",
+     "lat": 12.9941,
+     "lon": 80.1709
+    },
+    {
+     "name": "Chennai Central",
+     "kind": "railway station",
+     "lat": 13.0827,
+     "lon": 80.2757
+    }
+   ],
+   "areas": {
+    "Besant Nagar": [
+     13.0003,
+     80.2667
+    ],
+    "ECR": [
+     12.916,
+     80.25
+    ],
+    "Guindy": [
+     13.0067,
+     80.2206
+    ],
+    "OMR": [
+     12.9416,
+     80.2362
+    ],
+    "T Nagar": [
+     13.0418,
+     80.2341
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      10,
+      11,
+      12
+     ],
+     "risk": "High",
+     "note": "North-east monsoon: heavy rain and cyclone alerts are possible; keep an indoor fallback."
+    },
+    {
+     "months": [
+      4,
+      5,
+      6
+     ],
+     "risk": "Medium",
+     "note": "Hot and humid; keep outdoor parts short and after sunset."
+    }
+   ]
+  },
+  "Pune": {
+   "lat": 18.5204,
+   "lon": 73.8567,
+   "hubs": [
+    {
+     "name": "Pune International Airport",
+     "kind": "airport",
+     "lat": 18.5822,
+     "lon": 73.9197
+    },
+    {
+     "name": "Pune Junction",
+     "kind": "railway station",
+     "lat": 18.5289,
+     "lon": 73.8744
+    }
+   ],
+   "areas": {
+    "Baner": [
+     18.559,
+     73.7868
+    ],
+    "Hinjewadi": [
+     18.5913,
+     73.7389
+    ],
+    "Kharadi": [
+     18.5515,
+     73.9348
+    ],
+    "Koregaon Park": [
+     18.5362,
+     73.894
+    ],
+    "Lonavala": [
+     18.7546,
+     73.4062
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: steady rain, heavier in the ghats around Lonavala; avoid open lawns."
+    },
+    {
+     "months": [
+      4,
+      5
+     ],
+     "risk": "Low",
+     "note": "Warm afternoons; evenings are pleasant."
+    }
+   ]
+  },
+  "Goa": {
+   "lat": 15.4909,
+   "lon": 73.8278,
+   "hubs": [
+    {
+     "name": "Dabolim Airport",
+     "kind": "airport",
+     "lat": 15.3808,
+     "lon": 73.8314
+    },
+    {
+     "name": "Manohar International Airport, Mopa",
+     "kind": "airport",
+     "lat": 15.744,
+     "lon": 73.8607
+    },
+    {
+     "name": "Madgaon Junction",
+     "kind": "railway station",
+     "lat": 15.2736,
+     "lon": 73.9581
+    }
+   ],
+   "areas": {
+    "Panaji": [
+     15.4909,
+     73.8278
+    ],
+    "Assagao": [
+     15.595,
+     73.765
+    ],
+    "Benaulim": [
+     15.258,
+     73.928
+    ],
+    "Calangute": [
+     15.544,
+     73.755
+    ],
+    "Candolim": [
+     15.518,
+     73.762
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: very heavy rain and rough seas; many beach venues close, so plan indoors."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Peak season: dry weather but higher prices and early bookings."
+    }
+   ]
+  },
+  "Jaipur": {
+   "lat": 26.9124,
+   "lon": 75.7873,
+   "hubs": [
+    {
+     "name": "Jaipur International Airport",
+     "kind": "airport",
+     "lat": 26.8242,
+     "lon": 75.8122
+    },
+    {
+     "name": "Jaipur Junction",
+     "kind": "railway station",
+     "lat": 26.9196,
+     "lon": 75.7878
+    }
+   ],
+   "areas": {
+    "Amer": [
+     26.9855,
+     75.8513
+    ],
+    "C-Scheme": [
+     26.905,
+     75.8
+    ],
+    "Jagatpura": [
+     26.825,
+     75.865
+    ],
+    "Kukas": [
+     27.03,
+     75.89
+    ],
+    "Malviya Nagar": [
+     26.853,
+     75.815
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      4,
+      5,
+      6
+     ],
+     "risk": "High",
+     "note": "Peak heat, often above 40 °C; keep the event indoors or after sunset."
+    },
+    {
+     "months": [
+      7,
+      8,
+      9
+     ],
+     "risk": "Medium",
+     "note": "Monsoon showers; plan cover for courtyards and lawns."
+    },
+    {
+     "months": [
+      12,
+      1
+     ],
+     "risk": "Low",
+     "note": "Cool evenings; arrange heaters for open-air dinners."
+    }
+   ]
+  }
+ }
+}

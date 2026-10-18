@@ -1,0 +1,401 @@
+{
+ "_note": "SAMPLE DATA: indicative per-guest costs (INR, all-in: venue, food, decor, AV) for demos. Replace with real quotes.",
+ "city_tiers": {
+  "metro": [
+   "Mumbai",
+   "Delhi NCR",
+   "Bengaluru"
+  ],
+  "tier1": [
+   "Hyderabad",
+   "Chennai",
+   "Pune"
+  ],
+  "destination": [
+   "Goa",
+   "Jaipur"
+  ]
+ },
+ "city_aliases": {
+  "Bengaluru": [
+   "bangalore",
+   "blr",
+   "bengaluru",
+   "bengalooru"
+  ],
+  "Mumbai": [
+   "bombay",
+   "mumbai",
+   "navi mumbai",
+   "thane",
+   "vashi",
+   "andheri",
+   "bandra",
+   "powai",
+   "juhu"
+  ],
+  "Delhi NCR": [
+   "delhi",
+   "new delhi",
+   "ncr",
+   "gurgaon",
+   "gurugram",
+   "noida",
+   "faridabad",
+   "dwarka"
+  ],
+  "Hyderabad": [
+   "hyderabad",
+   "secunderabad",
+   "hitec city",
+   "gachibowli",
+   "hyd"
+  ],
+  "Chennai": [
+   "chennai",
+   "madras",
+   "omr",
+   "ecr"
+  ],
+  "Pune": [
+   "pune",
+   "poona",
+   "hinjewadi",
+   "lonavala"
+  ],
+  "Goa": [
+   "goa",
+   "panaji",
+   "panjim",
+   "candolim",
+   "calangute"
+  ],
+  "Jaipur": [
+   "jaipur",
+   "pink city",
+   "amer"
+  ]
+ },
+ "event_types": [
+  {
+   "id": "wedding",
+   "label": "Wedding",
+   "keywords": "wedding reception marriage shaadi engagement sangeet mehendi haldi ring ceremony nikah",
+   "cost_per_guest": {
+    "metro": [
+     2500,
+     4000,
+     8000
+    ],
+    "tier1": [
+     1800,
+     3000,
+     6000
+    ],
+    "destination": [
+     4000,
+     7000,
+     15000
+    ],
+    "other": [
+     1200,
+     2200,
+     4500
+    ]
+   },
+   "guest_options": [
+    100,
+    200,
+    350,
+    500
+   ],
+   "lead_weeks": 16,
+   "venue_types": [
+    "banquet hall",
+    "lawn",
+    "hotel ballroom",
+    "heritage",
+    "resort",
+    "farmhouse"
+   ],
+   "objectives": [
+    "Smooth guest hospitality and dining for both families",
+    "Elegant ceremony with a well-timed programme",
+    "Memorable celebration within a firm budget"
+   ],
+   "name_pattern": "{couple} Wedding Reception"
+  },
+  {
+   "id": "birthday",
+   "label": "Birthday party",
+   "keywords": "birthday party celebration anniversary bday surprise kitty milestone 30th 50th",
+   "cost_per_guest": {
+    "metro": [
+     900,
+     1600,
+     3000
+    ],
+    "tier1": [
+     700,
+     1200,
+     2500
+    ],
+    "destination": [
+     1500,
+     2500,
+     5000
+    ],
+    "other": [
+     500,
+     900,
+     1800
+    ]
+   },
+   "guest_options": [
+    25,
+    50,
+    80,
+    120
+   ],
+   "lead_weeks": 3,
+   "venue_types": [
+    "rooftop",
+    "private dining",
+    "banquet hall",
+    "lawn"
+   ],
+   "objectives": [
+    "A relaxed evening with good food and music",
+    "A surprise party the guest of honour will remember",
+    "Family-friendly celebration with activities for kids"
+   ],
+   "name_pattern": "{person}'s Birthday"
+  },
+  {
+   "id": "workshop",
+   "label": "Workshop",
+   "keywords": "workshop training bootcamp seminar masterclass hackathon session course learning",
+   "cost_per_guest": {
+    "metro": [
+     1200,
+     2000,
+     3500
+    ],
+    "tier1": [
+     900,
+     1500,
+     2800
+    ],
+    "destination": [
+     3000,
+     5000,
+     8000
+    ],
+    "other": [
+     700,
+     1200,
+     2200
+    ]
+   },
+   "guest_options": [
+    30,
+    60,
+    100,
+    200
+   ],
+   "lead_weeks": 6,
+   "venue_types": [
+    "workshop studio",
+    "convention centre",
+    "hotel ballroom"
+   ],
+   "objectives": [
+    "Hands-on learning with practical exercises",
+    "Build skills and peer connections for participants",
+    "Clear outcomes with feedback collected on the day"
+   ],
+   "name_pattern": "{topic} Workshop"
+  },
+  {
+   "id": "conference",
+   "label": "Conference",
+   "keywords": "conference summit conclave expo symposium convention keynote tech talk",
+   "cost_per_guest": {
+    "metro": [
+     2000,
+     3500,
+     6000
+    ],
+    "tier1": [
+     1500,
+     2600,
+     4500
+    ],
+    "destination": [
+     4000,
+     6500,
+     10000
+    ],
+    "other": [
+     1000,
+     1800,
+     3200
+    ]
+   },
+   "guest_options": [
+    150,
+    300,
+    500,
+    1000
+   ],
+   "lead_weeks": 12,
+   "venue_types": [
+    "convention centre",
+    "auditorium",
+    "hotel ballroom"
+   ],
+   "objectives": [
+    "Strong speaker line-up with smooth session transitions",
+    "Networking that leads to real business conversations",
+    "Sponsor visibility and a well-run registration desk"
+   ],
+   "name_pattern": "{topic} Summit"
+  },
+  {
+   "id": "offsite",
+   "label": "Corporate offsite",
+   "keywords": "offsite retreat team outing corporate team building leadership offsite annual day",
+   "cost_per_guest": {
+    "metro": [
+     4000,
+     7000,
+     12000
+    ],
+    "tier1": [
+     3500,
+     6000,
+     10000
+    ],
+    "destination": [
+     6000,
+     10000,
+     18000
+    ],
+    "other": [
+     3000,
+     5000,
+     8000
+    ]
+   },
+   "guest_options": [
+    20,
+    40,
+    80,
+    150
+   ],
+   "lead_weeks": 8,
+   "venue_types": [
+    "resort",
+    "farmhouse",
+    "beach resort",
+    "workshop studio"
+   ],
+   "objectives": [
+    "Strategy sessions balanced with team bonding",
+    "Recognise the team and reset priorities for next quarter",
+    "Relaxed retreat with clear takeaways"
+   ],
+   "name_pattern": "{company} Team Offsite"
+  },
+  {
+   "id": "college",
+   "label": "College fest",
+   "keywords": "college fest festival cultural fest techfest university student annual fest",
+   "cost_per_guest": {
+    "metro": [
+     300,
+     600,
+     1200
+    ],
+    "tier1": [
+     250,
+     500,
+     1000
+    ],
+    "destination": [
+     500,
+     900,
+     1800
+    ],
+    "other": [
+     200,
+     400,
+     800
+    ]
+   },
+   "guest_options": [
+    300,
+    800,
+    1500,
+    3000
+   ],
+   "lead_weeks": 8,
+   "venue_types": [
+    "auditorium",
+    "convention centre",
+    "lawn"
+   ],
+   "objectives": [
+    "Safe, well-run fest with strong student turnout",
+    "Great performances with smooth stage changeovers",
+    "Sponsor-funded event that stays on budget"
+   ],
+   "name_pattern": "{college} Annual Fest"
+  },
+  {
+   "id": "meetup",
+   "label": "Meetup",
+   "keywords": "meetup networking community mixer get together launch party",
+   "cost_per_guest": {
+    "metro": [
+     400,
+     800,
+     1500
+    ],
+    "tier1": [
+     300,
+     600,
+     1200
+    ],
+    "destination": [
+     800,
+     1400,
+     2500
+    ],
+    "other": [
+     250,
+     500,
+     1000
+    ]
+   },
+   "guest_options": [
+    30,
+    60,
+    100,
+    150
+   ],
+   "lead_weeks": 3,
+   "venue_types": [
+    "workshop studio",
+    "rooftop",
+    "private dining"
+   ],
+   "objectives": [
+    "Easy networking with a short talk or two",
+    "Grow the community and collect follow-up contacts",
+    "Casual evening that newcomers enjoy"
+   ],
+   "name_pattern": "{community} Meetup"
+  }
+ ]
+}

@@ -1,0 +1,3062 @@
+{
+ "_note": "SAMPLE DATA for demos. Vendor names and prices are illustrative, not real businesses. Replace with your own vendor list before real use.",
+ "categories": [
+  "catering",
+  "decor",
+  "photography",
+  "sound_light",
+  "entertainment",
+  "mehendi",
+  "av_production"
+ ],
+ "vendors": [
+  {
+   "id": "vd001",
+   "name": "Konkan Kitchen Caterers",
+   "city": "Mumbai",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd002",
+   "name": "Konkan Table Catering Co.",
+   "city": "Mumbai",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1500,
+   "min_guests": 50
+  },
+  {
+   "id": "vd003",
+   "name": "Saffron & Konkan Banquets",
+   "city": "Mumbai",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2550,
+   "min_guests": 100
+  },
+  {
+   "id": "vd004",
+   "name": "Konkan Florals & Decor",
+   "city": "Mumbai",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd005",
+   "name": "Marigold Konkan Designs",
+   "city": "Mumbai",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 290000
+  },
+  {
+   "id": "vd006",
+   "name": "Konkan Atelier Events",
+   "city": "Mumbai",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 690000
+  },
+  {
+   "id": "vd007",
+   "name": "Konkan Frames",
+   "city": "Mumbai",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd008",
+   "name": "Candid Konkan Studio",
+   "city": "Mumbai",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 160000
+  },
+  {
+   "id": "vd009",
+   "name": "Konkan Story Films",
+   "city": "Mumbai",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 370000
+  },
+  {
+   "id": "vd010",
+   "name": "Konkan Sound Rentals",
+   "city": "Mumbai",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd011",
+   "name": "Konkan Audio Visual",
+   "city": "Mumbai",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd012",
+   "name": "Konkan Live Production",
+   "city": "Mumbai",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 255000
+  },
+  {
+   "id": "vd013",
+   "name": "DJ Konkan",
+   "city": "Mumbai",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd014",
+   "name": "Konkan Live Band & Emcee",
+   "city": "Mumbai",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd015",
+   "name": "Konkan Folk Collective",
+   "city": "Mumbai",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 320000
+  },
+  {
+   "id": "vd016",
+   "name": "Konkan Mehendi Art",
+   "city": "Mumbai",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd017",
+   "name": "Henna by Konkan",
+   "city": "Mumbai",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd018",
+   "name": "Konkan AV Rentals",
+   "city": "Mumbai",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd019",
+   "name": "Konkan Stream & Stage",
+   "city": "Mumbai",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd020",
+   "name": "Yamuna Kitchen Caterers",
+   "city": "Delhi NCR",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd021",
+   "name": "Yamuna Table Catering Co.",
+   "city": "Delhi NCR",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1500,
+   "min_guests": 50
+  },
+  {
+   "id": "vd022",
+   "name": "Saffron & Yamuna Banquets",
+   "city": "Delhi NCR",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2550,
+   "min_guests": 100
+  },
+  {
+   "id": "vd023",
+   "name": "Yamuna Florals & Decor",
+   "city": "Delhi NCR",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd024",
+   "name": "Marigold Yamuna Designs",
+   "city": "Delhi NCR",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 290000
+  },
+  {
+   "id": "vd025",
+   "name": "Yamuna Atelier Events",
+   "city": "Delhi NCR",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 690000
+  },
+  {
+   "id": "vd026",
+   "name": "Yamuna Frames",
+   "city": "Delhi NCR",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd027",
+   "name": "Candid Yamuna Studio",
+   "city": "Delhi NCR",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 160000
+  },
+  {
+   "id": "vd028",
+   "name": "Yamuna Story Films",
+   "city": "Delhi NCR",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 370000
+  },
+  {
+   "id": "vd029",
+   "name": "Yamuna Sound Rentals",
+   "city": "Delhi NCR",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd030",
+   "name": "Yamuna Audio Visual",
+   "city": "Delhi NCR",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd031",
+   "name": "Yamuna Live Production",
+   "city": "Delhi NCR",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 255000
+  },
+  {
+   "id": "vd032",
+   "name": "DJ Yamuna",
+   "city": "Delhi NCR",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd033",
+   "name": "Yamuna Live Band & Emcee",
+   "city": "Delhi NCR",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd034",
+   "name": "Yamuna Folk Collective",
+   "city": "Delhi NCR",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 320000
+  },
+  {
+   "id": "vd035",
+   "name": "Yamuna Mehendi Art",
+   "city": "Delhi NCR",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd036",
+   "name": "Henna by Yamuna",
+   "city": "Delhi NCR",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd037",
+   "name": "Yamuna AV Rentals",
+   "city": "Delhi NCR",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd038",
+   "name": "Yamuna Stream & Stage",
+   "city": "Delhi NCR",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd039",
+   "name": "Cubbon Kitchen Caterers",
+   "city": "Bengaluru",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd040",
+   "name": "Cubbon Table Catering Co.",
+   "city": "Bengaluru",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1450,
+   "min_guests": 50
+  },
+  {
+   "id": "vd041",
+   "name": "Saffron & Cubbon Banquets",
+   "city": "Bengaluru",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2400,
+   "min_guests": 100
+  },
+  {
+   "id": "vd042",
+   "name": "Cubbon Florals & Decor",
+   "city": "Bengaluru",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 100000
+  },
+  {
+   "id": "vd043",
+   "name": "Marigold Cubbon Designs",
+   "city": "Bengaluru",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 275000
+  },
+  {
+   "id": "vd044",
+   "name": "Cubbon Atelier Events",
+   "city": "Bengaluru",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 660000
+  },
+  {
+   "id": "vd045",
+   "name": "Cubbon Frames",
+   "city": "Bengaluru",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd046",
+   "name": "Candid Cubbon Studio",
+   "city": "Bengaluru",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 155000
+  },
+  {
+   "id": "vd047",
+   "name": "Cubbon Story Films",
+   "city": "Bengaluru",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 350000
+  },
+  {
+   "id": "vd048",
+   "name": "Cubbon Sound Rentals",
+   "city": "Bengaluru",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd049",
+   "name": "Cubbon Audio Visual",
+   "city": "Bengaluru",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd050",
+   "name": "Cubbon Live Production",
+   "city": "Bengaluru",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 240000
+  },
+  {
+   "id": "vd051",
+   "name": "DJ Cubbon",
+   "city": "Bengaluru",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd052",
+   "name": "Cubbon Live Band & Emcee",
+   "city": "Bengaluru",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd053",
+   "name": "Cubbon Folk Collective",
+   "city": "Bengaluru",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 310000
+  },
+  {
+   "id": "vd054",
+   "name": "Cubbon Mehendi Art",
+   "city": "Bengaluru",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd055",
+   "name": "Henna by Cubbon",
+   "city": "Bengaluru",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd056",
+   "name": "Cubbon AV Rentals",
+   "city": "Bengaluru",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd057",
+   "name": "Cubbon Stream & Stage",
+   "city": "Bengaluru",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 120000
+  },
+  {
+   "id": "vd058",
+   "name": "Charminar Kitchen Caterers",
+   "city": "Hyderabad",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 750,
+   "min_guests": 50
+  },
+  {
+   "id": "vd059",
+   "name": "Charminar Table Catering Co.",
+   "city": "Hyderabad",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1300,
+   "min_guests": 50
+  },
+  {
+   "id": "vd060",
+   "name": "Saffron & Charminar Banquets",
+   "city": "Hyderabad",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2200,
+   "min_guests": 100
+  },
+  {
+   "id": "vd061",
+   "name": "Charminar Florals & Decor",
+   "city": "Hyderabad",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd062",
+   "name": "Marigold Charminar Designs",
+   "city": "Hyderabad",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 250000
+  },
+  {
+   "id": "vd063",
+   "name": "Charminar Atelier Events",
+   "city": "Hyderabad",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 600000
+  },
+  {
+   "id": "vd064",
+   "name": "Charminar Frames",
+   "city": "Hyderabad",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd065",
+   "name": "Candid Charminar Studio",
+   "city": "Hyderabad",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd066",
+   "name": "Charminar Story Films",
+   "city": "Hyderabad",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 320000
+  },
+  {
+   "id": "vd067",
+   "name": "Charminar Sound Rentals",
+   "city": "Hyderabad",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd068",
+   "name": "Charminar Audio Visual",
+   "city": "Hyderabad",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 95000
+  },
+  {
+   "id": "vd069",
+   "name": "Charminar Live Production",
+   "city": "Hyderabad",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 220000
+  },
+  {
+   "id": "vd070",
+   "name": "DJ Charminar",
+   "city": "Hyderabad",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd071",
+   "name": "Charminar Live Band & Emcee",
+   "city": "Hyderabad",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 120000
+  },
+  {
+   "id": "vd072",
+   "name": "Charminar Folk Collective",
+   "city": "Hyderabad",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 280000
+  },
+  {
+   "id": "vd073",
+   "name": "Charminar Mehendi Art",
+   "city": "Hyderabad",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 10000
+  },
+  {
+   "id": "vd074",
+   "name": "Henna by Charminar",
+   "city": "Hyderabad",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd075",
+   "name": "Charminar AV Rentals",
+   "city": "Hyderabad",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd076",
+   "name": "Charminar Stream & Stage",
+   "city": "Hyderabad",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd077",
+   "name": "Marina Kitchen Caterers",
+   "city": "Chennai",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 750,
+   "min_guests": 50
+  },
+  {
+   "id": "vd078",
+   "name": "Marina Table Catering Co.",
+   "city": "Chennai",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1300,
+   "min_guests": 50
+  },
+  {
+   "id": "vd079",
+   "name": "Saffron & Marina Banquets",
+   "city": "Chennai",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2200,
+   "min_guests": 100
+  },
+  {
+   "id": "vd080",
+   "name": "Marina Florals & Decor",
+   "city": "Chennai",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd081",
+   "name": "Marigold Marina Designs",
+   "city": "Chennai",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 250000
+  },
+  {
+   "id": "vd082",
+   "name": "Marina Atelier Events",
+   "city": "Chennai",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 600000
+  },
+  {
+   "id": "vd083",
+   "name": "Marina Frames",
+   "city": "Chennai",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd084",
+   "name": "Candid Marina Studio",
+   "city": "Chennai",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd085",
+   "name": "Marina Story Films",
+   "city": "Chennai",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 320000
+  },
+  {
+   "id": "vd086",
+   "name": "Marina Sound Rentals",
+   "city": "Chennai",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd087",
+   "name": "Marina Audio Visual",
+   "city": "Chennai",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 95000
+  },
+  {
+   "id": "vd088",
+   "name": "Marina Live Production",
+   "city": "Chennai",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 220000
+  },
+  {
+   "id": "vd089",
+   "name": "DJ Marina",
+   "city": "Chennai",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd090",
+   "name": "Marina Live Band & Emcee",
+   "city": "Chennai",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 120000
+  },
+  {
+   "id": "vd091",
+   "name": "Marina Folk Collective",
+   "city": "Chennai",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 280000
+  },
+  {
+   "id": "vd092",
+   "name": "Marina Mehendi Art",
+   "city": "Chennai",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 10000
+  },
+  {
+   "id": "vd093",
+   "name": "Henna by Marina",
+   "city": "Chennai",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd094",
+   "name": "Marina AV Rentals",
+   "city": "Chennai",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd095",
+   "name": "Marina Stream & Stage",
+   "city": "Chennai",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd096",
+   "name": "Sahyadri Kitchen Caterers",
+   "city": "Pune",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 750,
+   "min_guests": 50
+  },
+  {
+   "id": "vd097",
+   "name": "Sahyadri Table Catering Co.",
+   "city": "Pune",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1300,
+   "min_guests": 50
+  },
+  {
+   "id": "vd098",
+   "name": "Saffron & Sahyadri Banquets",
+   "city": "Pune",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2200,
+   "min_guests": 100
+  },
+  {
+   "id": "vd099",
+   "name": "Sahyadri Florals & Decor",
+   "city": "Pune",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd100",
+   "name": "Marigold Sahyadri Designs",
+   "city": "Pune",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 250000
+  },
+  {
+   "id": "vd101",
+   "name": "Sahyadri Atelier Events",
+   "city": "Pune",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 600000
+  },
+  {
+   "id": "vd102",
+   "name": "Sahyadri Frames",
+   "city": "Pune",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd103",
+   "name": "Candid Sahyadri Studio",
+   "city": "Pune",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd104",
+   "name": "Sahyadri Story Films",
+   "city": "Pune",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 320000
+  },
+  {
+   "id": "vd105",
+   "name": "Sahyadri Sound Rentals",
+   "city": "Pune",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd106",
+   "name": "Sahyadri Audio Visual",
+   "city": "Pune",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 95000
+  },
+  {
+   "id": "vd107",
+   "name": "Sahyadri Live Production",
+   "city": "Pune",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 220000
+  },
+  {
+   "id": "vd108",
+   "name": "DJ Sahyadri",
+   "city": "Pune",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd109",
+   "name": "Sahyadri Live Band & Emcee",
+   "city": "Pune",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 120000
+  },
+  {
+   "id": "vd110",
+   "name": "Sahyadri Folk Collective",
+   "city": "Pune",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 280000
+  },
+  {
+   "id": "vd111",
+   "name": "Sahyadri Mehendi Art",
+   "city": "Pune",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 10000
+  },
+  {
+   "id": "vd112",
+   "name": "Henna by Sahyadri",
+   "city": "Pune",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd113",
+   "name": "Sahyadri AV Rentals",
+   "city": "Pune",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd114",
+   "name": "Sahyadri Stream & Stage",
+   "city": "Pune",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd115",
+   "name": "Mandovi Kitchen Caterers",
+   "city": "Goa",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd116",
+   "name": "Mandovi Table Catering Co.",
+   "city": "Goa",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1450,
+   "min_guests": 50
+  },
+  {
+   "id": "vd117",
+   "name": "Saffron & Mandovi Banquets",
+   "city": "Goa",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2400,
+   "min_guests": 100
+  },
+  {
+   "id": "vd118",
+   "name": "Mandovi Florals & Decor",
+   "city": "Goa",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 100000
+  },
+  {
+   "id": "vd119",
+   "name": "Marigold Mandovi Designs",
+   "city": "Goa",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 275000
+  },
+  {
+   "id": "vd120",
+   "name": "Mandovi Atelier Events",
+   "city": "Goa",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 660000
+  },
+  {
+   "id": "vd121",
+   "name": "Mandovi Frames",
+   "city": "Goa",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd122",
+   "name": "Candid Mandovi Studio",
+   "city": "Goa",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 155000
+  },
+  {
+   "id": "vd123",
+   "name": "Mandovi Story Films",
+   "city": "Goa",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 350000
+  },
+  {
+   "id": "vd124",
+   "name": "Mandovi Sound Rentals",
+   "city": "Goa",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd125",
+   "name": "Mandovi Audio Visual",
+   "city": "Goa",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd126",
+   "name": "Mandovi Live Production",
+   "city": "Goa",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 240000
+  },
+  {
+   "id": "vd127",
+   "name": "DJ Mandovi",
+   "city": "Goa",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd128",
+   "name": "Mandovi Live Band & Emcee",
+   "city": "Goa",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd129",
+   "name": "Mandovi Folk Collective",
+   "city": "Goa",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 310000
+  },
+  {
+   "id": "vd130",
+   "name": "Mandovi Mehendi Art",
+   "city": "Goa",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd131",
+   "name": "Henna by Mandovi",
+   "city": "Goa",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd132",
+   "name": "Mandovi AV Rentals",
+   "city": "Goa",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd133",
+   "name": "Mandovi Stream & Stage",
+   "city": "Goa",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 120000
+  },
+  {
+   "id": "vd134",
+   "name": "Hawa Kitchen Caterers",
+   "city": "Jaipur",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet catering with regional menus and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 800,
+   "min_guests": 50
+  },
+  {
+   "id": "vd135",
+   "name": "Hawa Table Catering Co.",
+   "city": "Jaipur",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffets with Jain and vegan options, three live counters and uniformed service staff.",
+   "per_plate_inr": 1350,
+   "min_guests": 50
+  },
+  {
+   "id": "vd136",
+   "name": "Saffron & Hawa Banquets",
+   "city": "Jaipur",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet service with a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2300,
+   "min_guests": 100
+  },
+  {
+   "id": "vd137",
+   "name": "Hawa Florals & Decor",
+   "city": "Jaipur",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting from a standard design catalogue.",
+   "package_inr": 95000
+  },
+  {
+   "id": "vd138",
+   "name": "Marigold Hawa Designs",
+   "city": "Jaipur",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "themed stage",
+    "fresh flowers",
+    "mandap",
+    "table centrepieces"
+   ],
+   "description": "Themed stage and mandap with fresh flowers, table centrepieces and a design walkthrough.",
+   "package_inr": 260000
+  },
+  {
+   "id": "vd139",
+   "name": "Hawa Atelier Events",
+   "city": "Jaipur",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "bespoke design",
+    "3D render",
+    "ceiling installation",
+    "heritage props"
+   ],
+   "description": "Bespoke design with a 3D render, ceiling installations and props sourced for the theme.",
+   "package_inr": 630000
+  },
+  {
+   "id": "vd140",
+   "name": "Hawa Frames",
+   "city": "Jaipur",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours with edited photos delivered within a week.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd141",
+   "name": "Candid Hawa Studio",
+   "city": "Jaipur",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "1 videographer",
+    "highlight film"
+   ],
+   "description": "Two photographers and a videographer, with a three-minute highlight film.",
+   "package_inr": 145000
+  },
+  {
+   "id": "vd142",
+   "name": "Hawa Story Films",
+   "city": "Jaipur",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "candid team",
+    "drone",
+    "same-day edit",
+    "album"
+   ],
+   "description": "Candid team with drone coverage, a same-day edit for the reception and a printed album.",
+   "package_inr": 335000
+  },
+  {
+   "id": "vd143",
+   "name": "Hawa Sound Rentals",
+   "city": "Jaipur",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd144",
+   "name": "Hawa Audio Visual",
+   "city": "Jaipur",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line array",
+    "DJ console",
+    "LED wall",
+    "technician"
+   ],
+   "description": "Line-array sound, a DJ console, an LED wall and an on-site technician.",
+   "package_inr": 100000
+  },
+  {
+   "id": "vd145",
+   "name": "Hawa Live Production",
+   "city": "Jaipur",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "concert sound",
+    "moving heads",
+    "truss stage",
+    "backup generator"
+   ],
+   "description": "Concert-grade sound and lighting on a truss stage with a backup generator.",
+   "package_inr": 230000
+  },
+  {
+   "id": "vd146",
+   "name": "DJ Hawa",
+   "city": "Jaipur",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a Bollywood and retro playlist.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd147",
+   "name": "Hawa Live Band & Emcee",
+   "city": "Jaipur",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "live band",
+    "sangeet choreographer",
+    "emcee"
+   ],
+   "description": "Live band or sangeet choreography with an emcee for the evening.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd148",
+   "name": "Hawa Folk Collective",
+   "city": "Jaipur",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "gala"
+   ],
+   "features": [
+    "folk ensemble",
+    "shehnai",
+    "dhol",
+    "dance troupe"
+   ],
+   "description": "Folk ensemble with shehnai and dhol players and a dance troupe for entries.",
+   "package_inr": 295000
+  },
+  {
+   "id": "vd149",
+   "name": "Hawa Mehendi Art",
+   "city": "Jaipur",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd150",
+   "name": "Henna by Hawa",
+   "city": "Jaipur",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "6 artists",
+    "bridal full design",
+    "guest mehendi"
+   ],
+   "description": "Six artists covering a full bridal design and guests for four hours.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd151",
+   "name": "Hawa AV Rentals",
+   "city": "Jaipur",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd152",
+   "name": "Hawa Stream & Stage",
+   "city": "Jaipur",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 cameras",
+    "live stream",
+    "confidence monitor",
+    "technician"
+   ],
+   "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
+   "package_inr": 115000
+  }
+ ]
+}

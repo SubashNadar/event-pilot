@@ -1,0 +1,709 @@
+{
+ "_note": "SAMPLE DATA for demos. Venue names, capacities and prices are illustrative, not real listings. Replace with your own catalogue before real use.",
+ "venues": [
+  {
+   "id": "v001",
+   "name": "Whitefield Garden Pavilion",
+   "city": "Bengaluru",
+   "area": "Whitefield",
+   "location": "Whitefield, Bengaluru",
+   "type": "lawn",
+   "capacity": 450,
+   "rental_inr": 220000,
+   "features": [
+    "covered ceremony space",
+    "dining hall",
+    "parking"
+   ],
+   "description": "Landscaped garden with a covered pavilion; suits weddings and receptions with a separate dining hall and ample parking."
+  },
+  {
+   "id": "v002",
+   "name": "Koramangala Workshop Studio",
+   "city": "Bengaluru",
+   "area": "Koramangala",
+   "location": "Koramangala, Bengaluru",
+   "type": "workshop studio",
+   "capacity": 100,
+   "rental_inr": 65000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Bright studio with movable tables, two breakout rooms and fast Wi-Fi; built for workshops, trainings and hackathons."
+  },
+  {
+   "id": "v003",
+   "name": "Indiranagar Terrace Hall",
+   "city": "Bengaluru",
+   "area": "Indiranagar",
+   "location": "Indiranagar, Bengaluru",
+   "type": "rooftop",
+   "capacity": 220,
+   "rental_inr": 120000,
+   "features": [
+    "indoor hall",
+    "standard AV",
+    "metro access"
+   ],
+   "description": "Indoor hall that opens onto a terrace; good for product launches, birthday parties and evening networking, near the metro."
+  },
+  {
+   "id": "v004",
+   "name": "Electronic City Convention Centre",
+   "city": "Bengaluru",
+   "area": "Electronic City",
+   "location": "Electronic City, Bengaluru",
+   "type": "convention centre",
+   "capacity": 700,
+   "rental_inr": 340000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Large convention hall with a stage, green rooms and parking for coaches; for conferences, college fests and big receptions."
+  },
+  {
+   "id": "v005",
+   "name": "Hebbal Lakeside Banquets",
+   "city": "Bengaluru",
+   "area": "Hebbal",
+   "location": "Hebbal, Bengaluru",
+   "type": "banquet hall",
+   "capacity": 350,
+   "rental_inr": 180000,
+   "features": [
+    "lake view",
+    "in-house catering",
+    "valet"
+   ],
+   "description": "Air-conditioned banquet hall overlooking the lake with in-house vegetarian and non-vegetarian catering."
+  },
+  {
+   "id": "v006",
+   "name": "Yelahanka Farm Retreat",
+   "city": "Bengaluru",
+   "area": "Yelahanka",
+   "location": "Yelahanka, Bengaluru",
+   "type": "farmhouse",
+   "capacity": 150,
+   "rental_inr": 90000,
+   "features": [
+    "open lawn",
+    "bonfire area",
+    "overnight stay"
+   ],
+   "description": "Farm retreat with lawns, a bonfire pit and cottages for overnight team offsites and intimate celebrations."
+  },
+  {
+   "id": "v007",
+   "name": "Andheri Skyline Banquets",
+   "city": "Mumbai",
+   "area": "Andheri East",
+   "location": "Andheri East, Mumbai",
+   "type": "banquet hall",
+   "capacity": 300,
+   "rental_inr": 210000,
+   "features": [
+    "airport access",
+    "in-house catering",
+    "parking"
+   ],
+   "description": "Pillar-less banquet hall ten minutes from the airport; popular for receptions, engagements and corporate dinners."
+  },
+  {
+   "id": "v008",
+   "name": "Bandra Sea Breeze Terrace",
+   "city": "Mumbai",
+   "area": "Bandra West",
+   "location": "Bandra West, Mumbai",
+   "type": "rooftop",
+   "capacity": 120,
+   "rental_inr": 150000,
+   "features": [
+    "sea view",
+    "bar licence",
+    "sunset deck"
+   ],
+   "description": "Open-air rooftop with a sea view and sunset deck; ideal for cocktail evenings, birthdays and intimate sangeets."
+  },
+  {
+   "id": "v009",
+   "name": "Powai Lakeview Convention Hall",
+   "city": "Mumbai",
+   "area": "Powai",
+   "location": "Powai, Mumbai",
+   "type": "convention centre",
+   "capacity": 600,
+   "rental_inr": 380000,
+   "features": [
+    "stage",
+    "breakout rooms",
+    "hotel rooms nearby"
+   ],
+   "description": "Convention hall by Powai lake with a stage and four breakout rooms; suits conferences and large product events."
+  },
+  {
+   "id": "v010",
+   "name": "Lower Parel Loft Studio",
+   "city": "Mumbai",
+   "area": "Lower Parel",
+   "location": "Lower Parel, Mumbai",
+   "type": "workshop studio",
+   "capacity": 80,
+   "rental_inr": 70000,
+   "features": [
+    "projector",
+    "whiteboards",
+    "cafe"
+   ],
+   "description": "Industrial loft with whiteboards and an in-house cafe for workshops, offsites and design sprints."
+  },
+  {
+   "id": "v011",
+   "name": "Vashi Grand Ballroom",
+   "city": "Mumbai",
+   "area": "Navi Mumbai",
+   "location": "Navi Mumbai, Mumbai",
+   "type": "hotel ballroom",
+   "capacity": 450,
+   "rental_inr": 260000,
+   "features": [
+    "valet",
+    "bridal suite",
+    "in-house decor"
+   ],
+   "description": "Hotel ballroom in Vashi with a bridal suite and in-house decor team; a value option for weddings in Navi Mumbai."
+  },
+  {
+   "id": "v012",
+   "name": "Thane Garden Lawns",
+   "city": "Mumbai",
+   "area": "Thane",
+   "location": "Thane, Mumbai",
+   "type": "lawn",
+   "capacity": 800,
+   "rental_inr": 240000,
+   "features": [
+    "open lawn",
+    "generator backup",
+    "parking"
+   ],
+   "description": "Large lawn with generator backup and parking for 200 cars; suits big weddings in the dry season."
+  },
+  {
+   "id": "v013",
+   "name": "Juhu Beachside Cafe Hall",
+   "city": "Mumbai",
+   "area": "Juhu",
+   "location": "Juhu, Mumbai",
+   "type": "private dining",
+   "capacity": 60,
+   "rental_inr": 55000,
+   "features": [
+    "beach access",
+    "private dining",
+    "music system"
+   ],
+   "description": "Private dining room steps from Juhu beach for small birthdays, anniversaries and team dinners."
+  },
+  {
+   "id": "v014",
+   "name": "Chhatarpur Royal Farms",
+   "city": "Delhi NCR",
+   "area": "Chhatarpur",
+   "location": "Chhatarpur, Delhi NCR",
+   "type": "farmhouse",
+   "capacity": 900,
+   "rental_inr": 450000,
+   "features": [
+    "open lawn",
+    "bridal suite",
+    "parking"
+   ],
+   "description": "Sprawling farmhouse venue for big fat weddings with lawns, a bridal suite and valet parking."
+  },
+  {
+   "id": "v015",
+   "name": "Aerocity Summit Centre",
+   "city": "Delhi NCR",
+   "area": "Aerocity",
+   "location": "Aerocity, Delhi NCR",
+   "type": "convention centre",
+   "capacity": 800,
+   "rental_inr": 420000,
+   "features": [
+    "stage",
+    "simultaneous translation booths",
+    "hotel rooms"
+   ],
+   "description": "Conference centre next to the airport hotels with translation booths; for summits and multi-track conferences."
+  },
+  {
+   "id": "v016",
+   "name": "Cyber Hub Rooftop Lounge",
+   "city": "Delhi NCR",
+   "area": "Gurugram",
+   "location": "Gurugram, Delhi NCR",
+   "type": "rooftop",
+   "capacity": 180,
+   "rental_inr": 140000,
+   "features": [
+    "bar licence",
+    "DJ console",
+    "skyline view"
+   ],
+   "description": "Skyline rooftop lounge in Gurugram for launch parties, birthdays and after-conference networking."
+  },
+  {
+   "id": "v017",
+   "name": "Noida Knowledge Park Auditorium",
+   "city": "Delhi NCR",
+   "area": "Noida",
+   "location": "Noida, Delhi NCR",
+   "type": "auditorium",
+   "capacity": 500,
+   "rental_inr": 160000,
+   "features": [
+    "tiered seating",
+    "AV booth",
+    "green rooms"
+   ],
+   "description": "Tiered auditorium with an AV booth; good for college fests, seminars and award nights."
+  },
+  {
+   "id": "v018",
+   "name": "Dwarka Celebration Banquets",
+   "city": "Delhi NCR",
+   "area": "Dwarka",
+   "location": "Dwarka, Delhi NCR",
+   "type": "banquet hall",
+   "capacity": 350,
+   "rental_inr": 170000,
+   "features": [
+    "in-house catering",
+    "metro access",
+    "parking"
+   ],
+   "description": "Banquet hall near the metro with in-house catering for receptions and family functions."
+  },
+  {
+   "id": "v019",
+   "name": "Hauz Khas Workshop Loft",
+   "city": "Delhi NCR",
+   "area": "Hauz Khas",
+   "location": "Hauz Khas, Delhi NCR",
+   "type": "workshop studio",
+   "capacity": 60,
+   "rental_inr": 50000,
+   "features": [
+    "projector",
+    "natural light",
+    "cafe"
+   ],
+   "description": "Sunlit loft overlooking the lake for workshops, book clubs and community meetups."
+  },
+  {
+   "id": "v020",
+   "name": "HITEC Convention Hall",
+   "city": "Hyderabad",
+   "area": "HITEC City",
+   "location": "HITEC City, Hyderabad",
+   "type": "convention centre",
+   "capacity": 650,
+   "rental_inr": 300000,
+   "features": [
+    "stage",
+    "breakout rooms",
+    "parking"
+   ],
+   "description": "Modern convention hall in the IT corridor with breakout rooms; suits tech conferences and hackathons."
+  },
+  {
+   "id": "v021",
+   "name": "Gachibowli Learning Studio",
+   "city": "Hyderabad",
+   "area": "Gachibowli",
+   "location": "Gachibowli, Hyderabad",
+   "type": "workshop studio",
+   "capacity": 120,
+   "rental_inr": 60000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Training studio with breakout rooms and fast Wi-Fi for workshops and bootcamps."
+  },
+  {
+   "id": "v022",
+   "name": "Banjara Heritage Courtyard",
+   "city": "Hyderabad",
+   "area": "Banjara Hills",
+   "location": "Banjara Hills, Hyderabad",
+   "type": "heritage",
+   "capacity": 250,
+   "rental_inr": 200000,
+   "features": [
+    "courtyard",
+    "heritage architecture",
+    "in-house catering"
+   ],
+   "description": "Restored heritage courtyard for elegant receptions, mehendi and cultural evenings."
+  },
+  {
+   "id": "v023",
+   "name": "Shamshabad Resort Lawns",
+   "city": "Hyderabad",
+   "area": "Shamshabad",
+   "location": "Shamshabad, Hyderabad",
+   "type": "resort",
+   "capacity": 600,
+   "rental_inr": 280000,
+   "features": [
+    "open lawn",
+    "rooms",
+    "pool"
+   ],
+   "description": "Resort near the airport with lawns, a pool and rooms for destination-style weddings and offsites."
+  },
+  {
+   "id": "v024",
+   "name": "Jubilee Hills Rooftop",
+   "city": "Hyderabad",
+   "area": "Jubilee Hills",
+   "location": "Jubilee Hills, Hyderabad",
+   "type": "rooftop",
+   "capacity": 100,
+   "rental_inr": 85000,
+   "features": [
+    "city view",
+    "bar licence",
+    "music system"
+   ],
+   "description": "Compact rooftop with city views for birthdays and small networking evenings."
+  },
+  {
+   "id": "v025",
+   "name": "ECR Beach Resort",
+   "city": "Chennai",
+   "area": "ECR",
+   "location": "ECR, Chennai",
+   "type": "beach resort",
+   "capacity": 300,
+   "rental_inr": 260000,
+   "features": [
+    "beach access",
+    "rooms",
+    "pool"
+   ],
+   "description": "Beachfront resort on East Coast Road with lawns by the sea; for beach weddings and team offsites."
+  },
+  {
+   "id": "v026",
+   "name": "OMR Tech Park Convention Centre",
+   "city": "Chennai",
+   "area": "OMR",
+   "location": "OMR, Chennai",
+   "type": "convention centre",
+   "capacity": 550,
+   "rental_inr": 250000,
+   "features": [
+    "stage",
+    "breakout rooms",
+    "parking"
+   ],
+   "description": "Convention centre on the IT corridor for conferences, product launches and college fests."
+  },
+  {
+   "id": "v027",
+   "name": "T Nagar Kalyana Mandapam",
+   "city": "Chennai",
+   "area": "T Nagar",
+   "location": "T Nagar, Chennai",
+   "type": "banquet hall",
+   "capacity": 700,
+   "rental_inr": 200000,
+   "features": [
+    "traditional mandap",
+    "dining hall",
+    "parking"
+   ],
+   "description": "Traditional marriage hall with a mandap and large dining hall for South Indian weddings."
+  },
+  {
+   "id": "v028",
+   "name": "Guindy Workshop Hub",
+   "city": "Chennai",
+   "area": "Guindy",
+   "location": "Guindy, Chennai",
+   "type": "workshop studio",
+   "capacity": 90,
+   "rental_inr": 55000,
+   "features": [
+    "projector",
+    "whiteboards",
+    "reliable wi-fi"
+   ],
+   "description": "Flexible training room near the business district for workshops and meetups."
+  },
+  {
+   "id": "v029",
+   "name": "Besant Nagar Garden Cafe",
+   "city": "Chennai",
+   "area": "Besant Nagar",
+   "location": "Besant Nagar, Chennai",
+   "type": "private dining",
+   "capacity": 70,
+   "rental_inr": 50000,
+   "features": [
+    "garden seating",
+    "private dining",
+    "music system"
+   ],
+   "description": "Garden cafe near Elliot's Beach for small birthdays and community meetups."
+  },
+  {
+   "id": "v030",
+   "name": "Hinjewadi Conference Centre",
+   "city": "Pune",
+   "area": "Hinjewadi",
+   "location": "Hinjewadi, Pune",
+   "type": "convention centre",
+   "capacity": 400,
+   "rental_inr": 190000,
+   "features": [
+    "stage",
+    "breakout rooms",
+    "parking"
+   ],
+   "description": "Conference venue in the IT park with breakout rooms for tech meetups and conferences."
+  },
+  {
+   "id": "v031",
+   "name": "Koregaon Park Garden Venue",
+   "city": "Pune",
+   "area": "Koregaon Park",
+   "location": "Koregaon Park, Pune",
+   "type": "lawn",
+   "capacity": 300,
+   "rental_inr": 170000,
+   "features": [
+    "open lawn",
+    "fairy lights",
+    "in-house catering"
+   ],
+   "description": "Leafy garden venue with fairy lights for receptions, sangeets and evening parties."
+  },
+  {
+   "id": "v032",
+   "name": "Baner Co-work Studio",
+   "city": "Pune",
+   "area": "Baner",
+   "location": "Baner, Pune",
+   "type": "workshop studio",
+   "capacity": 70,
+   "rental_inr": 45000,
+   "features": [
+    "projector",
+    "reliable wi-fi",
+    "cafe"
+   ],
+   "description": "Co-working studio for workshops, hackathons and startup meetups."
+  },
+  {
+   "id": "v033",
+   "name": "Kharadi Grand Banquets",
+   "city": "Pune",
+   "area": "Kharadi",
+   "location": "Kharadi, Pune",
+   "type": "banquet hall",
+   "capacity": 450,
+   "rental_inr": 210000,
+   "features": [
+    "in-house catering",
+    "valet",
+    "bridal suite"
+   ],
+   "description": "Banquet hall with a bridal suite and in-house catering for weddings and large family events."
+  },
+  {
+   "id": "v034",
+   "name": "Lonavala Hill Resort",
+   "city": "Pune",
+   "area": "Lonavala",
+   "location": "Lonavala, Pune",
+   "type": "resort",
+   "capacity": 200,
+   "rental_inr": 220000,
+   "features": [
+    "hill view",
+    "rooms",
+    "pool"
+   ],
+   "description": "Hill resort an hour from Pune with rooms and a pool; a favourite for corporate offsites."
+  },
+  {
+   "id": "v035",
+   "name": "Candolim Beach Resort",
+   "city": "Goa",
+   "area": "Candolim",
+   "location": "Candolim, Goa",
+   "type": "beach resort",
+   "capacity": 250,
+   "rental_inr": 300000,
+   "features": [
+    "beach access",
+    "rooms",
+    "pool"
+   ],
+   "description": "Beachfront resort with lawns facing the sea; for destination weddings and offsites."
+  },
+  {
+   "id": "v036",
+   "name": "Calangute Shack Deck",
+   "city": "Goa",
+   "area": "Calangute",
+   "location": "Calangute, Goa",
+   "type": "private dining",
+   "capacity": 80,
+   "rental_inr": 70000,
+   "features": [
+    "beach access",
+    "bar licence",
+    "sunset deck"
+   ],
+   "description": "Beach shack deck for sundowners, birthdays and small celebrations."
+  },
+  {
+   "id": "v037",
+   "name": "Panaji Riverside Convention Hall",
+   "city": "Goa",
+   "area": "Panaji",
+   "location": "Panaji, Goa",
+   "type": "convention centre",
+   "capacity": 400,
+   "rental_inr": 230000,
+   "features": [
+    "stage",
+    "river view",
+    "parking"
+   ],
+   "description": "Riverside convention hall in Panaji for conferences and award nights."
+  },
+  {
+   "id": "v038",
+   "name": "South Goa Palm Grove Resort",
+   "city": "Goa",
+   "area": "Benaulim",
+   "location": "Benaulim, Goa",
+   "type": "resort",
+   "capacity": 180,
+   "rental_inr": 260000,
+   "features": [
+    "palm grove",
+    "rooms",
+    "spa"
+   ],
+   "description": "Quiet South Goa resort in a palm grove; suits intimate weddings and leadership retreats."
+  },
+  {
+   "id": "v039",
+   "name": "Assagao Villa Garden",
+   "city": "Goa",
+   "area": "Assagao",
+   "location": "Assagao, Goa",
+   "type": "lawn",
+   "capacity": 120,
+   "rental_inr": 150000,
+   "features": [
+    "villa",
+    "garden",
+    "overnight stay"
+   ],
+   "description": "Portuguese-style villa with a garden for small weddings, birthdays and offsites."
+  },
+  {
+   "id": "v040",
+   "name": "Amer Fort View Palace",
+   "city": "Jaipur",
+   "area": "Amer",
+   "location": "Amer, Jaipur",
+   "type": "heritage",
+   "capacity": 500,
+   "rental_inr": 450000,
+   "features": [
+    "palace architecture",
+    "courtyard",
+    "rooms"
+   ],
+   "description": "Heritage palace with fort views and courtyards for royal-style destination weddings."
+  },
+  {
+   "id": "v041",
+   "name": "Kukas Resort Lawns",
+   "city": "Jaipur",
+   "area": "Kukas",
+   "location": "Kukas, Jaipur",
+   "type": "resort",
+   "capacity": 600,
+   "rental_inr": 320000,
+   "features": [
+    "open lawn",
+    "rooms",
+    "pool"
+   ],
+   "description": "Resort on the Delhi highway with large lawns and rooms for weddings and conferences."
+  },
+  {
+   "id": "v042",
+   "name": "C-Scheme Business Centre",
+   "city": "Jaipur",
+   "area": "C-Scheme",
+   "location": "C-Scheme, Jaipur",
+   "type": "convention centre",
+   "capacity": 300,
+   "rental_inr": 150000,
+   "features": [
+    "stage",
+    "breakout rooms",
+    "parking"
+   ],
+   "description": "Central business venue for seminars, workshops and corporate events."
+  },
+  {
+   "id": "v043",
+   "name": "Malviya Nagar Rooftop",
+   "city": "Jaipur",
+   "area": "Malviya Nagar",
+   "location": "Malviya Nagar, Jaipur",
+   "type": "rooftop",
+   "capacity": 120,
+   "rental_inr": 80000,
+   "features": [
+    "city view",
+    "music system",
+    "in-house catering"
+   ],
+   "description": "Rooftop with city views for birthdays, kitty parties and small gatherings."
+  },
+  {
+   "id": "v044",
+   "name": "Jagatpura Haveli Courtyard",
+   "city": "Jaipur",
+   "area": "Jagatpura",
+   "location": "Jagatpura, Jaipur",
+   "type": "heritage",
+   "capacity": 200,
+   "rental_inr": 180000,
+   "features": [
+    "haveli",
+    "courtyard",
+    "folk performances"
+   ],
+   "description": "Restored haveli courtyard with folk performances for mehendi, sangeet and cultural evenings."
+  }
+ ]
+}

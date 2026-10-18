@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any
 
 
+# Kept for reference and the eventpilot://venue-catalog resource; search uses app/data/venues.json.
 VENUES = [
     {"name": "Whitefield Garden Pavilion", "location": "Whitefield, Bengaluru", "capacity": 450, "rental_inr": 220_000, "features": ["covered ceremony space", "dining hall", "parking"]},
     {"name": "Koramangala Workshop Studio", "location": "Koramangala, Bengaluru", "capacity": 100, "rental_inr": 65_000, "features": ["projector", "breakout rooms", "reliable Wi-Fi"]},
@@ -12,24 +13,51 @@ VENUES = [
 ]
 
 
-def search_venues(location: str, attendees: int, total_budget_inr: int) -> dict[str, Any]:
-    """Return suitable local venue options without contacting a third-party service."""
-    location_terms = {term.strip(",.").lower() for term in location.split() if len(term) > 2}
-    venue_budget_limit = round(total_budget_inr * 0.3)
-    matches = [
-        venue for venue in VENUES
-        if venue["capacity"] >= attendees
-        and venue["rental_inr"] <= venue_budget_limit
-        and (not location_terms or location_terms.intersection(venue["location"].lower().replace(",", "").split()))
-    ]
-    matches.sort(key=lambda venue: (venue["rental_inr"], venue["capacity"]))
-    return {
-        "location": location,
-        "attendees": attendees,
-        "venue_budget_limit_inr": venue_budget_limit,
-        "recommendations": matches[:3],
-        "note": "Demo catalog only. Confirm availability and quotations before booking.",
-    }
+def search_venues(location: str, attendees: int, total_budget_inr: int, venue_type: str = "", preferences: str = "") -> dict[str, Any]:
+    """Hybrid (BM25 + semantic) search over the sample venue catalogue.
+
+    Filters by city, capacity and a venue budget of 30% of the total, ranks the
+    matches by keywords, meaning, area and value, and explains near misses when
+    nothing fits. No third-party service is contacted.
+    """
+    from app.search.venues import search
+
+    return search(location, attendees, total_budget_inr, venue_type=venue_type, preferences=preferences)
+
+
+async def weather_outlook(location: str, event_date: str) -> dict[str, Any]:
+    """Weather risk for the event day from Open-Meteo, or climate notes offline."""
+    from app.integrations.weather import weather_outlook as outlook
+
+    return await outlook(location, event_date)
+
+
+def holiday_check(event_date: str, location: str = "", window_days: int = 3) -> dict[str, Any]:
+    """Public holidays, big festivals and long weekends on or near the date."""
+    from app.integrations.holidays import holiday_check as check
+
+    return check(event_date, location, window_days)
+
+
+async def travel_access(location: str) -> dict[str, Any]:
+    """Road distance and time from a venue to the city's airport and main station."""
+    from app.integrations.geo import travel_access as access
+
+    return await access(location)
+
+
+def vendor_search(city: str, category: str, budget_inr: int, guests: int = 0, event_type: str = "", preferences: str = "") -> dict[str, Any]:
+    """Shortlist vendors from the sample catalogue that fit one budget line."""
+    from app.integrations.vendors import search_vendors
+
+    return search_vendors(city, category, budget_inr, guests, event_type, preferences)
+
+
+def guest_message_draft(kind: str, event_name: str, event_date: str, location: str, venue: str = "", start_time: str = "", host: str = "", rsvp_by: str = "", event_type: str = "") -> dict[str, Any]:
+    """Draft a guest invite, reminder or venue-change message. Never sends."""
+    from app.integrations.messages import draft_guest_message
+
+    return draft_guest_message(kind, event_name, event_date, location, venue, start_time, host, rsvp_by, event_type)
 
 
 def validate_budget(budget_lines: list[dict[str, Any]], total_budget_inr: int) -> dict[str, Any]:

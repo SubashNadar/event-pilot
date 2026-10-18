@@ -44,13 +44,7 @@ def event_type_guidance(event: EventBrief) -> tuple[str, str]:
     return "general event", "Prioritize a practical balance of venue fit, attendee experience, schedule flow, communication, budget control, and operational readiness."
 
 
-def build_azure_plan(
-    event: EventBrief,
-    operation: str = "plan-generation",
-    specialist_context: dict[str, Any] | None = None,
-    tracing_config: RunnableConfig | None = None,
-) -> EventPlan:
-    structured_model = get_azure_model().with_structured_output(AiPlanDraft, method="function_calling")
+def manager_prompt(event: EventBrief, specialist_context: dict[str, Any] | None = None) -> str:
     event_type, domain_guidance = event_type_guidance(event)
     prompt = f"""
 You are the Event Manager in an autonomous event-planning team.
@@ -71,8 +65,32 @@ practical risks scaled to the event size and complexity. Include three concise
 agent activity entries. {domain_guidance}
 """
     if specialist_context:
-        prompt += "\nVerified specialist planning context:\n"
-        prompt += json.dumps(specialist_context, separators=(",", ":"))
-        prompt += "\nUse this context for venue, budget, schedule, marketing, and risk decisions."
-    draft = structured_model.invoke(prompt, config=tracing_config or get_langfuse_config(event, operation))
+        prompt += "\nVerified specialist planning context (reports and tool results):\n"
+        prompt += json.dumps(specialist_context, separators=(",", ":"), default=str)
+        prompt += (
+            "\nUse this context for venue, budget, schedule, marketing, and risk decisions. "
+            "Prefer the specialists' venue, budget lines and agenda. If a specialist was skipped, "
+            "add a risk telling the owner to review that area. Respect any user_adjustments."
+        )
+    return prompt
+
+
+def build_azure_plan(
+    event: EventBrief,
+    operation: str = "plan-generation",
+    specialist_context: dict[str, Any] | None = None,
+    tracing_config: RunnableConfig | None = None,
+) -> EventPlan:
+    structured_model = get_azure_model().with_structured_output(AiPlanDraft, method="function_calling")
+    draft = structured_model.invoke(manager_prompt(event, specialist_context), config=tracing_config or get_langfuse_config(event, operation))
     return EventPlan(event_id=event.id, source="azure", **draft.model_dump())
+
+
+async def abuild_plan_with_model(model, event: EventBrief, specialist_context: dict[str, Any] | None, config: RunnableConfig | None) -> tuple[EventPlan, Any]:
+    """Async Event Manager call used by the streaming workflow. Returns the plan and the raw message (for token usage)."""
+    structured_model = model.with_structured_output(AiPlanDraft, method="function_calling", include_raw=True)
+    output = await structured_model.ainvoke(manager_prompt(event, specialist_context), config=config)
+    draft = output["parsed"] if isinstance(output, dict) else output
+    if draft is None:
+        raise ValueError(f"The Event Manager returned an invalid plan: {output.get('parsing_error') if isinstance(output, dict) else 'no output'}")
+    return EventPlan(event_id=event.id, source="azure", **draft.model_dump()), output
