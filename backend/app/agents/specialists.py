@@ -76,12 +76,35 @@ def _logistics_args(args: dict, event: EventBrief, overrides: dict) -> dict:
     }
 
 
+def pick_venue(result: dict, overrides: dict) -> dict | None:
+    """The venue to recommend: the owner's choice when it fits, else the top result.
+
+    A chosen venue may fit without being in the top results, so the catalogue is
+    checked against the same limits the search used.
+    """
+    recs = result.get("recommendations", [])
+    wanted = str(overrides.get("venue") or "").lower()
+    if wanted:
+        match = next((r for r in recs if r["name"].lower() == wanted), None)
+        if match:
+            return match
+        from app.search.venues import catalog
+
+        args = result.get("_args") or {}
+        venue = next((v for v in catalog() if v["name"].lower() == wanted), None)
+        if venue and venue["capacity"] >= int(args.get("attendees", 0)) and venue["rental_inr"] <= int(result.get("venue_budget_limit_inr", 0)):
+            return {key: venue[key] for key in ("name", "location", "capacity", "rental_inr", "features")}
+        if not overrides.get("venue_soft"):
+            return None
+    return recs[0] if recs else None
+
+
 def _logistics_report(event: EventBrief, overrides: dict, result: dict) -> SpecialistReport:
     recs = result.get("recommendations", [])
     location = overrides.get("location") or event.location
     guests = overrides.get("attendees") or event.attendees
-    if recs:
-        best = recs[0]
+    best = pick_venue(result, overrides)
+    if best:
         mode = (result.get("search") or {}).get("mode", "bm25")
         return SpecialistReport(
             recommendations=[
@@ -89,7 +112,7 @@ def _logistics_report(event: EventBrief, overrides: dict, result: dict) -> Speci
                 f"Recommend {best['name']}: capacity {best['capacity']}, rent {money(best['rental_inr'])}",
                 "Confirm availability and quotations before booking",
             ],
-            decisions={"venue": best["name"], "venue_detail": f"{best['location']} · capacity {best['capacity']} · " + ", ".join(best["features"]), "rental_inr": best["rental_inr"], "alternatives": [r["name"] for r in recs[1:]]},
+            decisions={"venue": best["name"], "venue_detail": f"{best['location']} · capacity {best['capacity']} · " + ", ".join(best["features"]), "rental_inr": best["rental_inr"], "alternatives": [r["name"] for r in recs if r["name"] != best["name"]]},
             confidence=85,
         )
     if overrides.get("allow_unverified"):
@@ -114,7 +137,26 @@ LOGISTICS = Role(
 
 # ---------------------------------------------------------------- Finance
 
+def apply_budget_sets(base: list[dict], sets: list[dict]) -> list[dict]:
+    """Set lines to the owner's amounts. The difference comes out of (or goes into) Contingency first."""
+    lines = [{"category": str(line["category"]), "amount": int(line["amount"])} for line in base]
+    for change in sets or []:
+        line = next((l for l in lines if l["category"] == change["category"]), None)
+        if line is None:
+            continue
+        delta = int(change["amount"]) - line["amount"]
+        line["amount"] = int(change["amount"])
+        reserve = next((l for l in lines if "contingency" in l["category"].lower() and l is not line), None)
+        if reserve is not None:
+            taken = min(delta, reserve["amount"]) if delta > 0 else delta
+            reserve["amount"] -= taken
+    return lines
+
+
 def _finance_args(args: dict, event: EventBrief, overrides: dict) -> dict:
+    if overrides.get("base_lines") or overrides.get("budget_set"):
+        base = overrides.get("base_lines") or default_budget_lines(event, overrides.get("contingency_pct"))
+        return {"budget_lines": apply_budget_sets(base, overrides.get("budget_set") or []), "total_budget_inr": int(overrides.get("budget_ceiling") or event.budget)}
     lines = []
     for line in args.get("budget_lines") or []:
         try:
@@ -147,7 +189,23 @@ FINANCE = Role(
 
 # ---------------------------------------------------------------- Schedule
 
+def apply_agenda_edits(base: list[dict], overrides: dict) -> list[dict]:
+    from app.agents.plan_edit import time_key
+
+    agenda = [{"time": str(item["time"]), "activity": str(item["activity"])} for item in base]
+    removed = set(overrides.get("agenda_remove") or [])
+    agenda = [item for item in agenda if item["activity"] not in removed]
+    for move in overrides.get("agenda_move") or []:
+        for item in agenda:
+            if item["activity"] == move["activity"]:
+                item["time"] = move["time"]
+    agenda += [{"time": add["time"], "activity": add["activity"]} for add in overrides.get("agenda_add") or []]
+    return sorted(agenda, key=lambda item: time_key(item["time"]))
+
+
 def _schedule_args(args: dict, event: EventBrief, overrides: dict) -> dict:
+    if overrides.get("base_agenda") is not None:
+        return {"agenda": apply_agenda_edits(overrides["base_agenda"], overrides)}
     agenda = [{"time": str(item.get("time", "")), "activity": str(item.get("activity", ""))} for item in (args.get("agenda") or []) if isinstance(item, dict)]
     return {"agenda": agenda or default_agenda(event)}
 
@@ -181,8 +239,12 @@ def _requirements_args(args: dict, event: EventBrief, overrides: dict) -> dict:
 
 
 def _requirements_report(event: EventBrief, overrides: dict, result: dict) -> SpecialistReport:
-    reqs = result.get("requirements", [])
-    return SpecialistReport(recommendations=[f"Listed {len(reqs)} operational requirements for a {result.get('event_type')}", "Critical: " + ", ".join(reqs[:3])], decisions={"requirements": reqs}, confidence=80)
+    added = [r for r in overrides.get("requirements_add") or [] if r]
+    reqs = list(result.get("requirements", [])) + [r for r in added if r not in result.get("requirements", [])]
+    recs = [f"Listed {len(reqs)} operational requirements for a {result.get('event_type')}", "Critical: " + ", ".join(reqs[:3])]
+    if added:
+        recs.append("You added: " + ", ".join(added))
+    return SpecialistReport(recommendations=recs, decisions={"requirements": reqs, "added": added}, confidence=80)
 
 
 def _marketing_args(args: dict, event: EventBrief, overrides: dict) -> dict:
@@ -353,10 +415,12 @@ async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, A
             report.recommendations = report.recommendations[:5]  # the report schema allows five
         return report
 
-    if not llm_enabled():
+    # Plan edits apply the owner's change to the current plan in code: no LLM
+    # round, so nothing else drifts and the edit costs no tokens.
+    if not llm_enabled() or overrides.get("edit_mode"):
         result = await call({})
         report = await with_context(role.rule_report(event, overrides, tool_results[-1]))
-        return {"report": report.model_dump(), "tool_results": tool_results, "usage": usage, "mode": "rules"}
+        return {"report": report.model_dump(), "tool_results": tool_results, "usage": usage, "mode": "edit" if overrides.get("edit_mode") else "rules"}
 
     model = get_chat_model()
     messages: list[Any] = [SystemMessage(role.prompt), HumanMessage(brief_text(event) + adjustments_text(overrides))]

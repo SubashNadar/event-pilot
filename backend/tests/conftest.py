@@ -10,7 +10,10 @@ import pytest
 _TMP = tempfile.mkdtemp(prefix="eventpilot-tests-")
 os.environ["DATA_DIR"] = _TMP
 os.environ["MCP_URL"] = "http://127.0.0.1:9/mcp"  # nothing listens: tools run in-process
-os.environ["FREE_APIS_ENABLED"] = "false"  # offline data only; test_free_tools turns it on with a mock transport
+os.environ["FREE_APIS_ENABLED"] = "false"
+os.environ["RATE_LIMIT_WRITES_PER_MINUTE"] = "100000"  # test_guard lowers these to check the limiter
+os.environ["RATE_LIMIT_LLM_PER_MINUTE"] = "100000"
+os.environ["RATE_LIMIT_LLM_PER_DAY"] = "100000"  # offline data only; test_free_tools turns it on with a mock transport
 for key in ("AZURE_OPENAI_API_KEY", "AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_DEPLOYMENT_NAME", "AZURE_OPENAI_CHAT_DEPLOYMENT", "AZURE_OPENAI_DEPLOYMENT", "LANGFUSE_PUBLIC_KEY", "LANGFUSE_SECRET_KEY", "DB_USER"):
     os.environ[key] = ""
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))

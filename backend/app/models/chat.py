@@ -62,6 +62,8 @@ class BriefTurnRequest(BaseModel):
     answers: dict[str, str] = Field(default_factory=dict)
     dismissed: list[str] = Field(default_factory=list)
     ask: Literal["eventType", "name", "date", "location", "attendees", "budget", "objective"] | None = None
+    session_id: str | None = Field(default=None, max_length=64, description="Saves the turn to this conversation; a new one starts when omitted.")
+    display_text: str | None = Field(default=None, max_length=300, description="What the person typed or clicked, as shown in the chat.")
 
 
 class BriefTurnResponse(BaseModel):
@@ -75,3 +77,39 @@ class BriefTurnResponse(BaseModel):
     ready: bool = False
     reply: str
     mode: Literal["llm", "rules"] = "rules"
+    session_id: str | None = None
+
+
+class ChatMessage(BaseModel):
+    seq: int
+    role: Literal["user", "assistant"]
+    content: str
+    run_id: str | None = None
+    created_at: str
+    meta: dict | None = None
+
+
+class ChatSession(BaseModel):
+    id: str
+    event_id: str | None = None
+    title: str | None = None
+    state: dict = Field(default_factory=dict)
+    messages: list[ChatMessage] = Field(default_factory=list)
+
+
+class LinkSessionRequest(BaseModel):
+    event_id: str = Field(min_length=1, max_length=64)
+
+
+class PlanChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=1_000)
+    session_id: str | None = Field(default=None, max_length=64)
+
+
+class PlanChatResponse(BaseModel):
+    session_id: str
+    kind: Literal["edit_started", "answer", "clarify", "redirect", "busy", "no_plan"]
+    reply: str
+    run_id: str | None = None
+    steps: list[str] = Field(default_factory=list)
+    messages: list[ChatMessage] = Field(default_factory=list)

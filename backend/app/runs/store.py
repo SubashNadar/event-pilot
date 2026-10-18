@@ -60,6 +60,12 @@ def _connection() -> sqlite3.Connection:
 def initialize_run_storage() -> None:
     with _connection() as connection:
         connection.executescript(_SCHEMA)
+        # Columns added after the first release: add them to existing databases.
+        for table, column in (("chat_messages", "meta"), ("chat_sessions", "state")):
+            existing = {row["name"] for row in connection.execute(f"PRAGMA table_info({table})")}
+            if column not in existing:
+                connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} TEXT")
+        connection.execute("CREATE INDEX IF NOT EXISTS chat_sessions_by_event ON chat_sessions (event_id, updated_at)")
 
 
 def _to_record(row: sqlite3.Row, last_seq: int = 0) -> RunRecord:
@@ -99,6 +105,13 @@ def get_run(run_id: str) -> RunRecord | None:
             return None
         last = connection.execute("SELECT COALESCE(MAX(seq), 0) FROM run_events WHERE run_id = ?", (run_id,)).fetchone()[0]
     return _to_record(row, last)
+
+
+def active_run_for_event(event_id: str, statuses: tuple[str, ...] = ("queued", "running")) -> RunRecord | None:
+    marks = ",".join("?" for _ in statuses)
+    with _connection() as connection:
+        row = connection.execute(f"SELECT id FROM runs WHERE event_id = ? AND status IN ({marks}) ORDER BY created_at DESC LIMIT 1", (event_id, *statuses)).fetchone()
+    return get_run(row["id"]) if row else None
 
 
 def latest_run_for_event(event_id: str) -> RunRecord | None:
@@ -165,7 +178,8 @@ def events_after(run_id: str, after_seq: int = 0) -> list[tuple[int, dict[str, A
     return [(row["seq"], json.loads(row["payload"])) for row in rows]
 
 
-# Chat sessions (persistence endpoints arrive with RemainingPlan step 3).
+# Chat sessions: the brief intake conversation, then the plan-editing
+# conversation for the same event, survive refreshes and restarts.
 
 def create_chat_session(event_id: str | None, title: str, user_id: str | None = None) -> str:
     session_id = uuid4().hex
@@ -178,12 +192,51 @@ def create_chat_session(event_id: str | None, title: str, user_id: str | None = 
     return session_id
 
 
-def append_chat_message(session_id: str, role: str, content: str, run_id: str | None = None) -> int:
+def get_chat_session(session_id: str) -> dict[str, Any] | None:
+    with _connection() as connection:
+        row = connection.execute("SELECT * FROM chat_sessions WHERE id = ?", (session_id,)).fetchone()
+    if row is None:
+        return None
+    return {"id": row["id"], "event_id": row["event_id"], "title": row["title"], "state": json.loads(row["state"] or "{}"), "created_at": row["created_at"], "updated_at": row["updated_at"]}
+
+
+def session_for_event(event_id: str) -> dict[str, Any] | None:
+    with _connection() as connection:
+        row = connection.execute("SELECT id FROM chat_sessions WHERE event_id = ? ORDER BY updated_at DESC LIMIT 1", (event_id,)).fetchone()
+    return get_chat_session(row["id"]) if row else None
+
+
+def link_session_to_event(session_id: str, event_id: str, title: str | None = None) -> None:
+    with _connection() as connection:
+        connection.execute("UPDATE chat_sessions SET event_id = ?, title = COALESCE(?, title), updated_at = ? WHERE id = ?", (event_id, title, _now(), session_id))
+
+
+def save_session_state(session_id: str, state: dict[str, Any]) -> None:
+    with _connection() as connection:
+        connection.execute("UPDATE chat_sessions SET state = ?, updated_at = ? WHERE id = ?", (json.dumps(state, default=str), _now(), session_id))
+
+
+def append_chat_message(session_id: str, role: str, content: str, run_id: str | None = None, meta: dict[str, Any] | None = None) -> int:
     with _connection() as connection:
         seq = connection.execute("SELECT COALESCE(MAX(seq), 0) + 1 FROM chat_messages WHERE session_id = ?", (session_id,)).fetchone()[0]
         connection.execute(
-            "INSERT INTO chat_messages (session_id, seq, role, content, run_id, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            (session_id, seq, role, content, run_id, _now()),
+            "INSERT INTO chat_messages (session_id, seq, role, content, run_id, created_at, meta) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (session_id, seq, role, content, run_id, _now(), json.dumps(meta, default=str) if meta else None),
         )
         connection.execute("UPDATE chat_sessions SET updated_at = ? WHERE id = ?", (_now(), session_id))
     return seq
+
+
+def chat_messages(session_id: str, limit: int = 200) -> list[dict[str, Any]]:
+    with _connection() as connection:
+        rows = connection.execute(
+            "SELECT * FROM (SELECT * FROM chat_messages WHERE session_id = ? ORDER BY seq DESC LIMIT ?) ORDER BY seq", (session_id, limit)
+        ).fetchall()
+    return [{"seq": row["seq"], "role": row["role"], "content": row["content"], "run_id": row["run_id"], "created_at": row["created_at"], "meta": json.loads(row["meta"]) if row["meta"] else None} for row in rows]
+
+
+def message_for_run(session_id: str, run_id: str, kind: str) -> bool:
+    """True when the session already has a message of this kind for the run (keeps hooks idempotent)."""
+    with _connection() as connection:
+        rows = connection.execute("SELECT meta FROM chat_messages WHERE session_id = ? AND run_id = ?", (session_id, run_id)).fetchall()
+    return any(json.loads(row["meta"] or "{}").get("kind") == kind for row in rows)

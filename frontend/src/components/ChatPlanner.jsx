@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { briefTurn } from '../api/eventApi';
+import { BRIEF_SESSION_KEY, briefTurn, getChatSession } from '../api/eventApi';
 import { KnowledgeGuide } from './KnowledgeGuide';
 import './chatbotDock.css';
 
@@ -11,7 +11,13 @@ const EXAMPLE = 'Wedding reception in Bandra for 200 guests on 14 Feb 2027, budg
  * one sentence; the backend (/chat/brief) extracts what it can, checks it against
  * planning benchmarks, and asks only for what is missing, with options that fit
  * the event type, city and guest count.
+ *
+ * Every turn is saved on the server. The session id is kept in localStorage, so
+ * a refresh restores the conversation and the brief collected so far.
  */
+const readSession = () => { try { return localStorage.getItem(BRIEF_SESSION_KEY); } catch { return null; } };
+const writeSession = id => { try { id ? localStorage.setItem(BRIEF_SESSION_KEY, id) : localStorage.removeItem(BRIEF_SESSION_KEY); } catch { /* storage unavailable */ } };
+const GREETING = 'Tell me about your event: type, city, guests, budget and date. One sentence is fine, and I\'ll ask only for what\'s missing.';
 export function ChatPlanner({ onGenerate, onCancel }) {
   const [isOpen, setIsOpen] = useState(true);
   const [guideOpen, setGuideOpen] = useState(false);
@@ -26,6 +32,7 @@ export function ChatPlanner({ onGenerate, onCancel }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
   const historyRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -44,7 +51,8 @@ export function ChatPlanner({ onGenerate, onCancel }) {
     setBusy(true);
     setError('');
     try {
-      const result = await briefTurn({ answers, dismissed, ...body });
+      const result = await briefTurn({ answers, dismissed, ...body, session_id: sessionId || undefined, display_text: userText });
+      if (result.session_id && result.session_id !== sessionId) { setSessionId(result.session_id); writeSession(result.session_id); }
       apply(result, { userText });
       return result;
     } catch {
@@ -56,13 +64,31 @@ export function ChatPlanner({ onGenerate, onCancel }) {
     }
   };
 
+  const greet = () => briefTurn({ message: '', answers: {} })
+    .then(result => {
+      setNext(result.next);
+      setMessages([{ role: 'assistant', text: `${GREETING}\n${result.next?.prompt || ''}` }]);
+    })
+    .catch(() => setError('The planning assistant is unavailable. Check that the API is running, then try again.'));
+
+  // Restore an unfinished conversation after a refresh; otherwise start fresh.
   useEffect(() => {
-    briefTurn({ message: '', answers: {} })
-      .then(result => {
-        setNext(result.next);
-        setMessages([{ role: 'assistant', text: `Tell me about your event: type, city, guests, budget and date. One sentence is fine, and I'll ask only for what's missing.\n${result.next?.prompt || ''}` }]);
+    const saved = readSession();
+    if (!saved) { greet(); return; }
+    getChatSession(saved)
+      .then(session => {
+        const turn = [...session.messages].reverse().find(message => message.meta?.turn)?.meta.turn;
+        if (session.event_id || !turn) { writeSession(null); greet(); return; }
+        setSessionId(session.id);
+        setAnswers(turn.answers);
+        setBrief(turn.brief);
+        setNext(turn.next);
+        setWarnings(turn.warnings || []);
+        setReady(turn.ready);
+        setDismissed(session.state?.dismissed || []);
+        setMessages([{ role: 'assistant', text: GREETING }, ...session.messages.map(message => ({ role: message.role, text: message.content }))]);
       })
-      .catch(() => setError('The planning assistant is unavailable. Check that the API is running, then try again.'));
+      .catch(() => { writeSession(null); greet(); });
   }, []);
 
   useEffect(() => {
@@ -97,7 +123,8 @@ export function ChatPlanner({ onGenerate, onCancel }) {
         attendees: Number(answers.attendees),
         budget: Number(answers.budget),
         objective: `${answers.eventType}: ${answers.objective}`,
-      });
+      }, sessionId);
+      writeSession(null); // the conversation now belongs to the event
     } finally {
       setIsGenerating(false);
     }

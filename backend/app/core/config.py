@@ -49,6 +49,15 @@ class Settings(BaseSettings):
     tool_timeout_s: float = 25.0
     max_tool_calls_per_run: int = 40
     tool_cache_ttl_s: int = 600
+    # Abuse protection. Limits apply per client to write requests; LLM endpoints get their own budget.
+    rate_limit_enabled: bool = True
+    rate_limit_writes_per_minute: int = 60
+    rate_limit_llm_per_minute: int = 12
+    rate_limit_llm_per_day: int = 300
+    # Only behind a trusted reverse proxy: use X-Forwarded-For as the client address.
+    trust_forwarded_for: bool = False
+    max_body_bytes: int = 262_144
+    max_chat_chars: int = 1_000
     # Optional prices (USD per 1K tokens) for the usage line; 0 hides cost.
     llm_cost_per_1k_input: float = 0.0
     llm_cost_per_1k_output: float = 0.0

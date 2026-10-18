@@ -86,3 +86,28 @@ export function briefTurn(body) {
     body: JSON.stringify(body)
   });
 }
+
+// Saved conversations
+export const BRIEF_SESSION_KEY = 'eventpilot.briefSession';
+
+export function getChatSession(sessionId) {
+  return request(`/chat/sessions/${encodeURIComponent(sessionId)}`);
+}
+
+export function linkChatSession(sessionId, eventId) {
+  return request(`/chat/sessions/${encodeURIComponent(sessionId)}/event`, {
+    method: 'POST',
+    body: JSON.stringify({ event_id: eventId })
+  });
+}
+
+export function getEventChat(eventId) {
+  return request(`/events/${eventId}/chat`);
+}
+
+export function sendPlanChat(eventId, message, sessionId) {
+  return request(`/events/${eventId}/chat`, {
+    method: 'POST',
+    body: JSON.stringify({ message, session_id: sessionId || undefined })
+  });
+}

@@ -41,3 +41,6 @@ class EventPlanningState(TypedDict, total=False):
     review: dict[str, Any]
     revision_count: int
     recommendations: str
+    # Plan edits: reports kept from the previous plan, and inputs for the steps that run again.
+    reuse: dict[str, Any]
+    step_overrides: dict[str, Any]

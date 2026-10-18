@@ -41,6 +41,8 @@ class RunManager:
         self._saver_cm = None
         self._tasks: dict[str, asyncio.Task] = {}
         self._wakeups: dict[str, asyncio.Event] = {}
+        # Callbacks for a run's outcome (plan edits post the result into the chat).
+        self._hooks: dict[str, dict[str, Any]] = {}
 
     # ------------------------------------------------------------ lifecycle
 
@@ -98,7 +100,32 @@ class RunManager:
 
     # ------------------------------------------------------------ runs
 
-    async def start(self, event: EventBrief, operation: str = "plan-generation", session_id: str | None = None, interactive: bool = True) -> str:
+    async def previous_reports(self, run_id: str) -> dict[str, Any]:
+        """Specialist reports from a finished run's checkpoint."""
+        snapshot = await self.graph.aget_state({"configurable": {"thread_id": run_id}})
+        values = snapshot.values or {}
+        return {key: values.get(key) or {} for key in ("logistics", "finance", "schedule", "requirements", "marketing", "risks")}
+
+    def on_outcome(self, run_id: str, **hooks: Any) -> None:
+        self._hooks[run_id] = hooks
+
+    def _hook(self, run_id: str, name: str, *args: Any) -> None:
+        hook = self._hooks.get(run_id, {}).get(name)
+        if hook is None:
+            return
+        try:
+            hook(*args)
+        except Exception:
+            logger.exception("Run %s %s hook failed", run_id, name)
+
+    async def start_edit(self, event: EventBrief, reports: dict[str, Any], step_overrides: dict[str, Any], session_id: str | None = None) -> str:
+        """A plan-edit run: listed steps run again with their inputs, the rest keep their reports."""
+        from app.agents.plan_edit import STATE_KEYS
+
+        reuse = {step: reports[key] for step, key in STATE_KEYS.items() if step not in step_overrides and reports.get(key) and not reports[key].get("skipped")}
+        return await self.start(event, "plan-edit", session_id, extra={"reuse": reuse, "step_overrides": step_overrides})
+
+    async def start(self, event: EventBrief, operation: str = "plan-generation", session_id: str | None = None, interactive: bool = True, extra: dict[str, Any] | None = None) -> str:
         if self.graph is None:
             raise RuntimeError("Run manager is not started")
         run_id = store.create_run(str(event.id), operation, session_id)
@@ -111,6 +138,7 @@ class RunManager:
         graph_input = {
             "run_id": run_id, "event": event.model_dump(mode="json"), "operation": operation, "interactive": interactive,
             "steps": {step["id"]: {"status": "pending"} for step in STEPS}, "revision_count": 0,
+            **(extra or {}),
         }
         self._spawn(run_id, graph_input, config)
         return run_id
@@ -129,6 +157,7 @@ class RunManager:
             if pending:
                 store.update_run(run_id, status="paused")
                 self.publish(run_id, {"type": "run_paused", "pendingStepIds": [interrupt.value["step_id"] for interrupt in pending]})
+                self._hook(run_id, "paused", [interrupt.value for interrupt in pending])
                 return
             values = snapshot.values
             plan = EventPlan.model_validate({**values["final_plan"], "run_id": run_id})
@@ -143,14 +172,20 @@ class RunManager:
                 "durationMs": duration, "model": llm.model_name() if llm.llm_enabled() else "rules",
             }}, "run_completed")
             store.update_run(run_id, status="completed")
+            self._hook(run_id, "completed", plan)
+            self._hooks.pop(run_id, None)
         except asyncio.CancelledError:
             store.update_run(run_id, status="cancelled")
             self.publish(run_id, {"type": "run_cancelled", "message": "You stopped the plan."}, "run_cancelled")
+            self._hook(run_id, "ended", "cancelled", "You stopped the update.")
+            self._hooks.pop(run_id, None)
             raise
         except Exception as error:
             logger.exception("Run %s failed", run_id)
             store.update_run(run_id, status="error", error=str(error))
             self.publish(run_id, {"type": "error", "message": f"The planning run stopped: {error}"}, "error")
+            self._hook(run_id, "ended", "error", str(error))
+            self._hooks.pop(run_id, None)
         finally:
             self._tasks.pop(run_id, None)
 

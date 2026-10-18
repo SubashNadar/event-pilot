@@ -100,6 +100,55 @@ quotes before real use.
 The tests run the real graph through the HTTP API in rule-based mode and with a
 fake LLM (tool calls, structured output, streaming).
 
+## Change the plan by chatting
+
+`POST /api/v1/events/{event_id}/chat` takes plain words: "move dinner to 9 PM",
+"add a shehnai at 7 PM", "make it 300 guests", "put ₹2 lakh into catering",
+"switch to Vashi Grand Ballroom", "we need wheelchair access", or a question
+("what's the venue?").
+
+1. `app/agents/plan_edit.py` turns the message into a `PlanEdit` (LLM structured
+   output; a rule-based parser when Azure OpenAI isn't set or the call fails).
+2. `prepare` checks each change against the plan and the catalogue: the venue
+   exists in that city and holds the guests (raising the venue share if its rent
+   needs it), the agenda item exists, the budget line exists, the date is in the
+   future. Anything it can't apply comes back as one clarifying question.
+3. A `plan-edit` run re-runs only the affected specialists, with the plan the
+   owner sees as the base, and keeps every other report ("Kept from the current
+   plan"). Edits are applied in code, so nothing else drifts and they cost no
+   LLM tokens.
+4. When the run finishes, what changed ("Opening session: 10:00 AM → 10:30 AM")
+   is posted into the same conversation. If a step fails its check, the run
+   pauses with recovery options as usual and the chat says so. If the run stops,
+   the brief is put back.
+
+Only one run per event at a time: a chat change waits for the current run, and
+`POST /events/{id}/runs` returns 409 while one is running.
+
+## Saved conversations
+
+Brief intake turns (`POST /chat/brief`) and plan chat turns are stored in the
+`chat_sessions` and `chat_messages` tables. The frontend keeps the intake
+session id in localStorage, so a refresh restores the conversation and the brief
+so far. When the event is created, the session is linked to it
+(`POST /chat/sessions/{id}/event`), and the plan chat (`GET /events/{id}/chat`)
+continues the same history.
+
+## Abuse protection
+
+`app/core/guard.py`:
+- per-client rate limits on write requests (`RATE_LIMIT_WRITES_PER_MINUTE`),
+  with a tighter budget for endpoints that call the LLM or start runs
+  (`RATE_LIMIT_LLM_PER_MINUTE`, `RATE_LIMIT_LLM_PER_DAY`); replies 429 with
+  `Retry-After`. Reads are not limited. Limits are in memory, per process: use a
+  shared store (e.g. Redis) when running several workers.
+- request bodies over `MAX_BODY_BYTES` get 413; chat messages are capped.
+- user text is cleaned (control and invisible characters removed) and screened
+  for prompt-injection phrases; flagged chat messages get a polite redirect and
+  never reach the LLM.
+- every prompt fences user text in `<user_message>` tags with a rule to treat it
+  as data, and fence characters inside the text are neutralised.
+
 ## EventPilot MCP server
 
 A read-only MCP server with two groups of tools. Nothing here books, pays or

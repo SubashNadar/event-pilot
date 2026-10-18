@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 StepStatus = Literal["pending", "running", "verifying", "completed", "failed", "skipped"]
 RunStatus = Literal["queued", "running", "paused", "completed", "cancelled", "error"]
-RunOperation = Literal["plan-generation", "budget-revision"]
+RunOperation = Literal["plan-generation", "budget-revision", "plan-edit"]
 
 
 class Verification(BaseModel):

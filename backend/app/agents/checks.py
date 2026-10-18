@@ -31,11 +31,15 @@ def verify(step_id: str, result: dict[str, Any], event: EventBrief, overrides: d
     check = CHECK_TEXT.get(step_id, "Checking the result…").rstrip("…")
 
     if step_id == "logistics_agent":
+        from app.agents.specialists import pick_venue
+
         recs = tool.get("recommendations", [])
         args = tool.get("_args", {})
         guests = args.get("attendees", event.attendees)
-        if recs:
-            best = recs[0]
+        best = pick_venue(tool, overrides)
+        if overrides.get("venue") and not overrides.get("venue_soft") and best is None:
+            return Verification(check="Venue capacity ≥ guests and rent within the venue budget", passed=False, reason=f"{overrides['venue']} doesn't fit {guests} guests within {money(tool.get('venue_budget_limit_inr', 0))}")
+        if best:
             ok = best["capacity"] >= guests and best["rental_inr"] <= tool.get("venue_budget_limit_inr", 0)
             return Verification(check="Venue capacity ≥ guests and rent within the venue budget", passed=ok, reason=f"{best['name']} holds {best['capacity']} (need {guests}); rent {money(best['rental_inr'])} ≤ {money(tool.get('venue_budget_limit_inr', 0))}" if ok else f"{best['name']} doesn't fit {guests} guests within budget")
         if overrides.get("allow_unverified"):

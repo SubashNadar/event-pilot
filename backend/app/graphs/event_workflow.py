@@ -94,7 +94,8 @@ async def specialist_attempt(step_id: str, event: dict[str, Any], overrides: dic
 async def manager_attempt(event: dict[str, Any], context: dict[str, Any], overrides: dict[str, Any], operation: str) -> dict[str, Any]:
     brief = EventBrief.model_validate(event)
     try:
-        if overrides.get("use_fallback") or not llm.llm_enabled():
+        if overrides.get("use_fallback") or not llm.llm_enabled() or operation == "plan-edit":
+            # Plan edits merge in code so the owner's change is the only thing that moves.
             plan = compose_rule_plan(brief, context)
             return {"ok": True, "plan": plan.model_dump(mode="json"), "usage": {}, "mode": "rules"}
         async with llm.limited():
@@ -125,9 +126,9 @@ async def explain_attempt(step_id: str, error: str, event: dict[str, Any], overr
 
 # ------------------------------------------------------------------ step runner
 
-async def run_with_recovery(step_id: str, state: EventPlanningState, attempt_fn, check_fn, *, on_success, on_skip) -> dict[str, Any]:
+async def run_with_recovery(step_id: str, state: EventPlanningState, attempt_fn, check_fn, *, on_success, on_skip, initial_overrides: dict[str, Any] | None = None) -> dict[str, Any]:
     """Run a step; on failure explain it, pause for the user's choice, then retry or skip."""
-    overrides: dict[str, Any] = {}
+    overrides: dict[str, Any] = dict(initial_overrides or {})
     interactive = state.get("interactive", True)
     for attempt in range(1, settings.max_step_attempts + 1):
         emit({"type": "step_started", "stepId": step_id, "attempt": attempt, "at": _now()}, dedupe=f"started:{step_id}:{attempt}")
@@ -159,6 +160,12 @@ def specialist_node(step_id: str):
 
     async def node(state: EventPlanningState) -> dict[str, Any]:
         event = _event(state)
+        kept = (state.get("reuse") or {}).get(step_id)
+        if kept:  # plan edit: this step isn't affected, keep its report
+            emit({"type": "step_started", "stepId": step_id, "attempt": 1, "at": _now()}, dedupe=f"started:{step_id}:1")
+            verification = {"check": "Not affected by your change", "passed": True, "reason": "Kept from the current plan"}
+            emit({"type": "step_completed", "stepId": step_id, "summary": _summary(["Kept from the current plan; your change doesn't affect this step"], verification, {}), "at": _now()}, dedupe=f"completed:{step_id}")
+            return {role.state_key: kept, "steps": {step_id: {"status": "completed", "kept": True}}}
 
         def on_success(result, verification, overrides, attempt):
             report = {**result["report"], "agent": role.agent, "user_adjustments": overrides, "tool_results": [{k: v for k, v in r.items() if k != "_args"} for r in result["tool_results"]], "mode": result.get("mode")}
@@ -174,6 +181,7 @@ def specialist_node(step_id: str):
             lambda overrides, attempt: specialist_attempt(step_id, state["event"], overrides, attempt),
             lambda result, overrides: verify(step_id, result, event, overrides).model_dump(),
             on_success=on_success, on_skip=on_skip,
+            initial_overrides=(state.get("step_overrides") or {}).get(step_id),
         )
 
     node.__name__ = step_id

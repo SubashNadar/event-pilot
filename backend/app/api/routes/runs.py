@@ -8,6 +8,7 @@ from fastapi import APIRouter, Header, HTTPException, Query, Request, status
 from sse_starlette.sse import EventSourceResponse
 
 from app.agents.recovery import SKIP_LABELS, interpret_custom
+from app.core.guard import clean_text, screen
 from app.models.run import RecoveryProposal, ResolveStepRequest, ResolveStepResponse, RunRecord, RunSnapshot, StartRunRequest, StartRunResponse
 from app.runs import store
 from app.runs.manager import TERMINAL, RunConflict, RunNotFound, run_manager
@@ -28,6 +29,10 @@ async def start_run(event_id: UUID, payload: StartRunRequest) -> StartRunRespons
     event = load_event(event_id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
+    if payload.operation == "plan-edit":
+        raise HTTPException(status_code=422, detail="Plan edits start from the plan chat")
+    if store.active_run_for_event(str(event_id)) is not None:  # one live run per event
+        raise HTTPException(status_code=409, detail="A plan is already being generated for this event. Wait for it to finish or stop it first.")
     if payload.operation == "budget-revision":
         if payload.budget is None:
             raise HTTPException(status_code=422, detail="A budget-revision run needs a budget")
@@ -94,7 +99,10 @@ async def resolve_step(run_id: str, step_id: str, payload: ResolveStepRequest) -
             if option is None:
                 raise HTTPException(status_code=422, detail="Unknown option for this step")
         else:
-            option, question = await interpret_custom(step_id, payload.custom_text.strip(), run_manager.event_for(run), pending.get("overrides") or {})
+            text = clean_text(payload.custom_text, 500)
+            if screen(text):
+                return ResolveStepResponse(status="needs_clarification", question="Tell me what to change for this step, e.g. a different area, guest count or budget share.")
+            option, question = await interpret_custom(step_id, text, run_manager.event_for(run), pending.get("overrides") or {})
             if option is None:
                 return ResolveStepResponse(status="needs_clarification", question=question)
         result = await run_manager.resolve(run_id, step_id, _choice(option))
