@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens — RGB triplets so Tailwind can apply alpha (bg-accent/10). */
+:root {
+  --bg: 250 249 245;
+  --surface: 255 255 255;
+  --surface-2: 243 241 234;
+  --border: 229 225 215;
+  --ink: 31 30 27;
+  --muted: 107 103 94;
+  --accent: 170 74 40; /* #AA4A28 — 5.3:1 on surface */
+  --accent-ink: 255 255 255;
+  --accent-soft: 248 233 224;
+  --success: 35 119 72;
+  --danger: 179 38 30;
+  --warn: 138 97 0;
+  --info: 55 96 160;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: 28 27 25;
+  --surface: 38 37 34;
+  --surface-2: 47 45 41;
+  --border: 62 59 54;
+  --ink: 236 234 228;
+  --muted: 168 163 153;
+  --accent: 230 132 96;
+  --accent-ink: 28 18 12;
+  --accent-soft: 64 40 30;
+  --success: 110 196 142;
+  --danger: 242 130 122;
+  --warn: 227 180 90;
+  --info: 132 168 230;
+  color-scheme: dark;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: rgb(var(--accent) / 0.22);
+  }
+}
+
+@layer components {
+  .icon-btn {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-ink disabled:pointer-events-none disabled:opacity-40;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 text-xs text-muted;
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg, rgb(var(--muted)) 0%, rgb(var(--muted)) 40%, rgb(var(--ink)) 50%, rgb(var(--muted)) 60%, rgb(var(--muted)) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    @apply animate-shimmer;
+  }
+  .skeleton {
+    background: linear-gradient(90deg, rgb(var(--surface-2)) 0%, rgb(var(--border)) 50%, rgb(var(--surface-2)) 100%);
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-md;
+  }
+}
+
+/* Answer body — serif, Claude-like reading rhythm. */
+.answer {
+  @apply font-serif text-[16px] leading-[1.65] text-ink;
+}
+.answer > * + * {
+  margin-top: 0.85em;
+}
+.answer h2 {
+  @apply font-sans text-[19px] font-semibold leading-snug tracking-[-0.01em];
+}
+.answer h3 {
+  @apply font-sans text-[15px] font-semibold;
+  margin-top: 1.4em;
+}
+.answer strong {
+  @apply font-semibold;
+}
+.answer ul,
+.answer ol {
+  padding-left: 1.3em;
+}
+.answer ul {
+  list-style: disc;
+}
+.answer ol {
+  list-style: decimal;
+}
+.answer li + li {
+  margin-top: 0.3em;
+}
+.answer li::marker {
+  color: rgb(var(--muted));
+}
+.answer a {
+  @apply text-accent underline underline-offset-2;
+}
+.answer code {
+  @apply rounded bg-surface-2 px-1 py-0.5 font-mono text-[0.85em];
+}
+.answer .table-wrap {
+  @apply overflow-x-auto rounded-xl border border-border;
+}
+.answer table {
+  @apply w-full border-collapse font-sans text-[13.5px];
+}
+.answer th {
+  @apply bg-surface-2 px-3 py-2 text-left font-medium text-muted;
+}
+.answer td {
+  @apply border-t border-border px-3 py-2 align-top;
+}
+.answer td:last-child,
+.answer th:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cursor-blink::after,
+.streaming > :last-child:not(ul):not(ol):not(.table-wrap)::after,
+.streaming > ul:last-child > li:last-child::after,
+.streaming > ol:last-child > li:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: rgb(var(--accent));
+  border-radius: 1px;
+  @apply animate-blink;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--border)) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .shimmer-text {
+    color: rgb(var(--muted));
+    background: none;
+  }
+}

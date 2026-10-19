@@ -15,9 +15,9 @@ def test_one_sentence_fills_five_fields_and_asks_only_whats_left(client):
     result = turn(client, message="Wedding reception in Bandra for 200 guests on 14 Feb 2027, budget 10 lakh")
     assert result["answers"] == {"eventType": "Wedding", "location": "Bandra West, Mumbai", "attendees": "200", "budget": "1000000", "date": "2027-02-14"}
     assert result["missing"] == ["objective", "name"] and not result["ready"]
-    assert result["reply"].startswith("Got it: a wedding, in Bandra West, Mumbai, for 200 guests")
+    assert result["reply"].startswith("Lovely, I've noted: a wedding, in Bandra West, Mumbai, for 200 guests")
     question = result["next"]
-    assert question["field"] == "objective" and question["prompt"] == "What matters most for this wedding?"
+    assert question["field"] == "objective" and question["prompt"] == "What would make this wedding a success for you? Pick a suggestion below or tell me in your own words."
     assert question["options"][0]["label"] == "Smooth guest hospitality and dining for both families"
 
 
@@ -26,15 +26,15 @@ def test_questions_and_options_adapt_to_what_is_known(client):
     assert first["next"]["field"] == "eventType"
     step = turn(client, field="eventType", value="team retreat", answers=first["answers"])
     assert step["answers"]["eventType"] == "Corporate offsite"
-    assert step["next"]["prompt"] == "Where will the corporate offsite be held?"
+    assert step["next"]["prompt"] == "Where would you like to hold the corporate offsite? A few popular options are below, or name any city or area."
     assert [o["value"] for o in step["next"]["options"]][:2] == ["Goa", "Jaipur"]  # destinations first for offsites
     step = turn(client, field="location", value="Goa", answers=step["answers"])
-    assert step["next"]["prompt"] == "How many guests are you expecting in Goa?"
+    assert step["next"]["prompt"] == "How many guests are you expecting in Goa? A rough number is fine, and I'll adjust the venue options."
     assert [o["value"] for o in step["next"]["options"]] == ["20", "40", "80", "150"]
     step = turn(client, message="40", answers=step["answers"])  # plain reply answers the question on screen
     assert step["answers"]["attendees"] == "40"
     budget = step["next"]
-    assert budget["prompt"] == "What's the total budget for 40 guests in Goa?"
+    assert budget["prompt"] == "What's the total budget for 40 guests in Goa? A rough figure works, and I'll show you what it buys."
     assert [o["label"] for o in budget["options"]] == ["₹2.5L", "₹4L", "₹7.5L"]
     assert "₹6,000/guest" in budget["options"][0]["hint"]
 
@@ -56,7 +56,7 @@ def test_validation_errors_and_date_suggestions(client):
     assert result["errors"]["date"] == "That date has passed. Please choose a future date."
     assert result["next"]["field"] == "location"
     dates = turn(client, ask="date", answers={"eventType": "Birthday party"})["next"]
-    assert dates["prompt"] == "When is it? A birthday party usually needs about 3 weeks to plan."
+    assert dates["prompt"] == "When would you like it? A birthday party usually needs about 3 weeks of planning, so pick a date you can work with."
     first = date.fromisoformat(dates["options"][0]["value"])
     assert first.weekday() == 5 and first >= date.today() + timedelta(weeks=3)
 

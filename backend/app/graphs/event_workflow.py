@@ -50,9 +50,10 @@ STEPS: list[dict[str, Any]] = [
     {"id": "requirements_agent", "title": "List operational needs", "goal": "Name what the event needs to run, and who owns it.", "kind": "requirements", "agent": "Requirements", "group": "parallel"},
     {"id": "marketing_agent", "title": "Plan guest communication", "goal": "Choose channels and send dates; nothing goes out without approval.", "kind": "marketing", "agent": "Marketing", "group": "parallel"},
     {"id": "risk_operations_agent", "title": "Assess risks", "goal": "Build a risk register with a fallback for every high risk.", "kind": "risk", "agent": "Risk & Operations", "group": "parallel"},
+    {"id": "coordination", "title": "Compare the team's plans", "goal": "Check that the venue, its rent and the budget agree across the specialists.", "kind": "coordinate", "agent": "Event Manager", "group": "sequential"},
     {"id": "event_manager", "title": "Combine into one plan", "goal": "Merge the specialists' work into a single plan within budget.", "kind": "manager", "agent": "Event Manager", "group": "sequential"},
     {"id": "review_plan", "title": "Review the plan", "goal": "Check budget arithmetic, agenda times and risk coverage.", "kind": "review", "agent": "Event Manager", "group": "sequential"},
-    {"id": "reflection_agent", "title": "Fix review issues", "goal": "Revise the plan once if the review finds problems.", "kind": "reflection", "agent": "Event Manager", "group": "sequential"},
+    {"id": "replan", "title": "Re-plan the flagged parts", "goal": "Re-run only the specialists the review points to, using its feedback.", "kind": "reflection", "agent": "Event Manager", "group": "sequential"},
     {"id": "recommendations", "title": "Write recommendations", "goal": "Summarise the plan and the top next steps for you.", "kind": "recommend", "agent": "Event Manager", "group": "sequential"},
 ]
 STEP_BY_ID = {step["id"]: step for step in STEPS}
@@ -106,19 +107,6 @@ async def manager_attempt(event: dict[str, Any], context: dict[str, Any], overri
 
 
 @task
-async def reflection_attempt(event: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
-    brief = EventBrief.model_validate(event)
-    try:
-        if not llm.llm_enabled():
-            return {"ok": True, "plan": compose_rule_plan(brief, context).model_dump(mode="json"), "usage": {}}
-        async with llm.limited():
-            plan, raw = await abuild_plan_with_model(llm.get_chat_model(), brief, context, None)
-        return {"ok": True, "plan": plan.model_dump(mode="json"), "usage": llm.usage_of(raw)}
-    except Exception as error:
-        return {"ok": False, "error": str(error) or error.__class__.__name__}
-
-
-@task
 async def explain_attempt(step_id: str, error: str, event: dict[str, Any], overrides: dict[str, Any], attempt: int, context: dict[str, Any] | None = None) -> dict[str, Any]:
     proposal = await explain_failure(step_id, STEP_BY_ID[step_id]["goal"], error, EventBrief.model_validate(event), overrides, attempt, context=context)
     return proposal.model_dump()
@@ -130,11 +118,12 @@ async def run_with_recovery(step_id: str, state: EventPlanningState, attempt_fn,
     """Run a step; on failure explain it, pause for the user's choice, then retry or skip."""
     overrides: dict[str, Any] = dict(initial_overrides or {})
     interactive = state.get("interactive", True)
+    rev = state.get("revision_count", 0)
     for attempt in range(1, settings.max_step_attempts + 1):
-        emit({"type": "step_started", "stepId": step_id, "attempt": attempt, "at": _now()}, dedupe=f"started:{step_id}:{attempt}")
+        emit({"type": "step_started", "stepId": step_id, "attempt": attempt, "at": _now()}, dedupe=f"started:{step_id}:{rev}:{attempt}")
         result = await attempt_fn(overrides, attempt)
         if result.get("ok"):
-            emit({"type": "step_verifying", "stepId": step_id, "check": CHECK_TEXT.get(step_id, "Checking the result…")}, dedupe=f"verifying:{step_id}:{attempt}")
+            emit({"type": "step_verifying", "stepId": step_id, "check": CHECK_TEXT.get(step_id, "Checking the result…")}, dedupe=f"verifying:{step_id}:{rev}:{attempt}")
             verification = check_fn(result, overrides)
             if verification["passed"]:
                 return on_success(result, verification, overrides, attempt)
@@ -146,9 +135,9 @@ async def run_with_recovery(step_id: str, state: EventPlanningState, attempt_fn,
             break
         context = ((result.get("tool_results") or [{}])[-1] or {}).get("near_misses") if result.get("ok") else None
         proposal = RecoveryProposal.model_validate(await explain_attempt(step_id, error, state["event"], overrides, attempt, context))
-        emit({"type": "step_failed", "stepId": step_id, "error": error, "attempt": attempt, "retryable": True, "recovery": proposal.model_dump()}, dedupe=f"failed:{step_id}:{attempt}")
+        emit({"type": "step_failed", "stepId": step_id, "error": error, "attempt": attempt, "retryable": True, "recovery": proposal.model_dump()}, dedupe=f"failed:{step_id}:{rev}:{attempt}")
         choice = interrupt({"step_id": step_id, "attempt": attempt, "error": error, "proposal": proposal.model_dump(), "overrides": overrides})
-        emit({"type": "run_resumed", "stepId": step_id, "action": choice.get("action"), "label": choice.get("label", "")}, dedupe=f"resumed:{step_id}:{attempt}")
+        emit({"type": "run_resumed", "stepId": step_id, "action": choice.get("action"), "label": choice.get("label", "")}, dedupe=f"resumed:{step_id}:{rev}:{attempt}")
         if choice.get("action") == "skip":
             return on_skip(choice.get("label") or "Skipped by you")
         overrides = {**overrides, **(choice.get("patch") or {})}
@@ -168,7 +157,7 @@ def specialist_node(step_id: str):
             return {role.state_key: kept, "steps": {step_id: {"status": "completed", "kept": True}}}
 
         def on_success(result, verification, overrides, attempt):
-            report = {**result["report"], "agent": role.agent, "user_adjustments": overrides, "tool_results": [{k: v for k, v in r.items() if k != "_args"} for r in result["tool_results"]], "mode": result.get("mode")}
+            report = {**result["report"], "agent": role.agent, "user_adjustments": {k: v for k, v in overrides.items() if k not in INTERNAL_KEYS}, "tool_results": [{k: v for k, v in r.items() if k != "_args"} for r in result["tool_results"]], "mode": result.get("mode")}
             emit({"type": "step_completed", "stepId": step_id, "summary": _summary(result["report"]["recommendations"], verification, result.get("usage", {}), result["tool_results"]), "at": _now()}, dedupe=f"completed:{step_id}")
             return {role.state_key: report, "steps": {step_id: {"status": "completed", "attempts": attempt}}, "usage": result.get("usage", {})}
 
@@ -181,7 +170,7 @@ def specialist_node(step_id: str):
             lambda overrides, attempt: specialist_attempt(step_id, state["event"], overrides, attempt),
             lambda result, overrides: verify(step_id, result, event, overrides).model_dump(),
             on_success=on_success, on_skip=on_skip,
-            initial_overrides=(state.get("step_overrides") or {}).get(step_id),
+            initial_overrides=_specialist_overrides(state, step_id),
         )
 
     node.__name__ = step_id
@@ -193,7 +182,7 @@ def _context(state: EventPlanningState) -> dict[str, Any]:
 
 
 async def event_manager(state: EventPlanningState) -> dict[str, Any]:
-    context = _context(state)
+    context = {**_context(state), "conflicts": state.get("conflicts") or {"items": []}}
 
     def check(result, overrides):
         try:
@@ -206,15 +195,18 @@ async def event_manager(state: EventPlanningState) -> dict[str, Any]:
         plan = result["plan"]
         skipped = [ctx.get("agent") for ctx in context.values() if ctx.get("skipped")]
         did = [f"Combined {6 - len(skipped)} specialist reports" + (f" ({', '.join(skipped)} skipped)" if skipped else ""), f"Venue: {plan['venue']}", f"Forecast {inr(plan['budget_forecast'])} of {inr(state['event']['budget'])}"]
+        items = (context.get("conflicts") or {}).get("items") or []
+        if items:
+            did.append(f"Checked {len(items)} cross-team mismatch(es) against Logistics' venue and rent")
         if result.get("mode") == "rules":
             did.append("Built with the rule-based planner")
-        emit({"type": "step_completed", "stepId": "event_manager", "summary": _summary(did, verification, result.get("usage", {})), "at": _now()}, dedupe="completed:event_manager")
+        emit({"type": "step_completed", "stepId": "event_manager", "summary": _summary(did, verification, result.get("usage", {})), "at": _now()}, dedupe=f"completed:event_manager:{state.get('revision_count', 0)}")
         return {"final_plan": plan, "steps": {"event_manager": {"status": "completed", "attempts": attempt}}, "usage": result.get("usage", {})}
 
     def on_skip(reason):  # not offered to users; only reached when attempts run out
         plan = compose_rule_plan(_event(state), context).model_dump(mode="json")
         emit({"type": "notice", "message": f"The Event Manager failed ({reason}); the plan was built with the rule-based planner."})
-        emit({"type": "step_completed", "stepId": "event_manager", "summary": _summary(["Built with the rule-based planner after repeated failures"], {"check": "Plan matches the schema", "passed": True, "reason": "Rule-based plan"}, {}), "at": _now()}, dedupe="completed:event_manager")
+        emit({"type": "step_completed", "stepId": "event_manager", "summary": _summary(["Built with the rule-based planner after repeated failures"], {"check": "Plan matches the schema", "passed": True, "reason": "Rule-based plan"}, {}), "at": _now()}, dedupe=f"completed:event_manager:{state.get('revision_count', 0)}")
         return {"final_plan": plan, "steps": {"event_manager": {"status": "completed", "fallback": True}}}
 
     return await run_with_recovery(
@@ -224,7 +216,7 @@ async def event_manager(state: EventPlanningState) -> dict[str, Any]:
     )
 
 
-def _review(event: dict[str, Any], plan: dict[str, Any]) -> list[str]:
+def _review(event: dict[str, Any], plan: dict[str, Any], state: EventPlanningState | None = None) -> list[str]:
     issues: list[str] = []
     if plan["budget_forecast"] > event["budget"]:
         issues.append("Budget forecast exceeds the approved budget.")
@@ -234,6 +226,14 @@ def _review(event: dict[str, Any], plan: dict[str, Any]) -> list[str]:
         issues.append("Agenda includes a time outside the required 12-hour format.")
     if not 2 <= len(plan["risks"]) <= 5:
         issues.append("The plan needs between two and five risks.")
+    if state is not None:
+        decisions = (state.get("logistics") or {}).get("decisions") or {}
+        if decisions.get("venue") and plan.get("venue") != decisions["venue"]:
+            issues.append(f"The plan names {plan.get('venue')} but Logistics chose {decisions['venue']}.")
+        if decisions.get("rental_inr"):
+            venue_line = next((line for line in plan["budget_lines"] if "venue" in line["category"].lower()), None)
+            if venue_line and int(venue_line["amount"]) != int(decisions["rental_inr"]):
+                issues.append("The venue rent in the budget doesn't match Logistics' quote.")
     return issues
 
 
@@ -241,33 +241,128 @@ async def review_plan(state: EventPlanningState) -> dict[str, Any]:
     pass_number = state.get("revision_count", 0) + 1
     emit({"type": "step_started", "stepId": "review_plan", "attempt": pass_number, "at": _now()}, dedupe=f"started:review_plan:{pass_number}")
     emit({"type": "step_verifying", "stepId": "review_plan", "check": CHECK_TEXT["review_plan"]}, dedupe=f"verifying:review_plan:{pass_number}")
-    issues = _review(state["event"], state["final_plan"])
+    issues = _review(state["event"], state["final_plan"], state)
     approved = not issues
     verification = {"check": "Budget sums, 12-hour times, 2–5 risks", "passed": approved, "reason": "All checks passed" if approved else " ".join(issues)}
-    did = ["Checked budget arithmetic, agenda times and risk count"] + (["Found issues; sending back for one revision"] if issues and pass_number == 1 else [])
+    did = ["Checked budget arithmetic, agenda times and risk count"] + (["Found issues; the affected specialists will re-plan"] if issues and pass_number <= settings.max_replans else [])
     emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:review_plan:{pass_number}")
     if approved and pass_number == 1:
-        emit({"type": "step_skipped", "stepId": "reflection_agent", "reason": "Not needed — the review passed"}, dedupe="skipped:reflection_agent")
+        emit({"type": "step_skipped", "stepId": "replan", "reason": "Not needed — the review passed"}, dedupe="skipped:replan")
+    if not approved and pass_number > settings.max_replans:
+        emit({"type": "notice", "message": f"Still open after {settings.max_replans} re-plans: " + " ".join(issues)})
     return {"review": {"approved": approved, "issues": issues}, "steps": {"review_plan": {"status": "completed", "passes": pass_number}}}
 
 
-async def reflection_agent(state: EventPlanningState) -> dict[str, Any]:
-    emit({"type": "step_started", "stepId": "reflection_agent", "attempt": 1, "at": _now()}, dedupe="started:reflection_agent:1")
-    context = {**_context(state), "previous_plan": state["final_plan"], "review_feedback": state["review"]}
-    result = await reflection_attempt(state["event"], context)
-    revision = state.get("revision_count", 0) + 1
-    if not result.get("ok"):
-        reason = f"Kept the first plan: {result.get('error')}"
-        emit({"type": "step_skipped", "stepId": "reflection_agent", "reason": reason}, dedupe="skipped:reflection_agent")
-        return {"revision_count": revision, "steps": {"reflection_agent": {"status": "skipped", "reason": reason}}}
-    verification = {"check": "Revised plan addresses the review", "passed": True, "reason": "Revised plan sent back to review"}
-    emit({"type": "step_completed", "stepId": "reflection_agent", "summary": _summary(["Revised the plan to fix: " + " ".join(state["review"]["issues"])], verification, result.get("usage", {})), "at": _now()}, dedupe="completed:reflection_agent")
-    return {"final_plan": result["plan"], "revision_count": revision, "steps": {"reflection_agent": {"status": "completed"}}, "usage": result.get("usage", {})}
+# ------------------------------------------------------------------ coordination and replanning
+
+INTERNAL_KEYS = {"handoff", "feedback"}  # passed between specialists, not owner adjustments
+
+# Which specialists a review issue sends back, most specific first.
+REPLAN_OWNERS = [
+    (("venue", "rent", "logistics"), ["logistics_agent", "finance_agent"]),
+    (("budget", "contingency", "exceeds", "add up"), ["finance_agent"]),
+    (("agenda", "time", "12-hour"), ["schedule_agent"]),
+    (("risk",), ["risk_operations_agent"]),
+]
+
+
+def _handoff(state: EventPlanningState) -> dict[str, Any]:
+    """What Logistics settled: the venue, its quoted rent and any caveat. Teammates build on it."""
+    decisions = (state.get("logistics") or {}).get("decisions") or {}
+    if not decisions.get("venue"):
+        return {"venue": None, "note": "Logistics has not chosen a venue"}
+    return {
+        "venue": decisions["venue"],
+        "venue_detail": decisions.get("venue_detail", ""),
+        "rental_inr": decisions.get("rental_inr"),
+        "unverified": bool(decisions.get("unverified")),
+    }
+
+
+def _specialist_overrides(state: EventPlanningState, step_id: str) -> dict[str, Any]:
+    """Owner adjustments for a step, plus the Logistics handoff for every other specialist."""
+    overrides = dict((state.get("step_overrides") or {}).get(step_id) or {})
+    if step_id != "logistics_agent":
+        overrides["handoff"] = _handoff(state)
+    return overrides
+
+
+def _coordinate_items(state: EventPlanningState) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    decisions = (state.get("logistics") or {}).get("decisions") or {}
+    lines = ((state.get("finance") or {}).get("decisions") or {}).get("budget_lines") or []
+    venue_line = next((line for line in lines if "venue" in str(line.get("category", "")).lower()), None)
+    if decisions.get("rental_inr") and venue_line and int(venue_line["amount"]) != int(decisions["rental_inr"]):
+        items.append({"id": "venue-rent", "owner": "finance_agent", "message": f"The budget has {inr(venue_line['amount'])} for the venue, but Logistics quoted {inr(decisions['rental_inr'])} for {decisions['venue']}."})
+    total = sum(int(line["amount"]) for line in lines)
+    if lines and total > int(state["event"]["budget"]):
+        items.append({"id": "budget-total", "owner": "finance_agent", "message": f"The budget lines add up to {inr(total)}, above the {inr(state['event']['budget'])} approved."})
+    return items
+
+
+async def coordination(state: EventPlanningState) -> dict[str, Any]:
+    """Cross-check the specialists against each other before the manager composes the plan."""
+    rev = state.get("revision_count", 0)
+    emit({"type": "step_started", "stepId": "coordination", "attempt": rev + 1, "at": _now()}, dedupe=f"started:coordination:{rev}")
+    emit({"type": "step_verifying", "stepId": "coordination", "check": CHECK_TEXT["coordination"]}, dedupe=f"verifying:coordination:{rev}")
+    items = _coordinate_items(state)
+    reports = [key for key in ("logistics", "finance", "schedule", "requirements", "marketing", "risks") if state.get(key)]
+    did = [f"Compared {len(reports)} specialist reports", "No mismatches between the specialists" if not items else f"Found {len(items)} mismatch(es) for the Event Manager to reconcile"]
+    verification = {"check": CHECK_TEXT["coordination"], "passed": not items, "reason": "Venue, rent and budget agree" if not items else " ".join(item["message"] for item in items)}
+    emit({"type": "step_completed", "stepId": "coordination", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:coordination:{rev}")
+    return {"conflicts": {"items": items}, "steps": {"coordination": {"status": "completed"}}}
+
+
+def owners_for(issues: list[str]) -> list[str]:
+    text = " ".join(issues).lower()
+    owners: list[str] = []
+    for keywords, steps in REPLAN_OWNERS:
+        if any(word in text for word in keywords):
+            owners += [step for step in steps if step not in owners]
+    return owners or ["finance_agent"]
+
+
+async def replan(state: EventPlanningState) -> dict[str, Any]:
+    """Re-run only the specialists the review points to, giving each the review's feedback."""
+    rev = state.get("revision_count", 0) + 1
+    issues = list(state["review"]["issues"])
+    emit({"type": "step_started", "stepId": "replan", "attempt": rev, "at": _now()}, dedupe=f"started:replan:{rev}")
+    event = _event(state)
+    current: dict[str, Any] = {}
+    rerun: list[str] = []
+    kept: list[str] = []
+    usage: dict[str, int] = {}
+    for step_id in owners_for(issues):
+        role = ROLES[step_id]
+        view = {**state, **current}  # later owners build on the reports already re-run
+        base = dict((state.get("step_overrides") or {}).get(step_id) or {})
+        overrides = {**base, "feedback": issues}
+        if step_id != "logistics_agent":
+            overrides["handoff"] = _handoff(view)
+        emit({"type": "step_started", "stepId": step_id, "attempt": rev, "at": _now()}, dedupe=f"started:{step_id}:{rev}:replan")
+        try:
+            result = await run_specialist(step_id, event, overrides, rev)
+        except Exception as error:  # the previous report stands if the re-run fails
+            kept.append(f"{role.agent} ({error.__class__.__name__})")
+            emit({"type": "step_skipped", "stepId": step_id, "reason": f"Kept the previous report: {error}"}, dedupe=f"skipped:{step_id}:{rev}:replan")
+            continue
+        verification = {"check": CHECK_TEXT.get(step_id, "Checking the re-run…"), "passed": True, "reason": "Re-run with the review's feedback"}
+        emit({"type": "step_completed", "stepId": step_id, "summary": _summary(result["report"]["recommendations"], verification, result.get("usage", {}), result["tool_results"]), "at": _now()}, dedupe=f"completed:{step_id}:{rev}:replan")
+        current[role.state_key] = {**result["report"], "agent": role.agent, "user_adjustments": base, "tool_results": [{k: v for k, v in r.items() if k != "_args"} for r in result["tool_results"]], "mode": result.get("mode"), "replanned": rev}
+        rerun.append(role.agent)
+        for key, value in (result.get("usage") or {}).items():
+            usage[key] = usage.get(key, 0) + int(value or 0)
+    did = [f"Re-ran {', '.join(rerun)} with the review's feedback" if rerun else "Nothing could be re-run, so the current reports stand"]
+    if kept:
+        did.append(f"Kept the previous report for {', '.join(kept)}")
+    verification = {"check": CHECK_TEXT["replan"], "passed": bool(rerun), "reason": " ".join(issues)}
+    emit({"type": "step_completed", "stepId": "replan", "summary": _summary(did, verification, usage), "at": _now()}, dedupe=f"completed:replan:{rev}")
+    return {**current, "revision_count": rev, "usage": usage, "steps": {"replan": {"status": "completed", "passes": rev}}}
 
 
 def route_after_review(state: EventPlanningState) -> str:
-    if not state["review"]["approved"] and state.get("revision_count", 0) < 1:
-        return "reflection_agent"
+    if not state["review"]["approved"] and state.get("revision_count", 0) < settings.max_replans:
+        return "replan"
     return "recommendations"
 
 
@@ -326,16 +421,21 @@ async def recommendations(state: EventPlanningState, config: RunnableConfig) -> 
 
 def build_graph():
     workflow = StateGraph(EventPlanningState)
+    others = [step_id for step_id in SPECIALISTS if step_id != "logistics_agent"]
     for step_id in SPECIALISTS:
         workflow.add_node(step_id, specialist_node(step_id))
-        workflow.add_edge(START, step_id)
+    workflow.add_node("coordination", coordination)
     workflow.add_node("event_manager", event_manager)
     workflow.add_node("review_plan", review_plan)
-    workflow.add_node("reflection_agent", reflection_agent)
+    workflow.add_node("replan", replan)
     workflow.add_node("recommendations", recommendations)
-    workflow.add_edge(SPECIALISTS, "event_manager")  # waits for all six (completed or skipped)
+    workflow.add_edge(START, "logistics_agent")  # the venue comes first; everyone else builds on it
+    for step_id in others:
+        workflow.add_edge("logistics_agent", step_id)
+    workflow.add_edge(others, "coordination")  # waits for all five (completed or skipped)
+    workflow.add_edge("coordination", "event_manager")
     workflow.add_edge("event_manager", "review_plan")
-    workflow.add_conditional_edges("review_plan", route_after_review, {"reflection_agent": "reflection_agent", "recommendations": "recommendations"})
-    workflow.add_edge("reflection_agent", "review_plan")
+    workflow.add_conditional_edges("review_plan", route_after_review, {"replan": "replan", "recommendations": "recommendations"})
+    workflow.add_edge("replan", "coordination")
     workflow.add_edge("recommendations", END)
     return workflow

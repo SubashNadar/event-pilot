@@ -1,4 +1,4 @@
-# EventPilot Backend
+# Event Pilot Backend
 
 The FastAPI service currently exposes an in-memory event and planning API. It
 returns deterministic plans so the React app can integrate before Azure OpenAI
@@ -199,7 +199,7 @@ running, the API runs the same tools in-process. Resources:
 `eventpilot://venue-catalog`, `eventpilot://vendor-catalog`,
 `eventpilot://holiday-calendar`.
 
-# EventPilot Backend
+# Event Pilot Backend
 
 ## RAG Knowledge Base
 

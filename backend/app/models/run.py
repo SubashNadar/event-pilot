@@ -32,7 +32,7 @@ class ToolCallRecord(BaseModel):
 class SpecialistReport(BaseModel):
     """What one specialist agent hands to the Event Manager."""
 
-    recommendations: list[str] = Field(min_length=1, max_length=5, description="2-4 short, specific recommendations in plain English, first person, e.g. 'Shortlisted 2 venues that fit 200 guests'.")
+    recommendations: list[str] = Field(min_length=1, max_length=5, description="2-4 short recommendations in a warm, first-person planner voice, each with its reason, e.g. 'I shortlisted two venues that fit 200 guests comfortably; the rooftop one gives the best value.' Where a choice is open, end with one suggestion for the owner.")
     decisions: dict[str, Any] = Field(default_factory=dict, description="Key decisions as data, e.g. venue name, budget lines or agenda items.")
     assumptions: list[str] = Field(default_factory=list, description="Assumptions the plan depends on.")
     confidence: int = Field(default=75, ge=0, le=100)

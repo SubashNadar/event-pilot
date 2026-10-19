@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "EventPilot API"
+    app_name: str = "Event Pilot API"
     api_prefix: str = "/api/v1"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
     llm_provider: str = "azure"
@@ -37,6 +37,7 @@ class Settings(BaseSettings):
     data_dir: str = "data"
     max_parallel_llm_calls: int = 3
     max_step_attempts: int = 3
+    max_replans: int = 2  # review-driven re-plans of the affected specialists
     # Comma-separated MCP tool names whose first call in every run fails, e.g.
     # "venue_search". Used to demonstrate the recovery flow.
     eventpilot_fail_once: str = ""

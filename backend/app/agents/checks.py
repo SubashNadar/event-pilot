@@ -11,6 +11,8 @@ from app.models.event import EventBrief
 from app.models.run import Verification
 
 CHECK_TEXT = {
+    "coordination": "Comparing venue, rent and budget across the team…",
+    "replan": "Checking the re-planned parts against the review…",
     "logistics_agent": "Checking the venue fits the guest count and the venue budget…",
     "finance_agent": "Checking the budget lines stay within budget and include contingency…",
     "schedule_agent": "Checking the agenda for overlaps and 12-hour times…",

@@ -149,7 +149,7 @@ def check(state: BriefState) -> dict[str, Any]:
         if lead:
             warnings.append(lead)
     if answers.get("location") and not city:
-        warnings.append({"id": "city_not_in_catalog", "message": f"The sample venue catalogue doesn't cover {answers['location']} yet, so Logistics will suggest unverified venues there.", "options": [{"label": f"Use {c} instead", "patch": {"location": c}} for c in bench.known_cities()[:2]]})
+        warnings.append({"id": "city_not_in_catalog", "message": f"I don't have verified venues in {answers['location']} yet. I can carry on and flag the venues as unverified, or pick one of these cities where I can check options properly.", "options": [{"label": f"Use {c} instead", "patch": {"location": c}} for c in bench.known_cities()[:2]]})
     return {"warnings": [w for w in warnings if w["id"] not in dismissed]}
 
 
@@ -178,22 +178,22 @@ def frame(state: BriefState) -> dict[str, Any]:
     place = f" in {answers['location']}" if answers.get("location") else ""
     guests = _int(answers.get("attendees"))
     if field == "eventType":
-        prompt, options, placeholder = "What kind of event are you planning?", [{"value": t["label"], "label": t["label"], "hint": ""} for t in bench.event_types()[:6]], "e.g. Sangeet, hackathon, team retreat"
+        prompt, options, placeholder = "What kind of event are we planning? Pick one below, or describe it in your own words.", [{"value": t["label"], "label": t["label"], "hint": ""} for t in bench.event_types()[:6]], "e.g. Sangeet, hackathon, team retreat"
     elif field == "location":
-        prompt, options, placeholder = f"Where will the {kind} be held?", bench.location_options(event_type), "City or area, e.g. Bandra or Whitefield"
+        prompt, options, placeholder = f"Where would you like to hold the {kind}? A few popular options are below, or name any city or area.", bench.location_options(event_type), "City or area, e.g. Bandra or Whitefield"
     elif field == "attendees":
-        prompt, options, placeholder = f"How many guests are you expecting{place}?", bench.guest_options(event_type), "Number of guests"
+        prompt, options, placeholder = f"How many guests are you expecting{place}? A rough number is fine, and I'll adjust the venue options.", bench.guest_options(event_type), "Number of guests"
     elif field == "budget":
         who = f"{guests} guests" if guests else f"this {kind}"
-        prompt, options, placeholder = f"What's the total budget for {who}{place}?", bench.budget_options(event_type, city, guests), "e.g. ₹8 lakh or 800000"
+        prompt, options, placeholder = f"What's the total budget for {who}{place}? A rough figure works, and I'll show you what it buys.", bench.budget_options(event_type, city, guests), "e.g. ₹8 lakh or 800000"
     elif field == "date":
         lead = event_type["lead_weeks"] if event_type else None
-        prompt = f"When is it? A {kind} usually needs about {lead} weeks to plan." if lead else "When is the event?"
+        prompt = f"When would you like it? A {kind} usually needs about {lead} weeks of planning, so pick a date you can work with." if lead else "When would you like it?"
         options, placeholder = bench.date_options(event_type, _today()), "e.g. 14 Feb 2027"
     elif field == "objective":
-        prompt, options, placeholder = f"What matters most for this {kind}?", bench.objective_options(event_type), "Describe the outcome you want"
+        prompt, options, placeholder = f"What would make this {kind} a success for you? Pick a suggestion below or tell me in your own words.", bench.objective_options(event_type), "Describe the outcome you want"
     else:
-        prompt, options, placeholder = "Last one: what should we call it?", _name_options(answers, event_type), "e.g. Meera and Karthik Reception"
+        prompt, options, placeholder = "Almost there! What would you like to call it? I've suggested a few names below.", _name_options(answers, event_type), "e.g. Meera and Karthik Reception"
     question = BriefQuestion(field=field, label=LABELS[field], prompt=prompt, options=[BriefOption(**o) for o in options], placeholder=placeholder)
     return {"next": question.model_dump()}
 
@@ -217,14 +217,14 @@ def _reply(filled: list[str], answers: dict[str, str], errors: dict[str, str], r
             "date": lambda v: f"on {_display('date', v)}", "budget": lambda v: f"with a {bench.format_lakh(_int(v) or 0)} budget",
             "objective": lambda v: "your objective noted", "name": lambda v: f"called “{v}”",
         }
-        parts.append("Got it: " + ", ".join(phrases[f](answers[f]) for f in BRIEF_FIELDS if f in filled) + ".")
+        parts.append("Lovely, I've noted: " + ", ".join(phrases[f](answers[f]) for f in BRIEF_FIELDS if f in filled) + ".")
     if errors:
         parts.append(" ".join(errors.values()))
     if not filled and not errors and request.message:
-        parts.append("I couldn't find event details in that. You can answer the question below or describe the event in one sentence.")
+        parts.append("I didn't catch any event details there. Try describing it in one sentence, or pick an answer below.")
     if ready:
-        parts.append("That's everything I need. Check the brief, then generate the plan.")
-    return " ".join(parts) or "Tell me about your event: type, city, guests, budget and date. One sentence is fine."
+        parts.append("That's everything I need. Take a look at the brief, and when it looks right, I'll put the plan together.")
+    return " ".join(parts) or ("" if request.message is None else "Tell me about the event: what it is, where, roughly how many guests, your budget and the date. One sentence is plenty.")
 
 
 _graph = None

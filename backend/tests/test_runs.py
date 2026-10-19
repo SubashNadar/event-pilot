@@ -13,10 +13,10 @@ def test_full_run_streams_every_step_and_saves_the_plan(client):
 
     types = [e["type"] for e in snap["events"]]
     assert types[:2] == ["run_started", "plan_created"]
-    assert len(of_type(snap, "plan_created")[0]["steps"]) == 10
+    assert len(of_type(snap, "plan_created")[0]["steps"]) == 11
     completed = {e["stepId"] for e in of_type(snap, "step_completed")}
-    assert completed == {"logistics_agent", "finance_agent", "schedule_agent", "requirements_agent", "marketing_agent", "risk_operations_agent", "event_manager", "review_plan", "recommendations"}
-    assert [e["stepId"] for e in of_type(snap, "step_skipped")] == ["reflection_agent"]  # review passed first time
+    assert completed == {"logistics_agent", "finance_agent", "schedule_agent", "requirements_agent", "marketing_agent", "risk_operations_agent", "coordination", "event_manager", "review_plan", "recommendations"}
+    assert [e["stepId"] for e in of_type(snap, "step_skipped")] == ["replan"]  # review passed first time
     assert of_type(snap, "token"), "recommendations should stream tokens"
     assert types[-2:] == ["plan_ready", "run_completed"]
     seqs = [e["seq"] for e in snap["events"]]
@@ -51,10 +51,8 @@ def test_failed_step_offers_options_and_resumes_without_rerunning_others(client)
     assert ids[-1] == "skip" and "accept-unverified" in ids and "city-bengaluru" in ids
     assert failed["recovery"]["summary"] == "The venue catalogue doesn't cover Shillong yet."
 
-    # other specialists finished while Logistics waited
-    others_before = {e["stepId"] for e in of_type(snap, "step_completed")}
-    assert {"finance_agent", "schedule_agent", "risk_operations_agent"} <= others_before
-    finance_tools_before = len(of_type(snap, "tool_call", "finance_agent"))
+    # the other specialists wait for the venue, so none of them has started yet
+    assert {e["stepId"] for e in of_type(snap, "step_started")} == {"logistics_agent"}
 
     response = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"option_id": "accept-unverified"})
     assert response.status_code == 200 and response.json()["status"] == "resumed", response.text
@@ -64,7 +62,7 @@ def test_failed_step_offers_options_and_resumes_without_rerunning_others(client)
     assert of_type(snap, "recovery_chosen", "logistics_agent")[0]["label"] == "Use an unverified venue"
     assert [e["attempt"] for e in of_type(snap, "step_started", "logistics_agent")] == [1, 2]
     assert len(of_type(snap, "step_failed", "logistics_agent")) == 1  # replay did not duplicate it
-    assert len(of_type(snap, "tool_call", "finance_agent")) == finance_tools_before  # not re-run
+    assert len(of_type(snap, "step_started", "finance_agent")) == 1  # started once, not re-run by the replay
     plan = of_type(snap, "plan_ready")[0]["plan"]
     assert "Shillong" in plan["venue"] and "unverified" in plan["venue_detail"]
 
@@ -90,17 +88,18 @@ def test_parallel_failures_wait_for_every_answer(client, monkeypatch):
     event = create_event(client, location="Shillong", attendees=90)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
     snap = wait_for(client, run_id, {"paused"})
-    assert sorted(of_type(snap, "run_paused")[-1]["pendingStepIds"]) == ["logistics_agent", "schedule_agent"]
+    assert of_type(snap, "run_paused")[-1]["pendingStepIds"] == ["logistics_agent"]  # schedule waits for the venue
+    skipped = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/skip").json()
+    assert skipped["status"] == "resumed"
+    snap = wait_for(client, run_id, {"paused"})
+    assert sorted(of_type(snap, "run_paused")[-1]["pendingStepIds"]) == ["schedule_agent"]
     schedule_failure = of_type(snap, "step_failed", "schedule_agent")[0]
     assert "Simulated by EVENTPILOT_FAIL_ONCE" in schedule_failure["error"]
     assert of_type(snap, "tool_call", "schedule_agent")[-1]["tool"]["status"] == "error"
 
     first = client.post(f"/api/v1/runs/{run_id}/steps/schedule_agent/retry").json()
-    assert first["status"] == "queued"
-    assert client.get(f"/api/v1/runs/{run_id}").json()["run"]["status"] == "paused"
+    assert first["status"] == "resumed"  # the only open question, so the retry runs at once
 
-    second = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/skip").json()
-    assert second["status"] == "resumed"
     snap = wait_for(client, run_id, {"completed", "error", "paused"})
     assert snap["run"]["status"] == "completed", [e["type"] for e in snap["events"]]
     assert of_type(snap, "step_completed", "schedule_agent")  # retry succeeded (fails only once)

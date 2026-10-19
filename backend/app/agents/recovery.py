@@ -14,6 +14,7 @@ from typing import Any, Literal
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+from app.agents.voice import PLANNER_VOICE
 from app.agents.fmt import inr
 from app.core.guard import DATA_RULE, wrap_user
 from app.agents.llm import get_chat_model, limited, llm_enabled
@@ -143,11 +144,11 @@ def rule_proposal(step_id: str, error: str, event: EventBrief, overrides: dict[s
     if not check_failed:
         # A tool or model error, not a bad result: retrying usually works.
         short = error.split(". Simulated")[0]
-        proposal = RecoveryProposal(summary=f"{agent} couldn't finish: {short}.", cause=error, options=[], customPrompt="Tell me what to change", source="rules")
+        proposal = RecoveryProposal(summary=f"I couldn't finish the {agent.lower()} step: {short}.", cause=error, options=[], customPrompt="Tell me what to change", source="rules")
         extra = [RecoveryOption(id="use-fallback", label="Use the rule-based planner", description="Build the plan from the specialists' results without the LLM.", patch={"use_fallback": True})] if step_id == "event_manager" else []
         proposal.options = _finalise(step_id, [RecoveryOption(id="retry", label="Try again as is", description="Run the step again; temporary errors usually clear.", action="retry"), *extra])
         return proposal
-    summary = f"{agent} couldn't verify its result: {error.removeprefix('Check failed: ')}"
+    summary = f"I couldn't confirm the {agent.lower()} step: {error.removeprefix('Check failed: ')}"
     if step_id == "logistics_agent":
         share = int(overrides.get("venue_share_pct") or 30)
         location = overrides.get("location") or event.location
@@ -180,7 +181,7 @@ def rule_proposal(step_id: str, error: str, event: EventBrief, overrides: dict[s
 
 
 class _LlmProposal(BaseModel):
-    summary: str = Field(description="One plain sentence on what failed, naming the numbers involved. No apologies.")
+    summary: str = Field(description="One warm, plain sentence on what went wrong, naming the numbers involved, e.g. 'We couldn't find a venue for 500 guests within 30% of the budget.' No jargon, no apology.")
     options: list[RecoveryOption] = Field(description="2-3 concrete ways forward. Use action 'retry_with' with a patch, or 'retry'. Do not include a skip option.")
     custom_prompt: str = Field(description="Short placeholder for the free-text field, e.g. 'Try another city or a guest count'.")
 
@@ -201,7 +202,7 @@ async def explain_failure(step_id: str, goal: str, error: str, event: EventBrief
     try:
         model = get_chat_model().with_structured_output(_LlmProposal, method="function_calling")
         async with limited():
-            draft = await model.ainvoke([SystemMessage("You are EventPilot's recovery assistant. Be specific and brief."), HumanMessage(prompt)], config=config)
+            draft = await model.ainvoke([SystemMessage(PLANNER_VOICE + " When a step fails, explain it in one friendly sentence, offer two or three options the owner can pick, and invite them to describe their own change."), HumanMessage(prompt)], config=config)
         return RecoveryProposal(summary=draft.summary, cause=error, options=_finalise(step_id, list(draft.options)), customPrompt=draft.custom_prompt or "Tell me what to change", source="llm")
     except Exception:
         return rule_proposal(step_id, error, event, overrides, context)
@@ -236,7 +237,7 @@ def _rule_interpret(step_id: str, text: str) -> tuple[RecoveryOption | None, str
     patch = {key: value for key, value in patch.items() if key in allowed}
     if not patch:
         names = ", ".join(field.replace("_", " ") for field in allowed) or "nothing; you can retry or skip"
-        return None, f"I can change: {names}. What should I change?"
+        return None, f"I can adjust {names} for this step. What would you like to change? For example, 'try 450 guests' or 'move it to Pune'."
     return RecoveryOption(id="custom", label=text[:40], description="Your instruction", action="retry_with", patch=patch), None
 
 
@@ -250,13 +251,13 @@ async def interpret_custom(step_id: str, text: str, event: EventBrief, overrides
             model = get_chat_model().with_structured_output(_Interpretation, method="function_calling")
             async with limited():
                 result = await model.ainvoke([
-                    SystemMessage("Map the event owner's instruction for a failed planning step to input changes. Only use the allowed keys. " + DATA_RULE),
+                    SystemMessage(PLANNER_VOICE + " Map the owner's instruction for a failed step to input changes, using only the allowed keys. If it is unclear, ask one friendly question with a short example. " + DATA_RULE),
                     HumanMessage(f"Step: {step_id}\nAllowed keys: {fields}\nBrief: {event.attendees} guests, {event.location}, budget INR {event.budget}\nCurrent adjustments: {overrides or 'none'}\nInstruction:\n{wrap_user(text)}"),
                 ], config=config)
             if result.skip:
                 return (_skip_option(step_id), None) if step_id not in NOT_SKIPPABLE else (None, "This step can't be skipped. What should I change?")
             if not result.understood or not result.patch:
-                return None, result.question or f"I can change: {', '.join(fields)}. What should I change?"
+                return None, result.question or f"I can adjust {', '.join(fields)} for this step. What would you like to change?"
             option = RecoveryOption(id="custom", label=(result.label or text)[:40], description=f"Your instruction: {text[:120]}", action="retry_with", patch=result.patch)
             question = None
         except Exception:

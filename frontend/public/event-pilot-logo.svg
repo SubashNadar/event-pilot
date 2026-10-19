@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 96" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse" gradientTransform="translate(8 24) scale(1.333)">
+      <stop offset="0" stop-color="#D0643D"/>
+      <stop offset="1" stop-color="#7E2C14"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(8 16) scale(1.333)">
+    <rect width="48" height="48" rx="13" fill="url(#bg)"/>
+    <path d="M11 34Q22 12 36 15" stroke="#fff" stroke-opacity="0.55" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M11 34Q22 12 36 15" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="0.1 4"/>
+    <circle cx="11" cy="34" r="3.2" fill="#fff"/>
+    <path d="M36 9Q37 14 42 15Q37 16 36 21Q35 16 30 15Q35 14 36 9Z" fill="#fff"/>
+  </g>
+  <text x="100" y="58" font-family="Inter, Segoe UI, sans-serif" font-weight="600" font-size="40" fill="#1F1B18" letter-spacing="-0.5">Event</text>
+  <text x="206" y="58" font-family="'Source Serif 4', Georgia, serif" font-style="italic" font-weight="600" font-size="42" fill="#AA4A28">Pilot</text>
+  <text x="101" y="78" font-family="Inter, Segoe UI, sans-serif" font-size="11" letter-spacing="2.4" fill="#6B675E">AI EVENT PLANNING AGENT</text>
+</svg>

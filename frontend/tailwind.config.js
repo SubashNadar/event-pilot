@@ -1,13 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-// EventPilot uses the Eventa design tokens. Tokens are prefixed (--ep-*) so they
-// don't clash with the legacy variables in styles.css while screens move over.
-const v = (name) => `rgb(var(--ep-${name}) / <alpha-value>)`;
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 export default {
-  // Only TS/TSX files use Tailwind classes; legacy .jsx screens keep styles.css for now.
-  content: ["./src/**/*.{ts,tsx}"],
-  // Preflight would reset the legacy screens' element styles.
-  corePlugins: { preflight: false },
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -26,7 +22,7 @@ export default {
         info: v("info"),
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        sans: ['Inter', "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
         serif: ['"Source Serif 4"', "Georgia", "serif"],
         mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
@@ -40,6 +36,7 @@ export default {
         shimmer: { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
         "fade-in": { from: { opacity: "0", transform: "translateY(4px)" }, to: { opacity: "1", transform: "none" } },
         "slide-in-right": { from: { transform: "translateX(100%)" }, to: { transform: "none" } },
+        "slide-in-left": { from: { transform: "translateX(-100%)" }, to: { transform: "none" } },
         "slide-in-up": { from: { transform: "translateY(100%)" }, to: { transform: "none" } },
         blink: { "0%,50%": { opacity: "1" }, "50.01%,100%": { opacity: "0" } },
       },
@@ -47,6 +44,7 @@ export default {
         shimmer: "shimmer 2.2s linear infinite",
         "fade-in": "fade-in 220ms ease-out both",
         "slide-in-right": "slide-in-right 240ms cubic-bezier(.2,.8,.2,1) both",
+        "slide-in-left": "slide-in-left 220ms cubic-bezier(.2,.8,.2,1) both",
         "slide-in-up": "slide-in-up 240ms cubic-bezier(.2,.8,.2,1) both",
         blink: "blink 1s step-end infinite",
       },

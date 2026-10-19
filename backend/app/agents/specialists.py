@@ -19,6 +19,7 @@ from typing import Any, Awaitable, Callable
 
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 
+from app.agents.voice import PLANNER_VOICE
 from app.agents.llm import get_chat_model, limited, llm_enabled, usage_of
 from app.mcp.client import ToolCallError, call_planning_tool
 from app.models.event import EventBrief
@@ -39,9 +40,16 @@ def brief_text(event: EventBrief) -> str:
 
 
 def adjustments_text(overrides: dict[str, Any]) -> str:
-    if not overrides:
-        return ""
-    return "\nUser-approved adjustments for this attempt (these override the brief): " + json.dumps(overrides)
+    """What a specialist must take into account beyond the brief: the Logistics handoff, review feedback and owner adjustments."""
+    parts = []
+    if overrides.get("handoff"):
+        parts.append("Handoff from Logistics (build on it; don't search for another venue): " + json.dumps(overrides["handoff"], default=str))
+    if overrides.get("feedback"):
+        parts.append("The review found these problems; fix them in this attempt: " + json.dumps(overrides["feedback"], default=str))
+    owner = {key: value for key, value in overrides.items() if key not in ("handoff", "feedback")}
+    if owner:
+        parts.append("User-approved adjustments for this attempt (these override the brief): " + json.dumps(owner, default=str))
+    return ("\n" + "\n".join(parts)) if parts else ""
 
 
 @dataclass
@@ -168,10 +176,37 @@ def _finance_args(args: dict, event: EventBrief, overrides: dict) -> dict:
     return {"budget_lines": lines, "total_budget_inr": int(overrides.get("budget_ceiling") or event.budget)}
 
 
+def fit_lines_to_budget(lines: list[dict[str, Any]], budget: int) -> tuple[list[dict[str, Any]], str | None]:
+    """Keep the venue line as quoted; trim the other lines pro rata when the total is over budget."""
+    total = sum(int(line["amount"]) for line in lines)
+    if total <= budget:
+        return lines, None
+    is_venue = [("venue" in line["category"].lower()) for line in lines]
+    venue = sum(int(line["amount"]) for line, flag in zip(lines, is_venue) if flag)
+    others = total - venue
+    room = budget - venue
+    if room <= 0 or others <= 0:
+        return lines, f"The venue alone uses most of the {money(budget)} budget, so the other lines can't be trimmed to fit"
+    factor = room / others
+    trimmed = [dict(line) if flag else {**line, "amount": int(int(line["amount"]) * factor)} for line, flag in zip(lines, is_venue)]
+    return trimmed, f"Trimmed the other lines by {round((1 - factor) * 100)}% so the total fits {money(budget)}"
+
+
 def _finance_report(event: EventBrief, overrides: dict, result: dict) -> SpecialistReport:
-    lines = result.get("_lines", [])
+    lines = [dict(line) for line in result.get("_lines", [])]
+    handoff = overrides.get("handoff") or {}
+    notes = []
+    if handoff.get("rental_inr"):  # Logistics' quote replaces the estimate for the venue line
+        for line in lines:
+            if "venue" in line["category"].lower():
+                line["amount"] = int(handoff["rental_inr"])
+        notes.append(f"Venue line uses {handoff.get('venue')}'s quoted rent of {money(int(handoff['rental_inr']))}")
+    lines, trimmed = fit_lines_to_budget(lines, int(event.budget))
+    if trimmed:
+        notes.append(trimmed)
+    total = sum(int(line["amount"]) for line in lines)
     contingency = next((line for line in lines if "contingency" in line["category"].lower()), None)
-    recs = [f"Allocated {money(result.get('allocated_inr', 0))} across {len(lines)} categories against {money(result.get('approved_budget_inr', event.budget))}"]
+    recs = [f"Allocated {money(total)} across {len(lines)} categories against {money(event.budget)}", *notes]
     if contingency:
         recs.append(f"Kept {money(contingency['amount'])} as contingency")
     recs.append(result.get("recommendation", ""))
@@ -423,7 +458,7 @@ async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, A
         return {"report": report.model_dump(), "tool_results": tool_results, "usage": usage, "mode": "edit" if overrides.get("edit_mode") else "rules"}
 
     model = get_chat_model()
-    messages: list[Any] = [SystemMessage(role.prompt), HumanMessage(brief_text(event) + adjustments_text(overrides))]
+    messages: list[Any] = [SystemMessage(f"{PLANNER_VOICE}\n\n{role.prompt}"), HumanMessage(brief_text(event) + adjustments_text(overrides))]
     tool_model = model.bind_tools([role.tool_schema()])
     for _ in range(2):  # bounded ReAct loop: at most two tool rounds
         async with limited():

@@ -40,6 +40,7 @@ class EventPlanningState(TypedDict, total=False):
     final_plan: dict[str, Any]     # EventPlan dump
     review: dict[str, Any]
     revision_count: int
+    conflicts: dict[str, Any]      # {'items': [...]} mismatches found by the coordination step
     recommendations: str
     # Plan edits: reports kept from the previous plan, and inputs for the steps that run again.
     reuse: dict[str, Any]
