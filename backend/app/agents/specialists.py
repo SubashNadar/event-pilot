@@ -423,6 +423,32 @@ def _annotate(role: Role, args: dict, result: dict) -> dict:
     return annotated
 
 
+def _keep_tool_shaped_decisions(report: SpecialistReport, fallback: SpecialistReport) -> SpecialistReport:
+    """Keep model prose, but use verified tool data when a decision has the wrong shape.
+
+    Structured output guarantees that ``decisions`` is a mapping, not the shape
+    of every nested value. A model can still return e.g. a list of budget-line
+    labels instead of budget-line objects. Those values must not reach the
+    coordinator or Event Manager as if they were verified data.
+    """
+    decisions = report.decisions if isinstance(report.decisions, dict) else {}
+    for key, verified in fallback.decisions.items():
+        candidate = decisions.get(key)
+        needs_fallback = candidate is None
+        if isinstance(verified, dict):
+            needs_fallback = needs_fallback or not isinstance(candidate, dict)
+        elif isinstance(verified, list):
+            needs_fallback = needs_fallback or not isinstance(candidate, list)
+            if verified and isinstance(verified[0], dict):
+                needs_fallback = needs_fallback or not all(isinstance(item, dict) for item in candidate)
+        elif verified is not None:
+            needs_fallback = needs_fallback or not isinstance(candidate, type(verified))
+        if needs_fallback:
+            decisions[key] = verified
+    report.decisions = decisions
+    return report
+
+
 async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, Any], attempt: int, config: dict | None = None) -> dict[str, Any]:
     """One attempt of one specialist. Raises on tool or model failure."""
     role = ROLES[step_id]
@@ -483,6 +509,11 @@ async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, A
     report = output.get("parsed") if isinstance(output, dict) else output
     if report is None:
         report = role.rule_report(event, overrides, tool_results[-1])
+    else:
+        report = _keep_tool_shaped_decisions(
+            report,
+            role.rule_report(event, overrides, tool_results[-1]),
+        )
     report = await with_context(report)
     return {"report": report.model_dump(), "tool_results": tool_results, "usage": usage, "mode": "llm"}
 

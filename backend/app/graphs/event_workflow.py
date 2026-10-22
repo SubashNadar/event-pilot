@@ -70,8 +70,11 @@ def _event(state: EventPlanningState) -> EventBrief:
 def _summary(did: list[str], verification: dict[str, Any], usage: dict[str, int], tool_results: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     sources = []
     for index, result in enumerate(tool_results or []):
+        if not isinstance(result, dict):
+            continue
         for venue in (result.get("recommendations") or [])[:3]:
-            sources.append({"id": f"venue-{index}-{venue['name']}", "label": venue["name"], "kind": "tool"})
+            if isinstance(venue, dict) and venue.get("name"):
+                sources.append({"id": f"venue-{index}-{venue['name']}", "label": venue["name"], "kind": "tool"})
     return {
         "did": did,
         "sources": sources,
@@ -289,8 +292,14 @@ def _specialist_overrides(state: EventPlanningState, step_id: str) -> dict[str, 
 
 def _coordinate_items(state: EventPlanningState) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
-    decisions = (state.get("logistics") or {}).get("decisions") or {}
-    lines = ((state.get("finance") or {}).get("decisions") or {}).get("budget_lines") or []
+    logistics = state.get("logistics") or {}
+    finance = state.get("finance") or {}
+    decisions = logistics.get("decisions") if isinstance(logistics, dict) else {}
+    finance_decisions = finance.get("decisions") if isinstance(finance, dict) else {}
+    decisions = decisions if isinstance(decisions, dict) else {}
+    finance_decisions = finance_decisions if isinstance(finance_decisions, dict) else {}
+    lines = finance_decisions.get("budget_lines") or []
+    lines = [line for line in lines if isinstance(line, dict) and "amount" in line] if isinstance(lines, list) else []
     venue_line = next((line for line in lines if "venue" in str(line.get("category", "")).lower()), None)
     if decisions.get("rental_inr") and venue_line and int(venue_line["amount"]) != int(decisions["rental_inr"]):
         items.append({"id": "venue-rent", "owner": "finance_agent", "message": f"The budget has {inr(venue_line['amount'])} for the venue, but Logistics quoted {inr(decisions['rental_inr'])} for {decisions['venue']}."})

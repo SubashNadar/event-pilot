@@ -33,6 +33,15 @@ def test_budget_total_above_approved_is_flagged():
     assert [item["id"] for item in _coordinate_items(state)] == ["budget-total"]
 
 
+def test_coordination_ignores_malformed_model_budget_lines():
+    state = {
+        "event": {"budget": 100_000},
+        "logistics": {"decisions": {"venue": "Hall A", "rental_inr": 30_000}},
+        "finance": {"decisions": {"budget_lines": ["Venue: 30000", "Catering: 70000"]}},
+    }
+    assert _coordinate_items(state) == []
+
+
 def test_fit_keeps_the_venue_and_trims_the_rest():
     lines = [{"category": "Venue", "amount": 400_000}, {"category": "Catering", "amount": 500_000}, {"category": "Contingency", "amount": 100_000}]
     fitted, note = fit_lines_to_budget(lines, 800_000)
