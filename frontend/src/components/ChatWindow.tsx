@@ -86,7 +86,7 @@ export default function ChatWindow({ selected, onOpenStep }: Props) {
       <div ref={scroller} onScroll={onScroll} className="scroll-thin min-h-0 flex-1 overflow-y-auto">
         {empty ? (
           <div className="mx-auto flex h-full max-w-[768px] flex-col items-center justify-end px-4 pb-6 sm:justify-center sm:pb-0">
-            <EventPilotMark size={64} className="mb-5 drop-shadow-[0_8px_24px_rgba(170,74,40,0.28)]" />
+            <EventPilotMark size={64} className="mb-5 drop-shadow-[0_8px_24px_rgba(25,117,109,0.28)]" />
             <h1 className="text-center font-serif text-[28px] leading-tight tracking-[-0.01em] sm:text-[32px]">
               {greeting()}. What are we planning?
             </h1>

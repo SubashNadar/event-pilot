@@ -1,9 +1,13 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, status
+import re
+from typing import Literal
+
+from fastapi import APIRouter, HTTPException, Response, status
 
 from app.models.event import BudgetRevisionRequest, EventBrief, EventBriefCreate, EventPlan
 from app.runs.manager import run_manager
+from app.services.exports import build_pdf, build_pptx
 from app.services.storage import list_events, load_event, load_plan, save_event
 
 router = APIRouter(prefix="/events", tags=["events"])
@@ -57,3 +61,17 @@ async def revise_budget(event_id: UUID, payload: BudgetRevisionRequest) -> Event
     revised_event = event.model_copy(update={"budget": payload.budget})
     save_event(revised_event)
     return await run_manager.run_to_completion(revised_event, "budget-revision")
+
+
+@router.get("/{event_id}/exports/{fmt}")
+def export_plan(event_id: UUID, fmt: Literal["pdf", "pptx"]) -> Response:
+    """The saved plan as a PDF blueprint or a PPTX brochure."""
+    event, plan = load_event(event_id), load_plan(event_id)
+    if event is None or plan is None:
+        raise HTTPException(status_code=404, detail="No saved plan for this event yet")
+    if fmt == "pdf":
+        body, media = build_pdf(event, plan), "application/pdf"
+    else:
+        body, media = build_pptx(event, plan), "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    slug = re.sub(r"[^a-z0-9]+", "-", event.name.lower()).strip("-") or "event"
+    return Response(content=body, media_type=media, headers={"Content-Disposition": f'attachment; filename="{slug}-plan.{fmt}"'})

@@ -176,6 +176,24 @@ def _finance_args(args: dict, event: EventBrief, overrides: dict) -> dict:
     return {"budget_lines": lines, "total_budget_inr": int(overrides.get("budget_ceiling") or event.budget)}
 
 
+AMOUNT_KEYS = ("amount", "amount_inr", "amountInr", "inr", "value", "cost")
+
+
+def normalise_budget_lines(lines: Any) -> list[dict[str, Any]]:
+    """Budget lines as {category, amount}. Models name the amount field in different ways, so accept the common ones."""
+    cleaned: list[dict[str, Any]] = []
+    for line in lines if isinstance(lines, list) else []:
+        if not isinstance(line, dict):
+            continue
+        raw = next((line[key] for key in AMOUNT_KEYS if line.get(key) not in (None, "")), None)
+        try:
+            amount = int(float(str(raw).replace(",", "").replace("₹", "").strip()))
+        except (TypeError, ValueError):
+            continue
+        cleaned.append({"category": str(line.get("category") or line.get("name") or "Unlabelled"), "amount": amount})
+    return cleaned
+
+
 def fit_lines_to_budget(lines: list[dict[str, Any]], budget: int) -> tuple[list[dict[str, Any]], str | None]:
     """Keep the venue line as quoted; trim the other lines pro rata when the total is over budget."""
     total = sum(int(line["amount"]) for line in lines)

@@ -14,8 +14,8 @@ export function EventPilotMark({ className, size = 28 }: MarkProps) {
     <svg viewBox="0 0 48 48" width={size} height={size} className={clsx("shrink-0", className)} aria-hidden>
       <defs>
         <linearGradient id="ep-mark-bg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#D0643D" />
-          <stop offset="1" stopColor="#7E2C14" />
+          <stop offset="0" stopColor="#2A9D8F" />
+          <stop offset="1" stopColor="#0F5A54" />
         </linearGradient>
         <radialGradient id="ep-mark-glow" cx="0.3" cy="0.2" r="0.85">
           <stop offset="0" stopColor="#fff" stopOpacity="0.38" />

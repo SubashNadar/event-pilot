@@ -32,7 +32,7 @@ from app.agents import llm
 from app.agents.checks import CHECK_TEXT, verify
 from app.agents.fmt import inr
 from app.agents.recovery import RecoveryProposal, explain_failure
-from app.agents.specialists import ROLES, run_specialist
+from app.agents.specialists import ROLES, normalise_budget_lines, run_specialist
 from app.core.config import settings
 from app.graphs.emit import emit
 from app.graphs.state import EventPlanningState
@@ -85,10 +85,23 @@ def _summary(did: list[str], verification: dict[str, Any], usage: dict[str, int]
 @task
 async def specialist_attempt(step_id: str, event: dict[str, Any], overrides: dict[str, Any], attempt: int) -> dict[str, Any]:
     try:
-        result = await run_specialist(step_id, EventBrief.model_validate(event), overrides, attempt)
+        result = _normalise_result(await run_specialist(step_id, EventBrief.model_validate(event), overrides, attempt))
         return {"ok": True, **result}
     except Exception as error:  # returned, not raised: failed tasks are not cached
         return {"ok": False, "error": str(error) or error.__class__.__name__}
+
+
+def _normalise_result(result: dict[str, Any]) -> dict[str, Any]:
+    """Models may shape decisions differently: budget lines must be {category, amount}, and the venue a name."""
+    decisions = (result.get("report") or {}).get("decisions") or {}
+    if "budget_lines" in decisions:
+        decisions["budget_lines"] = normalise_budget_lines(decisions["budget_lines"])
+    venue = decisions.get("venue")
+    if isinstance(venue, dict):  # the model returned the venue as an object; the plan and checks compare names
+        decisions["venue"] = str(venue.get("name") or "")
+        decisions["rental_inr"] = decisions.get("rental_inr") or venue.get("rental_inr")
+        decisions.setdefault("venue_detail", ", ".join(str(venue[key]) for key in ("location", "capacity") if venue.get(key)))
+    return result
 
 
 @task
@@ -341,7 +354,7 @@ async def replan(state: EventPlanningState) -> dict[str, Any]:
             overrides["handoff"] = _handoff(view)
         emit({"type": "step_started", "stepId": step_id, "attempt": rev, "at": _now()}, dedupe=f"started:{step_id}:{rev}:replan")
         try:
-            result = await run_specialist(step_id, event, overrides, rev)
+            result = _normalise_result(await run_specialist(step_id, event, overrides, rev))
         except Exception as error:  # the previous report stands if the re-run fails
             kept.append(f"{role.agent} ({error.__class__.__name__})")
             emit({"type": "step_skipped", "stepId": step_id, "reason": f"Kept the previous report: {error}"}, dedupe=f"skipped:{step_id}:{rev}:replan")

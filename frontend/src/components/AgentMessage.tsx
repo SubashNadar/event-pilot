@@ -6,6 +6,7 @@ import type { ResolveResult } from "../lib/api";
 import { useAgent } from "../hooks/useAgentStream";
 import { copyText, formatDuration, formatUsd } from "../lib/format";
 import { traceUrl } from "../lib/langfuse";
+import { API_BASE_URL } from "../lib/config";
 import MemoryRecall from "./MemoryRecall";
 import PlannerLoader from "./PlannerLoader";
 import StepTimeline from "./StepTimeline";
@@ -17,6 +18,19 @@ interface Props {
   message: AgentMessageT;
   selectedStepId: string | null;
   onOpenStep: (msgId: string, stepId: string) => void;
+}
+
+/** Download links for the finished plan: a PPTX brochure and a PDF blueprint. */
+function PlanExports({ eventId }: { eventId: string }) {
+  const base = `${API_BASE_URL}/events/${eventId}/exports`;
+  const link = "inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-[13px] font-medium transition-colors duration-150 hover:border-accent/50 hover:text-accent";
+  return (
+    <div role="group" aria-label="Download the final plan" className="flex flex-wrap items-center gap-2 pt-1">
+      <span className="text-[12.5px] text-muted">Download the final plan</span>
+      <a href={`${base}/pptx`} download className={link}>Brochure (PPTX)</a>
+      <a href={`${base}/pdf`} download className={link}>Blueprint (PDF)</a>
+    </div>
+  );
 }
 
 /** Doubts about the brief, each with fixes to pick from or a "keep as is". */
@@ -226,6 +240,7 @@ export default function AgentMessage({ message, selectedStepId, onOpenStep }: Pr
           <StreamingMarkdown content={run.answer} streaming={run.status === "answering"} reveal={message.question !== undefined} />
         )}
 
+        {run.status === "completed" && run.eventId && <PlanExports eventId={run.eventId} />}
         {message.warnings && message.warnings.length > 0 && !isStreaming && <WarningCards warnings={message.warnings} onApply={answerPatch} onKeep={keepWarning} />}
         {message.question && !isStreaming && <QuestionChips question={message.question} onPick={answerOption} />}
 

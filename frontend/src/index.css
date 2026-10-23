@@ -4,32 +4,32 @@
 
 /* Design tokens — RGB triplets so Tailwind can apply alpha (bg-accent/10). */
 :root {
-  --bg: 250 249 245;
+  --bg: 244 247 245;
   --surface: 255 255 255;
-  --surface-2: 243 241 234;
-  --border: 229 225 215;
-  --ink: 31 30 27;
-  --muted: 107 103 94;
-  --accent: 170 74 40; /* #AA4A28 — 5.3:1 on surface */
+  --surface-2: 234 241 238;
+  --border: 220 229 225;
+  --ink: 23 45 43;
+  --muted: 100 115 112;
+  --accent: 25 117 109; /* #19756D — Event Pilot green, 5.4:1 on surface */
   --accent-ink: 255 255 255;
-  --accent-soft: 248 233 224;
+  --accent-soft: 223 240 237;
   --success: 35 119 72;
-  --danger: 179 38 30;
-  --warn: 138 97 0;
+  --danger: 200 90 80;
+  --warn: 176 110 30;
   --info: 55 96 160;
   color-scheme: light;
 }
 
 .dark {
-  --bg: 28 27 25;
-  --surface: 38 37 34;
-  --surface-2: 47 45 41;
-  --border: 62 59 54;
-  --ink: 236 234 228;
-  --muted: 168 163 153;
-  --accent: 230 132 96;
-  --accent-ink: 28 18 12;
-  --accent-soft: 64 40 30;
+  --bg: 16 26 25;
+  --surface: 24 36 35;
+  --surface-2: 32 47 45;
+  --border: 48 66 63;
+  --ink: 226 236 233;
+  --muted: 150 170 166;
+  --accent: 94 189 178; /* #5EBDB2 */
+  --accent-ink: 10 30 28;
+  --accent-soft: 22 52 49;
   --success: 110 196 142;
   --danger: 242 130 122;
   --warn: 227 180 90;

@@ -130,7 +130,7 @@ function stopRun(run: RunState, at: number): RunState {
 export function reduceRun(run: RunState, e: AgentEvent, at: number): RunState {
   switch (e.type) {
     case "run_started":
-      return { ...run, runId: e.runId, traceId: e.traceId, status: "thinking" };
+      return { ...run, runId: e.runId, traceId: e.traceId, status: "thinking", startedAt: at, eventId: e.eventId };
     case "memory_retrieved":
       return { ...run, memories: e.memories };
     case "thinking":
@@ -366,7 +366,9 @@ export function useAgentStream(): AgentApi {
     };
     es.onmessage = (message) => {
       const event = JSON.parse(message.data) as AgentEvent;
-      dispatch({ type: "event", msgId, event, at: Date.now() });
+      // The server stamps each event; replaying a finished run must keep its real timings.
+      const stamped = (event as { at?: string }).at;
+      dispatch({ type: "event", msgId, event, at: stamped ? Date.parse(stamped) : Date.now() });
       if (TERMINAL_EVENTS.has(event.type)) {
         es.close();
         if (esRef.current === es) esRef.current = null;

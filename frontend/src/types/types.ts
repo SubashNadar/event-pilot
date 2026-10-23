@@ -102,7 +102,7 @@ export interface Usage {
 }
 
 export type AgentEvent =
-  | { type: "run_started"; runId: string; traceId: string }
+  | { type: "run_started"; runId: string; traceId: string; eventId?: string }
   | { type: "memory_retrieved"; memories: Memory[] }
   | { type: "thinking"; hintContext?: string }
   | { type: "plan_created"; steps: Step[] }
@@ -165,6 +165,8 @@ export interface RunState {
   usage?: Usage;
   error?: string;
   feedback: Feedback;
+  /** The saved event this run plans; set once the run starts, used for the plan downloads. */
+  eventId?: string;
 }
 
 export interface UserMessage {

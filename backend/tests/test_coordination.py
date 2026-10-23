@@ -84,3 +84,28 @@ def test_flagged_review_replans_only_the_affected_specialists(client, monkeypatc
     assert len(of_type(snap, "step_started", "schedule_agent")) == 1  # not named by the review, so not re-run
     assert len(of_type(snap, "step_completed", "review_plan")) == 2
     assert len(of_type(snap, "step_started", "event_manager")) == 2  # the manager reconsolidates after the replan
+
+
+def test_model_budget_lines_with_other_amount_names_are_accepted():
+    from app.agents.specialists import normalise_budget_lines
+    from app.graphs.event_workflow import _normalise_result
+
+    lines = normalise_budget_lines([{"category": "Venue", "amount_inr": "1,50,000"}, {"name": "Catering", "inr": 300000}, {"category": "Odd", "amount": None}])
+    assert lines == [{"category": "Venue", "amount": 150000}, {"category": "Catering", "amount": 300000}]
+
+    result = {"report": {"decisions": {"budget_lines": [{"category": "Venue", "amount_inr": 400000}]}}}
+    state = {
+        "event": {"budget": 1_000_000},
+        "logistics": {"decisions": {"venue": "Hall A", "rental_inr": 400_000}},
+        "finance": _normalise_result(result)["report"],
+    }
+    assert _coordinate_items(state) == []  # no KeyError, and the venue matches the quote
+
+
+def test_venue_returned_as_an_object_is_read_as_its_name():
+    from app.graphs.event_workflow import _normalise_result
+
+    result = {"report": {"decisions": {"venue": {"name": "Kharadi Grand Banquets", "location": "Kharadi, Pune", "capacity": 450, "rental_inr": 210000}}}}
+    decisions = _normalise_result(result)["report"]["decisions"]
+    assert decisions["venue"] == "Kharadi Grand Banquets"
+    assert decisions["rental_inr"] == 210000
