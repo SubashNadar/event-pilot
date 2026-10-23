@@ -23,7 +23,7 @@ from collections import defaultdict
 from typing import Any
 
 from mcp import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
+from mcp.client.streamable_http import streamable_http_client
 
 from app.agents.fmt import inr
 from app.core.config import settings
@@ -121,7 +121,7 @@ def summarize_result(name: str, payload: dict[str, Any]) -> str:
 
 
 async def _call_mcp(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-    async with streamablehttp_client(MCP_URL) as (read, write, _):
+    async with streamable_http_client(MCP_URL) as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
             result = await session.call_tool(name, arguments)

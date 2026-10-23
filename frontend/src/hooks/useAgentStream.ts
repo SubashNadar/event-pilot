@@ -307,7 +307,7 @@ type TurnKind =
 export interface AgentApi {
   state: ChatState;
   isStreaming: boolean;
-  send: (prompt: string) => void;
+  send: (prompt: string, displayText?: string) => void;
   /** Answers the open brief question with one of its option chips. */
   answerOption: (field: string, value: string, label: string) => void;
   /** Applies a warning's fix to the brief. */
@@ -388,7 +388,7 @@ export function useAgentStream(): AgentApi {
 
   /** One chat turn: brief intake, then a planning run once the brief is ready. */
   const runTurn = useCallback(
-    async (prompt: string, how: TurnKind = { kind: "text" }) => {
+    async (prompt: string, how: TurnKind = { kind: "text" }, displayText?: string) => {
       const before = stateRef.current;
       if (before.sessionId) {
         // A saved event is open: a new message starts a new plan.
@@ -396,9 +396,10 @@ export function useAgentStream(): AgentApi {
         dispatch({ type: "new_session" });
       }
       const now = Date.now();
-      const user: ChatMessage = { id: uid("u"), role: "user", content: prompt, createdAt: now };
+      const shownPrompt = displayText || prompt;
+      const user: ChatMessage = { id: uid("u"), role: "user", content: shownPrompt, createdAt: now };
       const agent: AgentMessage = { id: uid("a"), role: "agent", createdAt: now, run: emptyRun("", now) };
-      dispatch({ type: "user_sent", user, agent, title: briefRef.current.sessionId ? undefined : titleFrom(prompt) });
+      dispatch({ type: "user_sent", user, agent, title: briefRef.current.sessionId ? undefined : titleFrom(shownPrompt) });
 
       try {
         if (how.kind === "keep") briefRef.current.dismissed = [...briefRef.current.dismissed, how.warningId];
@@ -407,7 +408,7 @@ export function useAgentStream(): AgentApi {
           answers: briefRef.current.answers,
           dismissed: briefRef.current.dismissed,
           session_id: briefRef.current.sessionId ?? undefined,
-          display_text: prompt,
+          display_text: shownPrompt,
         });
         briefRef.current = { ...briefRef.current, sessionId: turn.session_id ?? briefRef.current.sessionId, answers: turn.answers };
 
@@ -446,9 +447,9 @@ export function useAgentStream(): AgentApi {
   );
 
   const send = useCallback(
-    (prompt: string) => {
+    (prompt: string, displayText?: string) => {
       if (!prompt.trim() || stateRef.current.activeMessageId) return;
-      void runTurn(prompt.trim());
+      void runTurn(prompt.trim(), { kind: "text" }, displayText?.trim());
     },
     [runTurn],
   );

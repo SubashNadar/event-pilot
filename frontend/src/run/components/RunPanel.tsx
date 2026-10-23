@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import { AlertTriangle, ArrowRight, ExternalLink, Info, RotateCcw, Square } from "lucide-react";
+import { AlertTriangle, ArrowRight, ExternalLink, GitBranch, Image, Info, ListChecks, RotateCcw, Square } from "lucide-react";
 import type { PlanRunApi } from "../usePlanRun";
 import type { ResolveChoice, StepKind } from "../types";
 import { isTerminal } from "../reducer";
@@ -10,6 +10,8 @@ import StepDetailDrawer from "./StepDetailDrawer";
 import StepTimeline from "./StepTimeline";
 import StreamingMarkdown from "./StreamingMarkdown";
 import ThinkingHints from "./ThinkingHints";
+import WorkflowGraph from "./WorkflowGraph";
+import LangGraphPng from "./LangGraphPng";
 
 interface Props {
   planRun: PlanRunApi;
@@ -28,6 +30,7 @@ export default function RunPanel({ planRun, eventName, onReviewPlan, onRestart }
   const { run, connection, resolve, cancel } = planRun;
   const [selected, setSelected] = useState<string | null>(null);
   const [stopping, setStopping] = useState(false);
+  const [runView, setRunView] = useState<"timeline" | "graph" | "png">("timeline");
   const live = useRef<HTMLParagraphElement>(null);
 
   const selectedIndex = run ? run.steps.findIndex((s) => s.id === selected) : -1;
@@ -137,7 +140,16 @@ export default function RunPanel({ planRun, eventName, onReviewPlan, onRestart }
 
         {(status === "starting" || status === "executing") && <ThinkingHints context={runningKind} showLabel={run.steps.length === 0} />}
 
-        {run.steps.length > 0 && <StepTimeline run={run} selectedStepId={selected} onOpenStep={setSelected} onResolve={onResolve} />}
+        {run.steps.length > 0 && (
+          <>
+            <div className="inline-flex rounded-lg border border-border bg-surface p-0.5" role="tablist" aria-label="Planning run view">
+              <button type="button" role="tab" aria-selected={runView === "timeline"} onClick={() => setRunView("timeline")} className={clsx("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors", runView === "timeline" ? "bg-surface-2 text-ink" : "text-muted hover:text-ink")}><ListChecks size={13} aria-hidden /> Timeline</button>
+              <button type="button" role="tab" aria-selected={runView === "graph"} onClick={() => setRunView("graph")} className={clsx("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors", runView === "graph" ? "bg-surface-2 text-ink" : "text-muted hover:text-ink")}><GitBranch size={13} aria-hidden /> Workflow graph</button>
+              <button type="button" role="tab" aria-selected={runView === "png"} onClick={() => setRunView("png")} className={clsx("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors", runView === "png" ? "bg-surface-2 text-ink" : "text-muted hover:text-ink")}><Image size={13} aria-hidden /> LangGraph PNG</button>
+            </div>
+            {runView === "timeline" ? <StepTimeline run={run} selectedStepId={selected} onOpenStep={setSelected} onResolve={onResolve} /> : runView === "graph" ? <WorkflowGraph run={run} selectedStepId={selected} onOpenStep={setSelected} /> : <LangGraphPng />}
+          </>
+        )}
 
         {run.answer && (
           <section aria-label="Recommendations" className="rounded-2xl border border-border bg-surface px-5 py-4 shadow-soft">

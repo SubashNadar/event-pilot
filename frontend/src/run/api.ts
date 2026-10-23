@@ -27,3 +27,6 @@ export const resolveStep = (runId: string, stepId: string, choice: ResolveChoice
 export const cancelRun = (runId: string) => request<void>(`/runs/${runId}/cancel`, { method: "POST" });
 
 export const streamUrl = (runId: string) => `${API_BASE_URL}/runs/${runId}/stream`;
+
+/** Static PNG rendered from the backend's compiled LangGraph definition. */
+export const workflowGraphPngUrl = () => `${API_BASE_URL}/workflow/graph.png`;

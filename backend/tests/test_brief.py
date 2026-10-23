@@ -76,3 +76,23 @@ def test_editing_a_field_reasks_it_then_moves_on(client):
     assert ask["next"]["field"] == "attendees" and not ask["ready"]
     done = turn(client, message="90", ask="attendees", answers=answers)
     assert done["answers"]["attendees"] == "90" and done["ready"] and done["next"] is None
+
+
+def test_wedding_invitation_text_prefills_a_complete_brief(client):
+    invitation = """WEDDING RECEPTION OF MEERA AND KARTHIK
+    Together with their families, Meera and Karthik invite you to celebrate their wedding reception.
+    Saturday, 20 March 2027 | 6:30 PM onwards
+    Whitefield Garden Pavilion, Whitefield, Bengaluru
+    Planning note: approximately 350 guests. Event planning budget: INR 12 lakh.
+    Objective: create a warm family celebration with a smooth guest welcome, ceremony timing, photography and dinner flow."""
+    result = turn(client, message=invitation)
+    assert result["ready"] and result["next"] is None
+    assert result["answers"] == {
+        "eventType": "Wedding",
+        "location": "Whitefield, Bengaluru",
+        "attendees": "350",
+        "budget": "1200000",
+        "date": "2027-03-20",
+        "objective": "Create a warm family celebration with a smooth guest welcome, ceremony timing, photography and dinner flow.",
+        "name": "Meera And Karthik Wedding Reception",
+    }

@@ -48,6 +48,20 @@ Copy backend/.env.example to backend/.env before adding Azure OpenAI
 credentials. The API falls back to a deterministic planner when Azure OpenAI
 is unavailable.
 
+### Verify Locally
+
+Run the backend suite in deterministic, offline mode:
+
+    cd backend
+    source .venv/bin/activate
+    pip install -r requirements-dev.txt
+    python -m pytest -q
+
+The suite covers brief extraction, agent coordination, planning runs and recovery,
+MCP-tool boundaries and caching, plan chat changes, retrieval, rate limits, and
+input guardrails. See `docs/RESILIENCE_AND_PERFORMANCE.md` for the relevant
+runtime controls and reviewer evidence.
+
 ## Saved Event Workspace
 
 Every saved event brief and its latest generated plan are retained in local
