@@ -2,19 +2,38 @@
 
 import asyncio
 import json
+from functools import lru_cache
 from uuid import UUID
 
 from fastapi import APIRouter, Header, HTTPException, Query, Request, status
+from fastapi.responses import Response
 from sse_starlette.sse import EventSourceResponse
 
 from app.agents.recovery import SKIP_LABELS, interpret_custom
 from app.core.guard import clean_text, screen
+from app.graphs.event_workflow import STEPS, build_graph
 from app.models.run import RecoveryProposal, ResolveStepRequest, ResolveStepResponse, RunRecord, RunSnapshot, StartRunRequest, StartRunResponse
 from app.runs import store
 from app.runs.manager import TERMINAL, RunConflict, RunNotFound, run_manager
 from app.services.storage import load_event, save_event
+from app.services.workflow_diagram import render_workflow_png
 
 router = APIRouter(tags=["runs"])
+
+
+@lru_cache(maxsize=1)
+def _workflow_graph_png() -> bytes:
+    """Render the compiled graph locally once for the static UI view."""
+    graph = build_graph().compile().get_graph()
+    return render_workflow_png(graph.draw_mermaid(), STEPS)
+
+
+@router.get("/workflow/graph.png", include_in_schema=False)
+def workflow_graph_png() -> Response:
+    try:
+        return Response(_workflow_graph_png(), media_type="image/png", headers={"Cache-Control": "public, max-age=3600"})
+    except Exception as error:
+        raise HTTPException(status_code=503, detail="The LangGraph diagram could not be rendered. Use the live Workflow graph instead.") from error
 
 
 def _run_or_404(run_id: str) -> RunRecord:

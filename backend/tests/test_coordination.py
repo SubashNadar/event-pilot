@@ -3,7 +3,7 @@
 from datetime import date
 
 from app.agents.specialists import _finance_report, fit_lines_to_budget
-from app.graphs.event_workflow import _coordinate_items, owners_for
+from app.graphs.event_workflow import _coordinate_items, _reconcile_manager_plan, owners_for
 from app.models.event import EventBrief
 from conftest import create_event, of_type, wait_for
 
@@ -31,6 +31,32 @@ def test_budget_total_above_approved_is_flagged():
         "finance": {"decisions": {"budget_lines": [{"category": "Catering", "amount": 150_000}]}},
     }
     assert [item["id"] for item in _coordinate_items(state)] == ["budget-total"]
+
+
+def test_manager_plan_keeps_verified_venue_budget_and_agenda_handoffs():
+    plan = {
+        "venue": "Model Hall", "venue_detail": "Model detail", "budget_forecast": 490_000,
+        "budget_lines": [{"category": "Venue", "amount": 150_000, "share_percent": 31}],
+        "agenda": [{"time": "10:00 AM", "activity": "Model opening", "owner": "Host"}],
+    }
+    context = {
+        "logistics": {"decisions": {"venue": "Verified Hall", "venue_detail": "Pune · 200 seats", "rental_inr": 180_000}},
+        "finance": {"decisions": {"budget_lines": [{"category": "Venue", "amount": 180_000}, {"category": "Catering", "amount": 220_000}, {"category": "Contingency", "amount": 40_000}]}},
+        "schedule": {"decisions": {"agenda": [{"time": "9:30 AM", "activity": "Guest arrival"}]}},
+    }
+    result = _reconcile_manager_plan(plan, context, 500_000)
+    assert result["venue"] == "Verified Hall" and result["venue_detail"] == "Pune · 200 seats"
+    assert result["budget_forecast"] == 440_000 and result["budget_lines"][0]["amount"] == 180_000
+    assert result["agenda"] == [{"time": "9:30 AM", "activity": "Guest arrival", "owner": "Event operations"}]
+
+
+def test_coordination_ignores_malformed_model_budget_lines():
+    state = {
+        "event": {"budget": 100_000},
+        "logistics": {"decisions": {"venue": "Hall A", "rental_inr": 30_000}},
+        "finance": {"decisions": {"budget_lines": ["Venue: 30000", "Catering: 70000"]}},
+    }
+    assert _coordinate_items(state) == []
 
 
 def test_fit_keeps_the_venue_and_trims_the_rest():

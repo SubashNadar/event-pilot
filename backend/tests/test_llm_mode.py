@@ -9,6 +9,7 @@ from langchain_core.messages import AIMessage, AIMessageChunk, ToolMessage
 from app.agents import llm
 from app.models.event import AiPlanDraft
 from app.models.run import RecoveryOption, SpecialistReport
+from app.services.azure_planner import _draft_from_output
 
 TOOL_ARGS = {
     "venue_search": {"location": "Mumbai", "attendees": 999, "total_budget_inr": 1, "venue_type": "workshop studio", "preferences": "projector, breakout rooms"},  # brief values are enforced back in code
@@ -130,3 +131,24 @@ def test_llm_recovery_options_are_validated_and_custom_text_is_interpreted(clien
     second_call = [t for t in of_type(snap, "tool_call", "logistics_agent") if t["tool"]["name"] == "venue_search"][-1]["tool"]["input"]
     assert second_call["location"] == "Goa"
     assert TOOL_ARGS == TOOL_ARGS_BACKUP
+
+
+def test_manager_repairs_missing_agenda_owners_from_raw_tool_output():
+    payload = AiPlanDraft(
+        plan_type="wedding reception", venue="Garden Pavilion", venue_detail="Whitefield",
+        budget_forecast=500000,
+        budget_lines=[{"category": "Venue", "amount": 500000, "share_percent": 100}],
+        agenda=[{"time": "6:00 PM", "activity": "Guest arrival and welcome", "owner": "Guest Experience Lead"}],
+        risks=[{"level": "Medium", "title": "Rain", "detail": "Outdoor venue", "recommended_action": "Monitor"}, {"level": "Low", "title": "Traffic", "detail": "Peak hour", "recommended_action": "Share routes"}],
+        activity=[{"agent": "Event Manager", "detail": "Prepared plan", "timestamp": "Now"}], confidence=85,
+    ).model_dump()
+    del payload["agenda"][0]["owner"]
+
+    output = {
+        "parsed": None,
+        "raw": AIMessage(content="", tool_calls=[{"id": "agenda-owner", "name": "AiPlanDraft", "args": payload}]),
+        "parsing_error": ValueError("owner missing"),
+    }
+
+    draft = _draft_from_output(output)
+    assert draft.agenda[0].owner == "Guest Experience Lead"

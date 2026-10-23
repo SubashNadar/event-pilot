@@ -8,13 +8,30 @@ export interface ComposerHandle {
   focus: () => void;
 }
 
+export interface InvitationAttachment {
+  name: string;
+  text: string;
+}
+
 interface Props {
   value: string;
   onChange: (v: string) => void;
-  onSend: (v: string) => void;
+  onSend: (v: string, attachments: InvitationAttachment[]) => void;
   onStop: () => void;
   streaming: boolean;
 }
+
+const SAMPLE_INVITATION = `WEDDING RECEPTION OF MEERA AND KARTHIK
+
+Together with their families, Meera and Karthik invite you to celebrate their wedding reception.
+
+Saturday, 20 March 2027 | 6:30 PM onwards
+Whitefield Garden Pavilion, Whitefield, Bengaluru
+
+Dinner and music to follow. RSVP by 5 March 2027.
+
+Planning note: approximately 350 guests. Event planning budget: INR 12 lakh.
+Objective: create a warm family celebration with a smooth guest welcome, ceremony timing, photography and dinner flow.`;
 
 const Composer = forwardRef<ComposerHandle, Props>(function Composer({ value, onChange, onSend, onStop, streaming }, ref) {
   const ta = useRef<HTMLTextAreaElement>(null);
@@ -32,11 +49,12 @@ const Composer = forwardRef<ComposerHandle, Props>(function Composer({ value, on
   }, [value]);
 
   const over = value.length > MAX_CHARS;
-  const canSend = value.trim().length > 0 && !over && !streaming;
+  const canSend = (value.trim().length > 0 || attachments.length > 0) && !over && !streaming;
 
-  const submit = () => {
+  const submit = async () => {
     if (!canSend) return;
-    onSend(value);
+    const readable = await Promise.all(attachments.map(async (attachment) => ({ name: attachment.name, text: await attachment.text() })));
+    onSend(value, readable);
     setAttachments([]);
   };
 
@@ -48,7 +66,7 @@ const Composer = forwardRef<ComposerHandle, Props>(function Composer({ value, on
             <li key={f.name + i} className="flex items-center gap-2 rounded-xl border border-border bg-surface-2 py-1.5 pl-2.5 pr-1.5 text-[12.5px]">
               <FileText size={14} className="text-accent" aria-hidden />
               <span className="max-w-[180px] truncate">{f.name}</span>
-              <span className="text-muted">{Math.max(1, Math.round(f.size / 1024))} KB</span>
+          <span className="text-muted">Invitation text</span>
               <button type="button" className="icon-btn h-6 w-6" aria-label={`Remove ${f.name}`} onClick={() => setAttachments((a) => a.filter((_, j) => j !== i))}>
                 <X size={13} />
               </button>
@@ -80,7 +98,7 @@ const Composer = forwardRef<ComposerHandle, Props>(function Composer({ value, on
         <input
           ref={file}
           type="file"
-          accept=".pdf,.doc,.docx,.txt,.md"
+          accept=".txt,.md"
           multiple
           className="hidden"
           onChange={(e) => {
@@ -89,9 +107,19 @@ const Composer = forwardRef<ComposerHandle, Props>(function Composer({ value, on
             e.target.value = "";
           }}
         />
-        <button type="button" className="icon-btn h-9 w-9" aria-label="Attach a brief or PDF" title="Attach a brief or PDF" onClick={() => file.current?.click()}>
+        <button type="button" className="icon-btn h-9 w-9" aria-label="Attach an invitation text file" title="Attach an invitation text file" onClick={() => file.current?.click()}>
           <Paperclip size={17} />
         </button>
+
+        {!attachments.length && (
+          <button
+            type="button"
+            onClick={() => setAttachments([new File([SAMPLE_INVITATION], "Meera-and-Karthik-Wedding-Invitation.txt", { type: "text/plain" })])}
+            className="hidden rounded-lg border border-border px-2.5 py-1.5 text-[11.5px] font-medium text-accent transition-colors hover:border-accent/45 hover:bg-accent/5 sm:inline-flex"
+          >
+            Try wedding invitation
+          </button>
+        )}
 
         <span className="hidden text-[11.5px] text-muted sm:inline">
           <kbd className="font-sans">Enter</kbd> to send · <kbd className="font-sans">Shift + Enter</kbd> for a new line

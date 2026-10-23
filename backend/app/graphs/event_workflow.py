@@ -70,14 +70,65 @@ def _event(state: EventPlanningState) -> EventBrief:
 def _summary(did: list[str], verification: dict[str, Any], usage: dict[str, int], tool_results: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     sources = []
     for index, result in enumerate(tool_results or []):
+        if not isinstance(result, dict):
+            continue
         for venue in (result.get("recommendations") or [])[:3]:
-            sources.append({"id": f"venue-{index}-{venue['name']}", "label": venue["name"], "kind": "tool"})
+            if isinstance(venue, dict) and venue.get("name"):
+                sources.append({"id": f"venue-{index}-{venue['name']}", "label": venue["name"], "kind": "tool"})
     return {
         "did": did,
         "sources": sources,
         "verification": verification,
         "metrics": {"tokensIn": usage.get("tokens_in", 0), "tokensOut": usage.get("tokens_out", 0), "costUsd": llm.cost_usd(usage.get("tokens_in", 0), usage.get("tokens_out", 0)), "model": llm.model_name() if llm.llm_enabled() else "rules"},
     }
+
+
+def _reconcile_manager_plan(plan: dict[str, Any], context: dict[str, Any], budget: int) -> dict[str, Any]:
+    """Keep an LLM manager draft aligned with facts verified by specialists.
+
+    The manager remains responsible for synthesis and narrative choices, while
+    tool-backed specialist decisions remain the source of truth for venue,
+    venue rent and agenda timing. This prevents a plausible-looking LLM draft
+    from undoing a verified handoff and triggering avoidable reflection loops.
+    """
+    reconciled = dict(plan)
+    logistics = context.get("logistics") if isinstance(context.get("logistics"), dict) else {}
+    logistics_decisions = logistics.get("decisions") if isinstance(logistics.get("decisions"), dict) else {}
+    if logistics_decisions.get("venue"):
+        reconciled["venue"] = logistics_decisions["venue"]
+    if logistics_decisions.get("venue_detail"):
+        reconciled["venue_detail"] = logistics_decisions["venue_detail"]
+
+    finance = context.get("finance") if isinstance(context.get("finance"), dict) else {}
+    finance_decisions = finance.get("decisions") if isinstance(finance.get("decisions"), dict) else {}
+    raw_lines = finance_decisions.get("budget_lines")
+    if isinstance(raw_lines, list):
+        lines = [
+            {"category": str(line["category"]), "amount": int(line["amount"])}
+            for line in raw_lines
+            if isinstance(line, dict) and line.get("category") and isinstance(line.get("amount"), (int, float))
+        ]
+        total = sum(line["amount"] for line in lines)
+        if lines and total <= budget:
+            reconciled["budget_lines"] = [
+                {**line, "share_percent": round(line["amount"] / total * 100) if total else 0}
+                for line in lines
+            ]
+            reconciled["budget_forecast"] = total
+
+    schedule = context.get("schedule") if isinstance(context.get("schedule"), dict) else {}
+    schedule_decisions = schedule.get("decisions") if isinstance(schedule.get("decisions"), dict) else {}
+    raw_agenda = schedule_decisions.get("agenda")
+    if isinstance(raw_agenda, list) and raw_agenda:
+        owners = {(item.get("time"), item.get("activity")): item.get("owner", "Event operations") for item in plan.get("agenda", []) if isinstance(item, dict)}
+        agenda = [
+            {"time": str(item["time"]), "activity": str(item["activity"]), "owner": owners.get((item.get("time"), item.get("activity")), "Event operations")}
+            for item in raw_agenda
+            if isinstance(item, dict) and item.get("time") and item.get("activity")
+        ]
+        if agenda:
+            reconciled["agenda"] = agenda
+    return reconciled
 
 
 # ------------------------------------------------------------------ tasks
@@ -114,7 +165,7 @@ async def manager_attempt(event: dict[str, Any], context: dict[str, Any], overri
             return {"ok": True, "plan": plan.model_dump(mode="json"), "usage": {}, "mode": "rules"}
         async with llm.limited():
             plan, raw = await abuild_plan_with_model(llm.get_chat_model(), brief, context, None)
-        return {"ok": True, "plan": plan.model_dump(mode="json"), "usage": llm.usage_of(raw), "mode": "llm"}
+        return {"ok": True, "plan": _reconcile_manager_plan(plan.model_dump(mode="json"), context, brief.budget), "usage": llm.usage_of(raw), "mode": "llm"}
     except Exception as error:
         return {"ok": False, "error": str(error) or error.__class__.__name__}
 
@@ -302,8 +353,14 @@ def _specialist_overrides(state: EventPlanningState, step_id: str) -> dict[str, 
 
 def _coordinate_items(state: EventPlanningState) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
-    decisions = (state.get("logistics") or {}).get("decisions") or {}
-    lines = ((state.get("finance") or {}).get("decisions") or {}).get("budget_lines") or []
+    logistics = state.get("logistics") or {}
+    finance = state.get("finance") or {}
+    decisions = logistics.get("decisions") if isinstance(logistics, dict) else {}
+    finance_decisions = finance.get("decisions") if isinstance(finance, dict) else {}
+    decisions = decisions if isinstance(decisions, dict) else {}
+    finance_decisions = finance_decisions if isinstance(finance_decisions, dict) else {}
+    lines = finance_decisions.get("budget_lines") or []
+    lines = [line for line in lines if isinstance(line, dict) and "amount" in line] if isinstance(lines, list) else []
     venue_line = next((line for line in lines if "venue" in str(line.get("category", "")).lower()), None)
     if decisions.get("rental_inr") and venue_line and int(venue_line["amount"]) != int(decisions["rental_inr"]):
         items.append({"id": "venue-rent", "owner": "finance_agent", "message": f"The budget has {inr(venue_line['amount'])} for the venue, but Logistics quoted {inr(decisions['rental_inr'])} for {decisions['venue']}."})

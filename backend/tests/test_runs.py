@@ -37,6 +37,16 @@ def test_full_run_streams_every_step_and_saves_the_plan(client):
     assert plan["recommendations"].startswith("## AI Leadership Workshop")
 
 
+def test_workflow_graph_png_endpoint_returns_the_compiled_graph(client):
+    from app.api.routes import runs
+
+    runs._workflow_graph_png.cache_clear()
+    response = client.get("/api/v1/workflow/graph.png")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert response.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+
 def test_failed_step_offers_options_and_resumes_without_rerunning_others(client):
     event = create_event(client, location="Shillong", attendees=200, budget=1000000, name="Meera and Karthik Wedding Reception", objective="Elegant wedding reception with smooth guest hospitality.")
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]

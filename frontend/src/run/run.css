@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Eventa design tokens (RGB triplets so Tailwind can apply alpha, e.g. bg-accent/10).
+   Every text colour passes WCAG AA on bg, surface and surface-2. */
+:root {
+  --ep-bg: 250 249 245;
+  --ep-surface: 255 255 255;
+  --ep-surface-2: 243 241 234;
+  --ep-border: 229 225 215;
+  --ep-ink: 31 30 27;
+  --ep-muted: 107 103 94;
+  --ep-accent: 170 74 40; /* #AA4A28 terracotta: EventPilot itself and live activity */
+  --ep-accent-ink: 255 255 255;
+  --ep-accent-soft: 248 233 224;
+  --ep-success: 35 119 72;
+  --ep-danger: 179 38 30;
+  --ep-warn: 138 97 0;
+  --ep-info: 55 96 160;
+}
+
+/* Preflight is off (it would restyle the legacy screens), so reset only inside
+   Tailwind screens. :where() keeps specificity at zero so utilities still win. */
+:where(.ep-root) {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgb(var(--ep-ink));
+  -webkit-font-smoothing: antialiased;
+}
+:where(.ep-root) :where(h1, h2, h3, h4, p, ul, ol, dl, dd, figure, pre) {
+  margin: 0;
+}
+:where(.ep-root) :where(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+:where(.ep-root) :where(button) {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+:where(.ep-root) :where(button:disabled) {
+  cursor: default;
+}
+:where(.ep-root) :where(input, textarea) {
+  font: inherit;
+  color: inherit;
+}
+:where(.ep-root) :where(*, *::before, *::after) {
+  border-width: 0;
+  border-style: solid;
+  border-color: rgb(var(--ep-border));
+}
+:where(.ep-root) :where(code, pre) {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+.ep-root :focus-visible {
+  outline: 2px solid rgb(var(--ep-accent));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@layer components {
+  .ep-icon-btn {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-ink disabled:pointer-events-none disabled:opacity-40;
+  }
+  .ep-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 text-xs text-muted;
+  }
+  .ep-shimmer {
+    background: linear-gradient(90deg, rgb(var(--ep-muted)) 0%, rgb(var(--ep-muted)) 40%, rgb(var(--ep-ink)) 50%, rgb(var(--ep-muted)) 60%, rgb(var(--ep-muted)) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    @apply animate-shimmer;
+  }
+  .ep-skeleton {
+    background: linear-gradient(90deg, rgb(var(--ep-surface-2)) 0%, rgb(var(--ep-border)) 50%, rgb(var(--ep-surface-2)) 100%);
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-md;
+  }
+}
+
+/* Recommendations body: serif for what the agent wrote, sans for headings and tables. */
+.ep-answer {
+  @apply font-serif text-[16px] leading-[1.65] text-ink;
+}
+.ep-answer > * + * {
+  margin-top: 0.85em;
+}
+.ep-answer h2 {
+  @apply font-sans text-[19px] font-semibold leading-snug tracking-[-0.01em];
+}
+.ep-answer h3 {
+  @apply font-sans text-[15px] font-semibold;
+}
+.ep-answer strong {
+  @apply font-semibold;
+}
+.ep-answer ul,
+.ep-answer ol {
+  padding-left: 1.3em;
+}
+.ep-answer ul {
+  list-style: disc;
+}
+.ep-answer ol {
+  list-style: decimal;
+}
+.ep-answer li + li {
+  margin-top: 0.3em;
+}
+.ep-answer li::marker {
+  color: rgb(var(--ep-muted));
+}
+.ep-answer .table-wrap {
+  @apply overflow-x-auto rounded-xl border border-border;
+}
+.ep-answer table {
+  @apply w-full border-collapse font-sans text-[13.5px];
+}
+.ep-answer th {
+  @apply bg-surface-2 px-3 py-2 text-left font-medium text-muted;
+}
+.ep-answer td {
+  @apply border-t border-border px-3 py-2 align-top;
+}
+.ep-cursor::after,
+.ep-streaming > :last-child:not(ul):not(ol):not(.table-wrap)::after,
+.ep-streaming > ul:last-child > li:last-child::after,
+.ep-streaming > ol:last-child > li:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: rgb(var(--ep-accent));
+  border-radius: 1px;
+  @apply animate-blink;
+}
+
+.ep-scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--ep-border)) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ep-root *,
+  .ep-root *::before,
+  .ep-root *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .ep-shimmer {
+    color: rgb(var(--ep-muted));
+    background: none;
+  }
+}

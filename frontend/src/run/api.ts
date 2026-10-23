@@ -1,0 +1,32 @@
+import type { ResolveChoice, ResolveResult } from "./types";
+
+export const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8001/api/v1";
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, { headers: { "Content-Type": "application/json" }, ...options });
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null))?.detail;
+    throw new Error(typeof detail === "string" ? detail : "Unable to reach the planning API.");
+  }
+  return response.status === 204 ? (undefined as T) : response.json();
+}
+
+export interface StartRunOptions {
+  operation?: "plan-generation" | "budget-revision";
+  budget?: number;
+}
+
+export const startRun = (eventId: string, options: StartRunOptions = {}) =>
+  request<{ run_id: string; status: string }>(`/events/${eventId}/runs`, { method: "POST", body: JSON.stringify(options) });
+
+export const latestRun = (eventId: string) => request<{ id: string; status: string }>(`/events/${eventId}/runs/latest`);
+
+export const resolveStep = (runId: string, stepId: string, choice: ResolveChoice) =>
+  request<ResolveResult>(`/runs/${runId}/steps/${stepId}/resolve`, { method: "POST", body: JSON.stringify(choice) });
+
+export const cancelRun = (runId: string) => request<void>(`/runs/${runId}/cancel`, { method: "POST" });
+
+export const streamUrl = (runId: string) => `${API_BASE_URL}/runs/${runId}/stream`;
+
+/** Static PNG rendered from the backend's compiled LangGraph definition. */
+export const workflowGraphPngUrl = () => `${API_BASE_URL}/workflow/graph.png`;
