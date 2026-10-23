@@ -96,3 +96,16 @@ def render_workflow_png(graph_mermaid: str, steps: list[dict[str, Any]]) -> byte
     output = BytesIO()
     image.save(output, format="PNG", optimize=True)
     return output.getvalue()
+
+
+if __name__ == "__main__":
+    # Writes the LangGraph-rendered PNG to docs/workflow-graph.png:
+    #   cd backend && .venv\Scripts\python.exe -m app.services.workflow_diagram
+    from pathlib import Path
+
+    from app.graphs.event_workflow import STEPS, build_graph
+
+    compiled = build_graph().compile().get_graph()
+    target = Path(__file__).resolve().parents[3] / "docs" / "workflow-graph.png"
+    target.write_bytes(render_workflow_png(compiled.draw_mermaid(), STEPS))
+    print(f"Wrote {target}")
