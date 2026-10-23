@@ -24,6 +24,7 @@ from app.agents.llm import get_chat_model, limited, llm_enabled, usage_of
 from app.mcp.client import ToolCallError, call_planning_tool
 from app.models.event import EventBrief
 from app.models.run import SpecialistReport
+from app.core.guard import DATA_RULE, wrap_user
 from app.services.azure_planner import event_type_guidance
 from app.services.planning import default_agenda, default_budget_lines
 
@@ -48,7 +49,7 @@ def adjustments_text(overrides: dict[str, Any]) -> str:
         parts.append("The review found these problems; fix them in this attempt: " + json.dumps(overrides["feedback"], default=str))
     owner = {key: value for key, value in overrides.items() if key not in ("handoff", "feedback")}
     if owner:
-        parts.append("User-approved adjustments for this attempt (these override the brief): " + json.dumps(owner, default=str))
+        parts.append("User-approved adjustments for this attempt (these override the brief): " + wrap_user(json.dumps(owner, default=str), "user_message"))
     return ("\n" + "\n".join(parts)) if parts else ""
 
 
@@ -502,7 +503,7 @@ async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, A
         return {"report": report.model_dump(), "tool_results": tool_results, "usage": usage, "mode": "edit" if overrides.get("edit_mode") else "rules"}
 
     model = get_chat_model()
-    messages: list[Any] = [SystemMessage(f"{PLANNER_VOICE}\n\n{role.prompt}"), HumanMessage(brief_text(event) + adjustments_text(overrides))]
+    messages: list[Any] = [SystemMessage(f"{PLANNER_VOICE}\n\n{role.prompt}\n\n{DATA_RULE}"), HumanMessage(wrap_user(brief_text(event), "brief") + adjustments_text(overrides))]
     tool_model = model.bind_tools([role.tool_schema()])
     for _ in range(2):  # bounded ReAct loop: at most two tool rounds
         async with limited():
@@ -514,10 +515,10 @@ async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, A
             break
         for tool_call in ai.tool_calls:
             result = await call(tool_call.get("args") or {})
-            messages.append(ToolMessage(json.dumps(result, default=str), tool_call_id=tool_call["id"]))
+            messages.append(ToolMessage(wrap_user(json.dumps(result, default=str), "tool_result"), tool_call_id=tool_call["id"]))
     if not tool_results:  # the model answered without checking: run the tool once so the step can be verified
         await call({})
-        messages.append(HumanMessage("Tool result: " + json.dumps(tool_results[-1], default=str)))
+        messages.append(HumanMessage("Tool result: " + wrap_user(json.dumps(tool_results[-1], default=str), "tool_result")))
 
     structured = model.with_structured_output(SpecialistReport, method="function_calling", include_raw=True)
     async with limited():

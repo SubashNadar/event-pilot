@@ -33,6 +33,7 @@ from app.agents.checks import CHECK_TEXT, verify
 from app.agents.fmt import inr
 from app.agents.recovery import RecoveryProposal, explain_failure
 from app.agents.specialists import ROLES, normalise_budget_lines, run_specialist
+from app.core.guard import DATA_RULE, wrap_user
 from app.core.config import settings
 from app.graphs.emit import emit
 from app.graphs.state import EventPlanningState
@@ -468,7 +469,8 @@ async def recommendations(state: EventPlanningState, config: RunnableConfig) -> 
         prompt = (
             "Write the event owner a short markdown summary of this plan: a heading with the event name, one sentence on budget and venue, "
             "then '**Next steps**' and 3-4 numbered, specific actions (use ₹ and Indian number formatting). No preamble, no emoji.\n"
-            f"Brief: {event}\nPlan: {plan}\nSkipped specialists: {[c.get('agent') for c in context.values() if c.get('skipped')]}"
+            f"{wrap_user(f'Brief: {event}', 'brief')}\n{wrap_user(f'Plan: {plan}', 'brief')}\n{DATA_RULE}\n"
+            f"Skipped specialists: {[c.get('agent') for c in context.values() if c.get('skipped')]}"
         )
         try:
             async with llm.limited():
