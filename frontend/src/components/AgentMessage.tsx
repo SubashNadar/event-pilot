@@ -239,7 +239,15 @@ export default function AgentMessage({ message, selectedStepId, onOpenStep }: Pr
         {run.status === "awaiting_retry" && failed && <RecoveryCard msgId={message.id} step={failed} onResolve={resolveStep} />}
 
         {(run.answer || run.status === "answering") && (
-          <StreamingMarkdown content={run.answer} streaming={run.status === "answering"} reveal={message.question !== undefined} />
+          message.blocked ? (
+            <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-danger/30 bg-danger/5 px-3.5 py-3 text-[13.5px]">
+              <AlertTriangle size={16} className="mt-0.5 shrink-0 text-danger" aria-hidden />
+              <div className="min-w-0">
+                <p className="font-medium text-danger">Request blocked</p>
+                <p className="mt-0.5 text-muted">{run.answer}</p>
+              </div>
+            </div>
+          ) : <StreamingMarkdown content={run.answer} streaming={run.status === "answering"} reveal={message.question !== undefined} />
         )}
 
         {run.status === "completed" && run.eventId && <PlanExports eventId={run.eventId} />}

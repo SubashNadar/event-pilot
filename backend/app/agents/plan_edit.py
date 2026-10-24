@@ -60,6 +60,7 @@ class BudgetSet(BaseModel):
 class PlanEdit(BaseModel):
     """What the event owner wants changed. Leave everything empty for a question."""
 
+    name: str | None = Field(default=None, min_length=2, max_length=120, description="New event name")
     attendees: int | None = Field(default=None, ge=1, le=100_000)
     budget_inr: int | None = Field(default=None, ge=1_000, description="New TOTAL budget in rupees")
     event_date: str | None = Field(default=None, description="New date, YYYY-MM-DD")
@@ -75,7 +76,7 @@ class PlanEdit(BaseModel):
     question: str | None = Field(default=None, description="If the request is unclear, one short clarifying question")
 
     def is_change(self) -> bool:
-        return any([self.attendees, self.budget_inr, self.event_date, self.location, self.venue, self.venue_type,
+        return any([self.name, self.attendees, self.budget_inr, self.event_date, self.location, self.venue, self.venue_type,
                     self.agenda_add, self.agenda_move, self.agenda_remove, self.budget_set, self.requirements_add])
 
 
@@ -176,6 +177,11 @@ def rule_parse(message: str, today: date | None = None) -> PlanEdit:
     text = " " + message.strip() + " "
     edit = PlanEdit()
 
+    if match := re.search(r"\b(?:change|rename|update|set)\s+(?:the\s+)?(?:event\s+)?name\s+(?:to|as)\s+[\"']?(?P<name>[^\"'\n.!?]+)[\"']?", message, re.I):
+        name = " ".join(match.group("name").split()).strip(" '\"")
+        if len(name) >= 2:
+            edit.name = name[:120]
+
     def cut(match: re.Match) -> None:
         nonlocal text
         text = text[: match.start()] + " " + text[match.end():]
@@ -239,8 +245,11 @@ def plan_context(event: EventBrief, plan: dict[str, Any], reports: dict[str, Any
 
 async def interpret(message: str, event: EventBrief, plan: dict[str, Any], reports: dict[str, Any], config: dict | None = None) -> tuple[PlanEdit, str]:
     """Returns (edit, mode)."""
-    if not llm_enabled():
-        return rule_parse(message), "rules"
+    rule_edit = rule_parse(message)
+    # A name change is unambiguous and must not depend on an LLM deciding to
+    # populate an optional structured field.
+    if rule_edit.name or not llm_enabled():
+        return rule_edit, "rules"
     try:
         model = get_chat_model().with_structured_output(PlanEdit, method="function_calling")
         async with limited():
@@ -287,6 +296,13 @@ def prepare(edit: PlanEdit, event: EventBrief, plan: dict[str, Any], reports: di
     location = event.location
 
     # Brief-level changes
+    if edit.name and edit.name.strip() != event.name:
+        name = " ".join(edit.name.split())[:120]
+        prepared.brief["name"] = name
+        prepared.changes.append(f"event name to {name}")
+        # Re-run a small, relevant step so the manager re-synthesizes a plan
+        # that carries the updated event identity without changing unrelated work.
+        _add(prepared, "requirements_agent")
     if edit.attendees and edit.attendees != event.attendees:
         prepared.brief["attendees"] = edit.attendees
         prepared.changes.append(f"guests from {event.attendees} to {edit.attendees}")

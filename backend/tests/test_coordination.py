@@ -135,3 +135,23 @@ def test_venue_returned_as_an_object_is_read_as_its_name():
     decisions = _normalise_result(result)["report"]["decisions"]
     assert decisions["venue"] == "Kharadi Grand Banquets"
     assert decisions["rental_inr"] == 210000
+
+
+def test_unresolved_review_waits_for_the_owner_and_does_not_replace_plan(client, monkeypatch):
+    from app.graphs import event_workflow
+    from conftest import approve_plan
+
+    event = create_event(client, location="Pune", attendees=120, budget=1500000)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    assert wait_for(client, run_id, {"completed", "error", "paused"})["run"]["status"] == "paused"
+    assert approve_plan(client, run_id)["run"]["status"] == "completed"
+    original = client.get(f"/api/v1/events/{event['id']}/plan").json()
+
+    monkeypatch.setattr(event_workflow, "_review", lambda *args: ["Budget forecast exceeds the approved budget."])
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    snapshot = wait_for(client, run_id, {"completed", "error", "paused"})
+    # The owner decides on a plan the checks still flag: the run waits at approval, with the issue shown.
+    assert snapshot["run"]["status"] == "paused"
+    assert not of_type(snapshot, "plan_ready")
+    assert any("Budget forecast exceeds" in e["message"] for e in of_type(snapshot, "notice"))
+    assert client.get(f"/api/v1/events/{event['id']}/plan").json() == original

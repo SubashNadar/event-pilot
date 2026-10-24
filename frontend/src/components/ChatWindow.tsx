@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, Briefcase, Cake, Heart, Mic } from "lucide-react";
+import { ArrowDown, Briefcase, Cake, Heart, LoaderCircle, Mic } from "lucide-react";
 import { useAgent } from "../hooks/useAgentStream";
 import AgentMessage from "./AgentMessage";
 import { EventPilotMark } from "./Logo";
@@ -29,6 +29,12 @@ const SUGGESTIONS = [
   },
 ];
 
+const RESPONSE_STATUS = [
+  "Reviewing your event details...",
+  "Checking the planning requirements...",
+  "Preparing the next planning step...",
+];
+
 function greeting() {
   const h = new Date().getHours();
   return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
@@ -46,8 +52,10 @@ export default function ChatWindow({ selected, onOpenStep }: Props) {
   const scroller = useRef<HTMLDivElement>(null);
   const pinned = useRef(true);
   const [showJump, setShowJump] = useState(false);
+  const [responseStatus, setResponseStatus] = useState(0);
 
   const empty = state.messages.length === 0;
+  const planningStarted = state.messages.some((message) => message.role === "agent" && !message.blocked && Boolean(message.run.answer || message.question || message.warnings?.length));
 
   // Follow the stream while the reader is at the bottom; stop following if they scroll up.
   const onScroll = () => {
@@ -67,6 +75,15 @@ export default function ChatWindow({ selected, onOpenStep }: Props) {
     pinned.current = true;
     composer.current?.focus();
   }, [state.sessionId]);
+
+  useEffect(() => {
+    if (!isStreaming) {
+      setResponseStatus(0);
+      return undefined;
+    }
+    const timer = window.setInterval(() => setResponseStatus(current => (current + 1) % RESPONSE_STATUS.length), 2200);
+    return () => window.clearInterval(timer);
+  }, [isStreaming]);
 
   const jump = () => {
     const el = scroller.current;
@@ -115,6 +132,12 @@ export default function ChatWindow({ selected, onOpenStep }: Props) {
                 />
               ),
             )}
+            {isStreaming && (
+              <div className="flex items-center gap-2.5 text-[13px] font-medium text-muted" role="status" aria-live="polite">
+                <LoaderCircle size={15} className="animate-spin text-accent motion-reduce:animate-none" aria-hidden />
+                <span>{RESPONSE_STATUS[responseStatus]}</span>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -133,7 +156,7 @@ export default function ChatWindow({ selected, onOpenStep }: Props) {
 
       <div className="sticky bottom-0 bg-gradient-to-t from-bg via-bg to-bg/0 px-3 pb-3 pt-2 sm:px-6 sm:pb-5">
         <div className="mx-auto max-w-[768px]">
-          {empty && (
+          {!planningStarted && (
             <div className="mb-3 flex flex-wrap justify-center gap-2" role="group" aria-label="Suggestions">
               {SUGGESTIONS.map(({ label, icon: Icon, prompt }) => (
                 <button

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getEventChat, sendPlanChat } from '../api/eventApi';
+import { ApiError } from '../lib/http';
 import './chatbotDock.css';
 import './planChat.css';
 
@@ -19,6 +20,14 @@ export function PlanChat({ eventId, run, onEditRun, onOpenRun, onPlanUpdated }) 
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [retryAt, setRetryAt] = useState(0);
+  const [remaining, setRemaining] = useState(0);
+  useEffect(() => {
+    const tick = () => setRemaining(Math.max(0, Math.ceil((retryAt - Date.now()) / 1000)));
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timer);
+  }, [retryAt]);
   const [pendingRun, setPendingRun] = useState(null);
   const historyRef = useRef(null);
   const inputRef = useRef(null);
@@ -46,7 +55,7 @@ export function PlanChat({ eventId, run, onEditRun, onOpenRun, onPlanUpdated }) 
 
   const send = async text => {
     const message = text.trim();
-    if (!message || busy) return;
+    if (!message || busy || Date.now() < retryAt) return;
     setBusy(true);
     setError('');
     setDraft('');
@@ -63,6 +72,7 @@ export function PlanChat({ eventId, run, onEditRun, onOpenRun, onPlanUpdated }) 
       setMessages(current => current.filter(item => !item.pending));
       setDraft(message);
       setError(failure.message || 'The planning assistant is unavailable.');
+      if (failure instanceof ApiError && failure.status === 429) setRetryAt(Date.now() + (failure.retryAfter ?? 60) * 1000);
     } finally {
       setBusy(false);
       requestAnimationFrame(() => inputRef.current?.focus());
@@ -72,6 +82,9 @@ export function PlanChat({ eventId, run, onEditRun, onOpenRun, onPlanUpdated }) 
   const updating = pendingRun && run?.runId === pendingRun ? run : null;
   const rerun = updating ? updating.steps.filter(step => !(step.summary?.did?.[0] || '').startsWith('Kept from the current plan') && step.status !== 'pending' && step.status !== 'skipped') : [];
   const waiting = updating?.status === 'awaiting_input';
+  // Brief intake belongs to Plan with AI. Keep it stored with the event, but do
+  // not replay it in the dedicated post-plan edit conversation.
+  const visibleMessages = messages.filter(message => message.meta?.kind !== 'brief');
 
   return <aside className={`chatbot-dock plan-chat ${open ? 'is-open' : ''}`} aria-label="Plan conversation">
     {open && <section className="chatbot-window">
@@ -79,8 +92,8 @@ export function PlanChat({ eventId, run, onEditRun, onOpenRun, onPlanUpdated }) 
       <div className="chat-layout">
         <section className="chat-panel" aria-label="Conversation about the plan">
           <div className="chat-history" ref={historyRef} aria-live="polite">
-            {messages.length === 0 && <div className="chat-message assistant"><span>EP</span><p className="chat-text">Your plan is ready. Ask me about it, or tell me what to change, like “move dinner to 9 PM” or “make it 300 guests”. I’ll re-run only the specialists the change affects.</p></div>}
-            {messages.map(message => <div className={`chat-message ${message.role} ${message.meta?.kind ? `kind-${message.meta.kind}` : ''}`} key={message.seq}><span>{message.role === 'assistant' ? 'EP' : 'You'}</span><p className="chat-text">{message.content}</p></div>)}
+            {visibleMessages.length === 0 && <div className="chat-message assistant"><span>EP</span><p className="chat-text">Your plan is ready. Ask me about it, or tell me what to change, like “move dinner to 9 PM”, “make it 300 guests”, or “change name to Spring Birthday Celebration”. I’ll re-run only the specialists the change affects.</p></div>}
+            {visibleMessages.map(message => <div className={`chat-message ${message.role} ${message.meta?.kind ? `kind-${message.meta.kind}` : ''}`} key={message.seq}><span>{message.role === 'assistant' ? 'EP' : 'You'}</span><p className="chat-text">{message.content}</p></div>)}
             {updating && <div className="plan-chat-progress" role="status">
               <p>{waiting ? 'A step needs your decision.' : 'Updating the plan'}</p>
               <ul>{rerun.map(step => <li key={step.id} className={`is-${step.status}`}>{step.agent}: {step.status === 'completed' ? 'done' : step.status === 'failed' ? 'needs you' : 'working'}</li>)}</ul>
@@ -88,12 +101,12 @@ export function PlanChat({ eventId, run, onEditRun, onOpenRun, onPlanUpdated }) 
             </div>}
           </div>
           <div className="chat-composer">
-            {messages.length < 2 && <div className="suggestion-row">{SUGGESTIONS.map(text => <button key={text} disabled={busy || Boolean(updating)} onClick={() => send(text)}>{text}</button>)}</div>}
+            {visibleMessages.length < 2 && <div className="suggestion-row">{SUGGESTIONS.map(text => <button key={text} disabled={busy || remaining > 0 || Boolean(updating)} onClick={() => send(text)}>{text}</button>)}</div>}
             <form onSubmit={event => { event.preventDefault(); send(draft); }}>
               <input ref={inputRef} value={draft} maxLength={1000} disabled={busy} onChange={event => setDraft(event.target.value)} placeholder={updating ? 'Wait for this update to finish' : 'e.g. Add a shehnai at the gate at 7 PM'} aria-label="Ask about or change the plan" />
-              <button className="button primary" type="submit" disabled={busy || !draft.trim() || Boolean(updating && !waiting)}>{busy ? 'Sending…' : 'Send'}</button>
+              <button className="button primary" type="submit" disabled={busy || remaining > 0 || !draft.trim() || Boolean(updating && !waiting)}>{busy ? 'Sending…' : remaining > 0 ? `Wait ${remaining}s` : 'Send'}</button>
             </form>
-            {error && <p className="chat-error">{error}</p>}
+            {error && <p className="chat-error" role="alert">{error}</p>}
           </div>
         </section>
       </div>

@@ -1,15 +1,8 @@
+import { request } from '../lib/http';
 import type { ResolveChoice, ResolveResult } from "./types";
 
 export const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8001/api/v1";
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, { headers: { "Content-Type": "application/json" }, ...options });
-  if (!response.ok) {
-    const detail = (await response.json().catch(() => null))?.detail;
-    throw new Error(typeof detail === "string" ? detail : "Unable to reach the planning API.");
-  }
-  return response.status === 204 ? (undefined as T) : response.json();
-}
 
 export interface StartRunOptions {
   operation?: "plan-generation" | "budget-revision";

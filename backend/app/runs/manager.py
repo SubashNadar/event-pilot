@@ -165,6 +165,13 @@ class RunManager:
                 self._hook(run_id, "paused", [interrupt.value for interrupt in pending])
                 return
             values = snapshot.values
+            if values.get("review", {}).get("approved") is False:
+                message = "The plan needs attention: " + " ".join(values["review"].get("issues", [])) + " Update the brief or budget and generate the plan again."
+                store.update_run(run_id, status="error", error=message)
+                self.publish(run_id, {"type": "error", "message": message}, "error")
+                self._hook(run_id, "ended", "error", message)
+                self._hooks.pop(run_id, None)
+                return
             plan = EventPlan.model_validate({**values["final_plan"], "run_id": run_id})
             save_plan(plan)
             usage = values.get("usage", {})
@@ -187,9 +194,10 @@ class RunManager:
             raise
         except Exception as error:
             logger.exception("Run %s failed", run_id)
-            store.update_run(run_id, status="error", error=str(error))
-            self.publish(run_id, {"type": "error", "message": f"The planning run stopped: {error}"}, "error")
-            self._hook(run_id, "ended", "error", str(error))
+            message = f"The planning run could not finish. Check the brief and try again. Reference: {run_id}"
+            store.update_run(run_id, status="error", error=message)
+            self.publish(run_id, {"type": "error", "message": message}, "error")
+            self._hook(run_id, "ended", "error", message)
             self._hooks.pop(run_id, None)
         finally:
             self._tasks.pop(run_id, None)
