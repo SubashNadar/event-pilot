@@ -9,6 +9,7 @@
   posted back into the same conversation when the run finishes.
 """
 
+import re
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
@@ -30,6 +31,14 @@ from app.services.storage import load_event, load_plan, save_event
 router = APIRouter(prefix="/chat", tags=["chat"])
 event_chat_router = APIRouter(tags=["chat"])
 
+_EVENT_START_CUE = re.compile(
+    r"\b(event|wedding|reception|birthday|party|celebration|conference|summit|workshop|training|seminar|"
+    r"meetup|networking|offsite|retreat|ceremony|engagement|festival|fest|concert|launch|hackathon|"
+    r"team[ -]?building|lunch|dinner)\b",
+    re.IGNORECASE,
+)
+BRIEF_REDIRECT = "Out-of-scope request. EventPilot is designed only for event planning, so I cannot advise on that topic. Try an event-related request, such as 'Plan a wedding reception in Bengaluru for 200 guests.'"
+
 
 @router.post("/planning-turn", response_model=PlanningChatTurnResponse)
 def planning_turn(payload: PlanningChatTurnRequest) -> PlanningChatTurnResponse:
@@ -44,9 +53,18 @@ async def brief_turn(payload: BriefTurnRequest) -> BriefTurnResponse:
     benchmarks and frame the next question with data-driven options."""
     message = clean_text(payload.message) if payload.message else payload.message
     flagged = screen(message)
-    result = await run_brief_turn(payload.model_copy(update={"message": None if flagged else message}))
+    # Only the first free-text message needs an event cue. Later turns can be
+    # concise answers such as a city, date, guest count, or budget.
+    out_of_scope_start = bool(
+        message and not payload.answers and not payload.field and not payload.ask
+        and not payload.patch and not _EVENT_START_CUE.search(message)
+    )
+    result = await run_brief_turn(payload.model_copy(update={"message": None if flagged or out_of_scope_start else message}))
     if flagged:
         result.reply = REDIRECT
+    elif out_of_scope_start:
+        result.reply = BRIEF_REDIRECT
+        result.next = None
 
     shown = clean_text(payload.display_text or payload.message or "", 300)
     session_id = payload.session_id if payload.session_id and store.get_chat_session(payload.session_id) else None

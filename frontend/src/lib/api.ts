@@ -1,3 +1,4 @@
+import { request } from './http';
 /**
  * Backend calls for the Eventa chat. Paths and payloads match backend/app/api/routes.
  * Snake_case is the wire format for events and briefs; run events arrive camelCase.
@@ -36,17 +37,6 @@ export interface NewEvent {
   objective: string;
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
-  if (!response.ok) {
-    const detail = (await response.json().catch(() => null))?.detail;
-    throw new Error(typeof detail === "string" ? detail : "Unable to reach the planning API.");
-  }
-  return response.status === 204 ? (undefined as T) : response.json();
-}
 
 export const listEvents = () => request<ApiEvent[]>("/events");
 

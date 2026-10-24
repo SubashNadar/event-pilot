@@ -21,6 +21,13 @@ def test_one_sentence_fills_five_fields_and_asks_only_whats_left(client):
     assert question["options"][0]["label"] == "Smooth guest hospitality and dining for both families"
 
 
+def test_out_of_scope_first_message_is_not_misread_as_an_event(client):
+    result = turn(client, message="Which Kubernetes cluster version should the deployment use?")
+    assert result["answers"] == {}
+    assert result["reply"] == "Out-of-scope request. EventPilot is designed only for event planning, so I cannot advise on that topic. Try an event-related request, such as 'Plan a wedding reception in Bengaluru for 200 guests.'"
+    assert result["next"] is None
+
+
 def test_questions_and_options_adapt_to_what_is_known(client):
     first = turn(client, message="")
     assert first["next"]["field"] == "eventType"

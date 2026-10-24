@@ -166,3 +166,21 @@ def test_over_budget_venue_offers_the_exact_share_needed(client):
     client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"option_id": "raise-venue-share"})
     snap = wait_for(client, run_id, {"completed", "error", "paused"})
     assert of_type(snap, "plan_ready")[0]["plan"]["venue"] == "Andheri Skyline Banquets"
+
+
+def test_unexpected_run_failure_hides_internal_exception(client, monkeypatch):
+    from app.runs.manager import run_manager
+
+    event = create_event(client)
+
+    async def fail(*args, **kwargs):
+        raise RuntimeError("private-provider-detail")
+        yield  # make this an async generator, like graph.astream
+
+    monkeypatch.setattr(run_manager.graph, "astream", fail)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    snapshot = wait_for(client, run_id, {"error"})
+    message = of_type(snapshot, "error")[0]["message"]
+    assert run_id in message
+    assert "private-provider-detail" not in str(snapshot)
+    assert not of_type(snapshot, "run_completed")

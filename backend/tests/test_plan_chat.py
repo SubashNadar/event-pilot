@@ -53,6 +53,8 @@ def test_rule_parser_understands_common_edits():
     assert budget.budget_inr == 1_200_000
     venue = rule_parse("Switch to Vashi Grand Ballroom")
     assert venue.venue == "Vashi Grand Ballroom"
+    name = rule_parse("Change name to Surprise Birthday Party Nov 2026")
+    assert name.name == "Surprise Birthday Party Nov 2026"
     need = rule_parse("We need wheelchair access.")
     assert need.requirements_add == ["Wheelchair access"]
     assert rule_parse("What's the venue?").answer == ""
@@ -107,8 +109,13 @@ def test_chat_edits_rerun_only_the_affected_steps(client):
     assert client.get(f"/api/v1/events/{event['id']}").json()["attendees"] == 90
     assert client.get(f"/api/v1/events/{event['id']}/plan").json()["venue"] == "Indiranagar Terrace Hall"  # still fits, so kept
 
+    reply = say(client, event["id"], "Change name to Spring Leadership Workshop")
+    assert reply["steps"] == ["requirements_agent"]
+    finish(client, reply)
+    assert client.get(f"/api/v1/events/{event['id']}").json()["name"] == "Spring Leadership Workshop"
+
     history = client.get(f"/api/v1/events/{event['id']}/chat").json()["messages"]
-    assert [m["role"] for m in history[:2]] == ["user", "assistant"] and len(history) == 12
+    assert [m["role"] for m in history[:2]] == ["user", "assistant"] and len(history) == 15
 
 
 def test_chat_answers_questions_and_asks_when_unclear(client):

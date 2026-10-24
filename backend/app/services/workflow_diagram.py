@@ -6,6 +6,7 @@ the static architecture image used by the Planning Run UI.
 """
 
 from io import BytesIO
+from pathlib import Path
 from typing import Any
 
 from PIL import Image, ImageDraw, ImageFont
@@ -52,6 +53,19 @@ def _arrow(draw: ImageDraw.ImageDraw, start: tuple[int, int], end: tuple[int, in
     draw.polygon(points, fill=TEAL)
 
 
+def _poly_arrow(draw: ImageDraw.ImageDraw, points: list[tuple[int, int]], direction: str = "right") -> None:
+    """Route connectors through rails so parallel edges never cross node labels."""
+    draw.line(points, fill=TEAL, width=4, joint="curve")
+    x, y = points[-1]
+    heads = {
+        "right": [(x, y), (x - 14, y - 8), (x - 14, y + 8)],
+        "left": [(x, y), (x + 14, y - 8), (x + 14, y + 8)],
+        "up": [(x, y), (x - 8, y + 14), (x + 8, y + 14)],
+        "down": [(x, y), (x - 8, y - 14), (x + 8, y - 14)],
+    }
+    draw.polygon(heads[direction], fill=TEAL)
+
+
 def render_workflow_png(graph_mermaid: str, steps: list[dict[str, Any]]) -> bytes:
     """Return a local PNG for the current compiled graph and declared step list."""
     # Accessing Mermaid confirms this is based on the compiled topology. The local
@@ -59,7 +73,7 @@ def render_workflow_png(graph_mermaid: str, steps: list[dict[str, Any]]) -> byte
     if "event_manager" not in graph_mermaid or "review_plan" not in graph_mermaid:
         raise ValueError("The compiled workflow is missing required EventPilot nodes")
 
-    image = Image.new("RGB", (1780, 980), BG)
+    image = Image.new("RGB", (2160, 1040), BG)
     draw = ImageDraw.Draw(image)
     draw.text((70, 52), "EVENTPILOT", font=_font(22, True), fill=TEAL)
     draw.text((70, 92), "Compiled LangGraph workflow", font=_font(38, True), fill=INK)
@@ -67,45 +81,54 @@ def render_workflow_png(graph_mermaid: str, steps: list[dict[str, Any]]) -> byte
 
     parallel = [step for step in steps if step.get("group") == "parallel"]
     sequential = [step for step in steps if step.get("group") != "parallel"]
+    draw.rounded_rectangle((335, 235, 1285, 760), radius=20, fill="#F3F8F5", outline=LINE, width=2)
+    draw.text((370, 267), "PARALLEL SPECIALIST TEAM", font=_font(16, True), fill=TEAL)
+    draw.text((370, 293), "Structured evidence moves through shared rails to avoid connector crossings.", font=_font(14), fill="#5E726E")
     start = _node(draw, 70, 455, "Event brief", "shared state", LIME, TEAL)
     specialist_boxes = []
     for index, step in enumerate(parallel):
-        x = 370 + (index % 3) * 270
-        y = 270 + (index // 3) * 210
-        title = str(step["title"]).replace("Find a ", "").replace("Draft the ", "").replace("Build the ", "")
+        x = 430 + (index % 3) * 280
+        y = 370 + (index // 3) * 210
+        title = ["Venue & logistics", "Budget allocation", "Event agenda", "Requirements", "Guest communication", "Risk operations"][index]
         specialist_boxes.append(_node(draw, x, y, title, str(step.get("agent", "specialist")), MINT, TEAL))
+    input_rail, output_rail = 390, 1255
+    draw.line((input_rail, 417, input_rail, 627), fill=TEAL, width=4)
+    draw.line((output_rail, 417, output_rail, 627), fill=TEAL, width=4)
+    _poly_arrow(draw, [(start[2], 502), (input_rail, 502)], "right")
     for box in specialist_boxes:
-        _arrow(draw, (start[2], (start[1] + start[3]) // 2), (box[0], (box[1] + box[3]) // 2))
+        midpoint = (box[1] + box[3]) // 2
+        _poly_arrow(draw, [(input_rail, midpoint), (box[0], midpoint)], "right")
+        _poly_arrow(draw, [(box[2], midpoint), (output_rail, midpoint)], "right")
 
-    manager_x = 1210
+    manager_x = 1360
     manager = _node(draw, manager_x, 455, "Event Manager", "synthesis", MINT, TEAL)
-    for box in specialist_boxes:
-        _arrow(draw, (box[2], (box[1] + box[3]) // 2), (manager[0], (manager[1] + manager[3]) // 2))
-    review = _node(draw, 1490, 455, "Review", "checks and routing", "#FFF1E7", ORANGE)
+    _poly_arrow(draw, [(output_rail, 502), (manager[0], 502)], "right")
+    review = _node(draw, 1640, 455, "Review gate", "checks and routing", "#FFF1E7", ORANGE)
     _arrow(draw, (manager[2], (manager[1] + manager[3]) // 2), (review[0], (review[1] + review[3]) // 2))
 
-    final = _node(draw, 1490, 680, "Final plan", "human review", LIME, TEAL)
-    _arrow(draw, ((review[0] + review[2]) // 2, review[3]), ((final[0] + final[2]) // 2, final[1]))
+    final = _node(draw, 1920, 455, "Final plan", "human review", LIME, TEAL)
+    _arrow(draw, (review[2], 502), (final[0], 502))
     replan = next((step for step in sequential if step.get("id") == "replan"), None)
     if replan:
-        replan_box = _node(draw, 1210, 680, "Re-plan", "one bounded retry", "#FFF1E7", ORANGE)
-        _arrow(draw, ((review[0] + review[2]) // 2, review[3]), ((replan_box[0] + replan_box[2]) // 2, replan_box[1]))
-        _arrow(draw, (replan_box[0], (replan_box[1] + replan_box[3]) // 2), (manager[0], manager[3]))
-    draw.text((70, 900), "Six specialists work in parallel, converge through the Event Manager, then pass a review gate before human approval.", font=_font(17), fill="#5E726E")
+        replan_box = _node(draw, 1640, 705, "Re-plan", "one bounded retry", "#FFF1E7", ORANGE)
+        _poly_arrow(draw, [(1750, review[3]), (1750, 675), (1750, replan_box[1])], "down")
+        _poly_arrow(draw, [(replan_box[0], 752), (1580, 752), (1580, 650), (1470, 650), (1470, manager[3])], "up")
+    draw.text((70, 945), "Flow: event brief -> six parallel specialists -> Event Manager -> review gate -> human-approved final plan.", font=_font(17), fill="#5E726E")
 
     output = BytesIO()
     image.save(output, format="PNG", optimize=True)
     return output.getvalue()
 
 
-if __name__ == "__main__":
-    # Writes the LangGraph-rendered PNG to docs/workflow-graph.png:
-    #   cd backend && .venv\Scripts\python.exe -m app.services.workflow_diagram
-    from pathlib import Path
-
+def main() -> None:
+    """Write a shareable local PNG from the current compiled LangGraph graph."""
     from app.graphs.event_workflow import STEPS, build_graph
 
-    compiled = build_graph().compile().get_graph()
-    target = Path(__file__).resolve().parents[3] / "docs" / "workflow-graph.png"
-    target.write_bytes(render_workflow_png(compiled.draw_mermaid(), STEPS))
-    print(f"Wrote {target}")
+    graph = build_graph().compile().get_graph()
+    destination = Path(__file__).resolve().parents[3] / "docs" / "workflow-graph.png"
+    destination.write_bytes(render_workflow_png(graph.draw_mermaid(), STEPS))
+    print(f"Wrote {destination.resolve()}")
+
+
+if __name__ == "__main__":
+    main()

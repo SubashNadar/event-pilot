@@ -1,3 +1,4 @@
+import { errorMessage } from '../lib/http';
 import { useEffect, useRef, useState } from 'react';
 import { BRIEF_SESSION_KEY, briefTurn, getChatSession } from '../api/eventApi';
 import { KnowledgeGuide } from './KnowledgeGuide';
@@ -54,8 +55,8 @@ export function ChatPlanner({ onGenerate, onCancel }) {
       if (result.session_id && result.session_id !== sessionId) { setSessionId(result.session_id); writeSession(result.session_id); }
       apply(result, { userText });
       return result;
-    } catch {
-      setError('The planning assistant is unavailable. Check that the API is running, then try again.');
+    } catch (failure) {
+      setError(errorMessage(failure));
       return null;
     } finally {
       setBusy(false);
@@ -124,6 +125,8 @@ export function ChatPlanner({ onGenerate, onCancel }) {
         objective: `${answers.eventType}: ${answers.objective}`,
       }, sessionId);
       writeSession(null); // the conversation now belongs to the event
+    } catch (failure) {
+      setError(errorMessage(failure));
     } finally {
       setIsGenerating(false);
     }

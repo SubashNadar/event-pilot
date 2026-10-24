@@ -110,3 +110,20 @@ def test_flagged_review_replans_only_the_affected_specialists(client, monkeypatc
     assert len(of_type(snap, "step_started", "schedule_agent")) == 1  # not named by the review, so not re-run
     assert len(of_type(snap, "step_completed", "review_plan")) == 2
     assert len(of_type(snap, "step_started", "event_manager")) == 2  # the manager reconsolidates after the replan
+
+
+def test_unresolved_review_does_not_publish_or_replace_plan(client, monkeypatch):
+    from app.graphs import event_workflow
+
+    event = create_event(client, location="Pune", attendees=120, budget=1500000)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    assert wait_for(client, run_id, {"completed", "error", "paused"})["run"]["status"] == "completed"
+    original = client.get(f"/api/v1/events/{event['id']}/plan").json()
+    monkeypatch.setattr(event_workflow, "_review", lambda *args: ["Budget forecast exceeds the approved budget."])
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    snapshot = wait_for(client, run_id, {"completed", "error", "paused"})
+    assert snapshot["run"]["status"] == "error"
+    assert "needs attention" in of_type(snapshot, "error")[0]["message"]
+    assert not of_type(snapshot, "plan_ready")
+    assert not of_type(snapshot, "run_completed")
+    assert client.get(f"/api/v1/events/{event['id']}/plan").json() == original

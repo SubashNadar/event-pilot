@@ -54,7 +54,7 @@ export interface ChatState {
 type Action =
   | { type: "user_sent"; user: ChatMessage; agent: AgentMessage; title?: string }
   | { type: "event"; msgId: string; event: AgentEvent; at: number }
-  | { type: "reply"; msgId: string; text: string; question?: BriefQuestion | null; warnings?: BriefWarning[] }
+  | { type: "reply"; msgId: string; text: string; question?: BriefQuestion | null; warnings?: BriefWarning[]; blocked?: boolean }
   | { type: "reset_run"; msgId: string; runId: string }
   | { type: "stopped"; msgId: string; at: number }
   | { type: "step_skipped"; msgId: string; stepId: string; at: number }
@@ -235,7 +235,7 @@ function reducer(state: ChatState, a: Action): ChatState {
       return mapRun(state, a.msgId, (r) => reduceRun(r, a.event, a.at));
     case "reply": {
       const next = mapRun(state, a.msgId, (r) => ({ ...r, status: "completed", answer: a.text }));
-      return { ...next, messages: next.messages.map((m) => (m.id === a.msgId && m.role === "agent" ? { ...m, question: a.question ?? null, warnings: a.warnings ?? [] } : m)) };
+      return { ...next, messages: next.messages.map((m) => (m.id === a.msgId && m.role === "agent" ? { ...m, question: a.question ?? null, warnings: a.warnings ?? [], blocked: a.blocked } : m)) };
     }
     case "reset_run":
       return mapRun(state, a.msgId, (r) => emptyRun(a.runId, r.startedAt));
@@ -414,7 +414,7 @@ export function useAgentStream(): AgentApi {
 
         if (!turn.ready) {
           const text = [turn.reply, turn.next?.prompt].filter(Boolean).join("\n\n");
-          dispatch({ type: "reply", msgId: agent.id, text, question: turn.next, warnings: turn.warnings });
+          dispatch({ type: "reply", msgId: agent.id, text, question: turn.next, warnings: turn.warnings, blocked: turn.reply.startsWith("Out-of-scope request.") || turn.reply.startsWith("I can only help with planning this event:") });
           dispatch({ type: "closed", msgId: agent.id });
           return;
         }

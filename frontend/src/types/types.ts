@@ -214,6 +214,8 @@ export interface AgentMessage {
   /** Set while the brief is waiting for an answer; cleared when the user replies. */
   question?: BriefQuestion | null;
   warnings?: BriefWarning[];
+  /** A request rejected by the backend safety or scope guard. */
+  blocked?: boolean;
 }
 
 export type ChatMessage = UserMessage | AgentMessage;
