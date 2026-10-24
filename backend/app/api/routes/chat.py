@@ -143,7 +143,7 @@ async def plan_chat(event_id: UUID, payload: PlanChatRequest) -> PlanChatRespons
     active = store.active_run_for_event(str(event_id), ("queued", "running", "paused"))
     if active is not None:
         if active.status == "paused":
-            return reply("busy", "A step is waiting for your decision. Answer it in the steps panel first, then tell me the change again.", active.id)
+            return reply("busy", "Your plan is waiting for your decision. Approve it, or send the changes from the plan card, then tell me the change again.", active.id)
         return reply("busy", "I'm still updating the plan. Send that again when this update finishes.", active.id)
 
     plan = load_plan(event_id)

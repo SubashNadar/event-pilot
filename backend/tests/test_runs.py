@@ -1,6 +1,6 @@
 """End-to-end run tests through the HTTP API, in rule-based mode (no Azure)."""
 
-from conftest import create_event, of_type, wait_for
+from conftest import approve_plan, create_event, of_type, wait_for
 
 from app.core.config import settings
 
@@ -8,14 +8,14 @@ from app.core.config import settings
 def test_full_run_streams_every_step_and_saves_the_plan(client):
     event = create_event(client)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed", [e["type"] for e in snap["events"]]
 
     types = [e["type"] for e in snap["events"]]
     assert types[:2] == ["run_started", "plan_created"]
-    assert len(of_type(snap, "plan_created")[0]["steps"]) == 11
+    assert len(of_type(snap, "plan_created")[0]["steps"]) == 14
     completed = {e["stepId"] for e in of_type(snap, "step_completed")}
-    assert completed == {"logistics_agent", "finance_agent", "schedule_agent", "requirements_agent", "marketing_agent", "risk_operations_agent", "coordination", "event_manager", "review_plan", "recommendations"}
+    assert completed == {"receptionist", "manager_intake", "logistics_agent", "finance_agent", "schedule_agent", "requirements_agent", "marketing_agent", "risk_operations_agent", "coordination", "event_manager", "review_plan", "approval", "recommendations"}
     assert [e["stepId"] for e in of_type(snap, "step_skipped")] == ["replan"]  # review passed first time
     assert of_type(snap, "token"), "recommendations should stream tokens"
     assert types[-2:] == ["plan_ready", "run_completed"]
@@ -35,6 +35,24 @@ def test_full_run_streams_every_step_and_saves_the_plan(client):
     assert plan["run_id"] == run_id
     assert plan["venue"] == "Koramangala Workshop Studio"  # chosen by the Logistics agent's tool result
     assert plan["recommendations"].startswith("## AI Leadership Workshop")
+
+
+def test_owner_can_send_the_plan_back_before_approving(client):
+    event = create_event(client)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    snap = wait_for(client, run_id, {"paused", "completed", "error"})
+    assert of_type(snap, "run_paused")[-1]["pendingStepIds"] == ["approval"]
+    options = of_type(snap, "step_failed", "approval")[0]["recovery"]["options"]
+    assert [o["id"] for o in options] == ["approve", "revise"]
+
+    response = client.post(f"/api/v1/runs/{run_id}/steps/approval/resolve", json={"option_id": "revise"})
+    assert response.status_code == 200 and response.json()["status"] == "resumed", response.text
+    snap = approve_plan(client, run_id)  # the rebuilt plan comes back for approval
+    assert snap["run"]["status"] == "completed", [e["type"] for e in snap["events"]]
+
+    assert len(of_type(snap, "step_started", "approval")) == 2  # asked twice
+    assert len(of_type(snap, "step_started", "event_manager")) == 2  # the manager rebuilt the plan
+    assert len(of_type(snap, "plan_ready")) == 1  # the plan is only published once it is approved
 
 
 def test_workflow_graph_png_endpoint_returns_the_compiled_graph(client):
@@ -62,11 +80,11 @@ def test_failed_step_offers_options_and_resumes_without_rerunning_others(client)
     assert failed["recovery"]["summary"] == "The venue catalogue doesn't cover Shillong yet."
 
     # the other specialists wait for the venue, so none of them has started yet
-    assert {e["stepId"] for e in of_type(snap, "step_started")} == {"logistics_agent"}
+    assert {e["stepId"] for e in of_type(snap, "step_started")} == {"receptionist", "manager_intake", "logistics_agent"}
 
     response = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"option_id": "accept-unverified"})
     assert response.status_code == 200 and response.json()["status"] == "resumed", response.text
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed", [e["type"] for e in snap["events"]]
 
     assert of_type(snap, "recovery_chosen", "logistics_agent")[0]["label"] == "Use an unverified venue"
@@ -88,7 +106,7 @@ def test_custom_text_needs_clarification_then_changes_the_rerun(client):
 
     clear = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "Try in Koramangala instead"}).json()
     assert clear["status"] == "resumed" and clear["option"]["patch"] == {"location": "Koramangala"}
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed"
     assert of_type(snap, "plan_ready")[0]["plan"]["venue"] == "Koramangala Workshop Studio"
 
@@ -110,7 +128,7 @@ def test_parallel_failures_wait_for_every_answer(client, monkeypatch):
     first = client.post(f"/api/v1/runs/{run_id}/steps/schedule_agent/retry").json()
     assert first["status"] == "resumed"  # the only open question, so the retry runs at once
 
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed", [e["type"] for e in snap["events"]]
     assert of_type(snap, "step_completed", "schedule_agent")  # retry succeeded (fails only once)
     assert of_type(snap, "step_skipped", "logistics_agent")[0]["reason"] == "Skip — I'll book the venue myself"
@@ -121,7 +139,7 @@ def test_parallel_failures_wait_for_every_answer(client, monkeypatch):
 def test_stream_replays_from_last_event_id_and_ends_for_finished_runs(client):
     event = create_event(client)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
-    snap = wait_for(client, run_id, {"completed"})
+    snap = approve_plan(client, run_id)
     total = len(snap["events"])
     with client.stream("GET", f"/api/v1/runs/{run_id}/stream", headers={"Last-Event-ID": "5"}) as response:
         ids = [int(line.split(":", 1)[1]) for line in response.iter_lines() if line.startswith("id:")]
@@ -142,7 +160,7 @@ def test_cancel_and_conflicts(client):
 def test_budget_revision_run_and_legacy_endpoint(client):
     event = create_event(client)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={"operation": "budget-revision", "budget": 400000}).json()["run_id"]
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["operation"] == "budget-revision" and snap["run"]["status"] == "completed"
     assert of_type(snap, "plan_ready")[0]["plan"]["budget_forecast"] <= 400000
 
@@ -164,5 +182,5 @@ def test_over_budget_venue_offers_the_exact_share_needed(client):
     assert option["patch"] == {"venue_share_pct": 42} and option["label"] == "Raise venue share to 42%"
     assert failed["recovery"]["summary"].startswith("No venue in Mumbai fits 200 guests within 30% of the budget.")
     client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"option_id": "raise-venue-share"})
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert of_type(snap, "plan_ready")[0]["plan"]["venue"] == "Andheri Skyline Banquets"

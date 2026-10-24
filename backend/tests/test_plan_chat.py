@@ -9,13 +9,13 @@ from app.agents.specialists import apply_agenda_edits, apply_budget_sets
 from app.core import guard
 from app.core.config import settings
 from app.runs import store
-from conftest import create_event, of_type, wait_for
+from conftest import approve_plan, create_event, of_type, wait_for
 
 
 def planned_event(client, **overrides):
     event = create_event(client, **overrides)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
-    assert wait_for(client, run_id, {"completed", "error", "paused"})["run"]["status"] == "completed"
+    assert approve_plan(client, run_id)["run"]["status"] == "completed"
     return event
 
 

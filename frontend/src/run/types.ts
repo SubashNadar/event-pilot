@@ -21,6 +21,9 @@ export type StepKind =
   | "reflection"
   | "recommend";
 
+/** Where a step sits in the team's flow: reception -> split (manager) -> specialists -> review (manager) -> owner. */
+export type StepLane = "reception" | "split" | "specialists" | "review" | "owner";
+
 export interface Step {
   id: string;
   title: string;
@@ -28,6 +31,7 @@ export interface Step {
   kind: StepKind;
   agent: string;
   group: "parallel" | "sequential";
+  lane?: StepLane;
 }
 
 export interface ToolCall {

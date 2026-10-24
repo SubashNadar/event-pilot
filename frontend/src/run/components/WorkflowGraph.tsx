@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { ArrowDown, GitFork, Network, Sparkles } from "lucide-react";
-import type { RunState, StepState } from "../types";
+import type { RunState, StepLane, StepState } from "../types";
 import { StatusIcon, STATUS_LABEL } from "./StepItem";
 
 interface Props {
@@ -34,10 +34,18 @@ function Connector({ label }: { label?: string }) {
   return <div className="flex flex-col items-center py-2 text-muted" aria-hidden><ArrowDown size={17} strokeWidth={1.8} />{label && <span className="mt-0.5 text-[10px] font-medium">{label}</span>}</div>;
 }
 
+/** Lanes in flow order. The backend tags each step with its lane (event_workflow.STEPS). */
+const LANES: { id: StepLane; label: string; hint: string }[] = [
+  { id: "reception", label: "Receptionist", hint: "Takes the brief in" },
+  { id: "split", label: "Event Manager · splits the work", hint: "Assigns each part of the brief to the team" },
+  { id: "specialists", label: "Specialist agents · run in parallel", hint: "Each builds its part from the shared brief" },
+  { id: "review", label: "Event Manager · combines and reviews", hint: "Merges the reports, checks them, and sends feedback to the owning agent" },
+  { id: "owner", label: "You · approve and get the summary", hint: "Nothing is final until you approve" },
+];
+
 /** A visual representation of the real LangGraph workflow. It shares state with the timeline. */
 export default function WorkflowGraph({ run, selectedStepId, onOpenStep }: Props) {
-  const specialists = run.steps.filter((step) => step.group === "parallel");
-  const managerSteps = run.steps.filter((step) => step.group !== "parallel");
+  const lanes = LANES.map((lane) => ({ ...lane, steps: run.steps.filter((step) => (step.lane ?? "review") === lane.id) })).filter((lane) => lane.steps.length > 0);
   const active = run.steps.find((step) => step.status === "running" || step.status === "verifying");
 
   return (
@@ -52,33 +60,20 @@ export default function WorkflowGraph({ run, selectedStepId, onOpenStep }: Props
       </header>
 
       <div className="mx-auto mt-5 max-w-[820px]">
-        <div className="mx-auto flex max-w-[220px] items-center gap-2 rounded-xl border border-success/30 bg-success/[0.06] px-3 py-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-success text-surface"><Sparkles size={14} aria-hidden /></span>
-          <span><strong className="block text-[12.5px]">Event brief</strong><small className="block text-[10.5px] text-muted">Shared graph state</small></span>
-        </div>
-        <Connector label="delegate" />
-
-        <div className="rounded-2xl border border-border bg-surface-2/60 p-3 sm:p-4">
-          <p className="mb-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted"><GitFork size={13} aria-hidden /> Specialist agents run in parallel</p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {specialists.map((step) => <GraphStep key={step.id} step={step} selected={selectedStepId === step.id} onOpen={() => onOpenStep(step.id)} />)}
+        {lanes.map((lane, index) => (
+          <div key={lane.id}>
+            {index > 0 && <Connector label={lane.id === "owner" ? "ready for approval" : undefined} />}
+            <div className={clsx("rounded-2xl border p-3 sm:p-4", lane.id === "owner" ? "border-accent/30 bg-accent-soft/40" : "border-border bg-surface-2/60")}>
+              <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">
+                {lane.id === "specialists" ? <GitFork size={13} aria-hidden /> : lane.id === "owner" ? <Network size={13} aria-hidden /> : <Sparkles size={13} aria-hidden />} {lane.label}
+              </p>
+              <p className="mb-3 text-[11.5px] text-muted">{lane.hint}</p>
+              <div className={clsx("grid gap-2", lane.id === "specialists" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3")}>
+                {lane.steps.map((step) => <GraphStep key={step.id} step={step} selected={selectedStepId === step.id} onOpen={() => onOpenStep(step.id)} />)}
+              </div>
+            </div>
           </div>
-        </div>
-
-        <Connector label="combine and check" />
-
-        <div className="rounded-2xl border border-border bg-surface-2/40 p-3 sm:p-4">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">Event Manager and review loop</p>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {managerSteps.map((step) => <GraphStep key={step.id} step={step} selected={selectedStepId === step.id} onOpen={() => onOpenStep(step.id)} />)}
-          </div>
-        </div>
-
-        <Connector />
-        <div className="mx-auto flex max-w-[250px] items-center gap-2 rounded-xl border border-accent/30 bg-accent-soft px-3 py-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-accent-ink"><Network size={14} aria-hidden /></span>
-          <span><strong className="block text-[12.5px]">Human review</strong><small className="block text-[10.5px] text-muted">Approve decisions and export the plan</small></span>
-        </div>
+        ))}
       </div>
     </section>
   );

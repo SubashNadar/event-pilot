@@ -3,10 +3,11 @@
 from typing import Any
 
 import pytest
-from conftest import create_event, of_type, wait_for
+from conftest import approve_plan, create_event, of_type, wait_for
 from langchain_core.messages import AIMessage, AIMessageChunk, ToolMessage
 
 from app.agents import llm
+from app.agents.judge import JudgedFeedback, PlanJudgement
 from app.models.event import AiPlanDraft
 from app.models.run import RecoveryOption, SpecialistReport
 from app.services.azure_planner import _draft_from_output
@@ -21,6 +22,7 @@ TOOL_ARGS = {
 }
 
 CALLS: list[str] = []
+JUDGE_VERDICTS: list[PlanJudgement] = []  # queued verdicts for the plan judge; empty means "satisfied"
 
 
 class _Structured:
@@ -41,6 +43,8 @@ class _Structured:
                 risks=[{"level": "High", "title": "Speaker no-show", "detail": "Line up a backup", "recommended_action": "Set fallback"}, {"level": "Medium", "title": "Low turnout", "detail": "Send reminders", "recommended_action": "Monitor"}],
                 activity=[{"agent": "Event Manager", "detail": "Combined reports", "timestamp": "Now"}], confidence=88,
             )
+        elif self.schema is PlanJudgement:
+            value = JUDGE_VERDICTS.pop(0) if JUDGE_VERDICTS else PlanJudgement(satisfied=True, feedback=[])
         elif name == "_LlmProposal":
             value = self.schema(summary="No venue in the catalog fits 200 guests in Mumbai within ₹3,00,000.", options=[
                 RecoveryOption(id="nearby", label="Search Navi Mumbai", description="Try a nearby area", patch={"location": "Navi Mumbai"}),
@@ -89,7 +93,7 @@ def fake_llm(monkeypatch):
 def test_llm_specialists_call_tools_and_stream_recommendations(client, fake_llm):
     event = create_event(client)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed", [(e["type"], e.get("error")) for e in snap["events"]]
     assert not of_type(snap, "notice")  # LLM mode: no rule-based notice
 
@@ -106,9 +110,22 @@ def test_llm_specialists_call_tools_and_stream_recommendations(client, fake_llm)
     tokens = "".join(e["content"] for e in of_type(snap, "token"))
     assert tokens.startswith("## AI Leadership Workshop")
     usage = of_type(snap, "run_completed")[0]["usage"]
-    assert usage["tokensIn"] == 6 * 230 + 100
+    assert usage["tokensIn"] == 6 * 230 + 100 + 100  # the plan judge's call adds its own 100
     plan = of_type(snap, "plan_ready")[0]["plan"]
     assert plan["source"] == "azure" and plan["recommendations"] == tokens
+
+
+def test_plan_judge_sends_its_note_only_to_the_specialist_it_names(client, fake_llm):
+    JUDGE_VERDICTS.append(PlanJudgement(satisfied=False, feedback=[JudgedFeedback(owner="schedule_agent", note="Lunch sits too late; move it before 1 PM.")]))
+    event = create_event(client)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    snap = approve_plan(client, run_id)
+    assert snap["run"]["status"] == "completed", [(e["type"], e.get("error")) for e in snap["events"]]
+
+    assert fake_llm.count("PlanJudgement") == 2  # judged once unsatisfied, then again after the re-run
+    assert len(of_type(snap, "step_started", "schedule_agent")) == 2  # the named specialist re-ran
+    assert len(of_type(snap, "step_started", "finance_agent")) == 1  # nobody else did
+    assert "Lunch sits too late" in of_type(snap, "step_completed", "replan")[0]["summary"]["verification"]["reason"]
 
 
 def test_llm_recovery_options_are_validated_and_custom_text_is_interpreted(client, fake_llm):
@@ -126,7 +143,7 @@ def test_llm_recovery_options_are_validated_and_custom_text_is_interpreted(clien
 
     resumed = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "Try a beach venue in Goa, keep 200 guests"}).json()
     assert resumed["status"] == "resumed" and resumed["option"]["patch"] == {"location": "Goa", "allow_unverified": True}
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed"
     second_call = [t for t in of_type(snap, "tool_call", "logistics_agent") if t["tool"]["name"] == "venue_search"][-1]["tool"]["input"]
     assert second_call["location"] == "Goa"

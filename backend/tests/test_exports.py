@@ -2,7 +2,7 @@
 
 import io
 
-from conftest import create_event, wait_for
+from conftest import approve_plan, create_event
 
 PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
@@ -10,7 +10,7 @@ PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentatio
 def test_plan_exports_as_pdf_and_pptx(client):
     event = create_event(client, location="Pune", attendees=120, budget=1500000)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
-    assert wait_for(client, run_id, {"completed", "error", "paused"})["run"]["status"] == "completed"
+    assert approve_plan(client, run_id)["run"]["status"] == "completed"
 
     pdf = client.get(f"/api/v1/events/{event['id']}/exports/pdf")
     assert pdf.status_code == 200 and pdf.headers["content-type"] == "application/pdf" and pdf.content.startswith(b"%PDF")

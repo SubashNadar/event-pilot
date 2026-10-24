@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "docs:generate": "node ../scripts/generate_complete_test_guide.mjs && node ../scripts/generate_langgraph_cricket_guide.mjs && ..\\backend\\.venv\\Scripts\\python.exe ..\\scripts\\generate_reviewer_materials.py"
   },
   "dependencies": {
     "clsx": "2.1.1",
+    "jspdf": "^4.2.1",
     "lucide-react": "0.460.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",

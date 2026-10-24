@@ -281,8 +281,7 @@ def prepare(edit: PlanEdit, event: EventBrief, plan: dict[str, Any], reports: di
             return prepared
         prepared.brief["budget"] = edit.budget_inr
         prepared.changes.append(f"budget from {inr(event.budget)} to {inr(edit.budget_inr)}")
-        _add(prepared, "logistics_agent")
-        _add(prepared, "finance_agent")
+        _add(prepared, "finance_agent")  # the venue is only searched again if it no longer fits the new budget
     if edit.event_date:
         try:
             new_date = date.fromisoformat(edit.event_date[:10])

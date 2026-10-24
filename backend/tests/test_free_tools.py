@@ -14,7 +14,7 @@ from app.integrations.messages import draft_guest_message
 from app.integrations.vendors import normalise_category, search_vendors
 from app.integrations.weather import weather_outlook
 from app.mcp import client as mcp_client
-from conftest import create_event, of_type, wait_for
+from conftest import approve_plan, create_event, of_type, wait_for
 
 TODAY = date(2026, 10, 18)
 
@@ -204,7 +204,7 @@ def test_run_reports_weather_holidays_travel_vendors_and_invite(client):
     mcp_client.reset_guardrails()
     event = create_event(client, name="Meera and Karthik Wedding Reception", event_date="2027-07-17", location="Bandra West, Mumbai", attendees=150, budget=2500000, objective="Elegant wedding reception with smooth guest hospitality.")
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed", [e for e in snap["events"] if e["type"] in ("step_failed", "error")]
 
     def did(step):

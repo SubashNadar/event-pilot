@@ -38,8 +38,12 @@ class EventPlanningState(TypedDict, total=False):
     marketing: dict[str, Any]
     risks: dict[str, Any]
     final_plan: dict[str, Any]     # EventPlan dump
-    review: dict[str, Any]
-    revision_count: int
+    review: dict[str, Any]         # {approved, issues, notes}: rule issues, plus the LLM judge's notes per specialist
+    approval: dict[str, Any]       # {decision: 'approve' | 'revise'} from the event owner
+    revision_count: int            # every re-plan pass so far (keys the UI events)
+    manager_round: int             # automatic manager re-plans in the current owner round; reset when the owner sends it back
+    human_rounds: int              # how many times the owner has sent the plan back
+    feedback: list[str]            # the owner's requested changes, used by the manager's re-split and the next replan
     conflicts: dict[str, Any]      # {'items': [...]} mismatches found by the coordination step
     recommendations: str
     # Plan edits: reports kept from the previous plan, and inputs for the steps that run again.

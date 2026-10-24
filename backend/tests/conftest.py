@@ -50,5 +50,14 @@ def wait_for(client, run_id, statuses, timeout=30.0):
     raise AssertionError(f"run stayed {snapshot['run']['status']}: {[e['type'] for e in snapshot['events']]}")
 
 
+def approve_plan(client, run_id, timeout=30.0):
+    """Wait for a finished plan to reach the owner's approval step, approve it, and return the final snapshot."""
+    snapshot = wait_for(client, run_id, {"paused", "completed", "error"}, timeout)
+    assert snapshot["run"]["status"] == "paused" and of_type(snapshot, "run_paused")[-1]["pendingStepIds"] == ["approval"], [e["type"] for e in snapshot["events"]]
+    response = client.post(f"/api/v1/runs/{run_id}/steps/approval/resolve", json={"option_id": "approve"})
+    assert response.status_code == 200 and response.json()["status"] == "resumed", response.text
+    return wait_for(client, run_id, {"completed", "error", "paused"}, timeout)
+
+
 def of_type(snapshot, kind, step=None):
     return [e for e in snapshot["events"] if e["type"] == kind and (step is None or e.get("stepId") == step)]

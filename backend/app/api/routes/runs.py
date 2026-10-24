@@ -12,6 +12,8 @@ from sse_starlette.sse import EventSourceResponse
 from app.agents.recovery import SKIP_LABELS, interpret_custom
 from app.core.guard import clean_text, screen
 from app.graphs.event_workflow import STEPS, build_graph
+from pydantic import BaseModel, Field
+
 from app.models.run import RecoveryProposal, ResolveStepRequest, ResolveStepResponse, RunRecord, RunSnapshot, StartRunRequest, StartRunResponse
 from app.runs import store
 from app.runs.manager import TERMINAL, RunConflict, RunNotFound, run_manager
@@ -31,7 +33,8 @@ def _workflow_graph_png() -> bytes:
 @router.get("/workflow/graph.png", include_in_schema=False)
 def workflow_graph_png() -> Response:
     try:
-        return Response(_workflow_graph_png(), media_type="image/png", headers={"Cache-Control": "public, max-age=3600"})
+        # Revalidate on every view: a stale cached copy would show an old graph after the workflow changes.
+        return Response(_workflow_graph_png(), media_type="image/png", headers={"Cache-Control": "no-cache"})
     except Exception as error:
         raise HTTPException(status_code=503, detail="The LangGraph diagram could not be rendered. Use the live Workflow graph instead.") from error
 
@@ -158,3 +161,25 @@ async def skip_step(run_id: str, step_id: str) -> ResolveStepResponse:
 async def cancel_run(run_id: str) -> None:
     _run_or_404(run_id)
     await run_manager.cancel(run_id)
+
+
+class ApprovalRequest(BaseModel):
+    decision: str = Field(pattern="^(approve|revise)$")
+    feedback: str | None = Field(default=None, max_length=500, description="What to change, in the owner's words.")
+
+
+@router.post("/runs/{run_id}/approval", response_model=ResolveStepResponse)
+async def decide_plan(run_id: str, payload: ApprovalRequest) -> ResolveStepResponse:
+    """The owner's decision on the finished plan: approve it, or send it back with changes."""
+    _run_or_404(run_id)
+    feedback = (payload.feedback or "").strip()
+    if payload.decision == "approve":
+        choice = {"action": "retry_with", "patch": {"decision": "approve"}, "label": "Approve the plan", "option_id": "approve"}
+    else:
+        label = f"Send back: {feedback[:60]}" if feedback else "Send back with changes"
+        choice = {"action": "retry_with", "patch": {"decision": "revise"}, "label": label, "option_id": "revise", "feedback": feedback}
+    try:
+        result = await run_manager.resolve(run_id, "approval", choice)
+    except RunConflict as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    return ResolveStepResponse(status=result)

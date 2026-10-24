@@ -86,6 +86,10 @@ export const skipStep = (runId: string, stepId: string) => request(`/runs/${runI
 
 export const cancelRun = (runId: string) => request<void>(`/runs/${runId}/cancel`, { method: "POST" });
 
+/** The owner's decision on the finished plan: approve it, or send it back with what to change. */
+export const decidePlan = (runId: string, decision: "approve" | "revise", feedback = "") =>
+  request<ResolveResult>(`/runs/${runId}/approval`, { method: "POST", body: JSON.stringify({ decision, feedback: feedback || null }) });
+
 export interface ResolveResult {
   status: "resumed" | "queued" | "needs_clarification";
   question?: string | null;

@@ -5,7 +5,7 @@ from datetime import date
 from app.agents.specialists import _finance_report, fit_lines_to_budget
 from app.graphs.event_workflow import _coordinate_items, _reconcile_manager_plan, owners_for
 from app.models.event import EventBrief
-from conftest import create_event, of_type, wait_for
+from conftest import approve_plan, create_event, of_type, wait_for
 
 
 def _event(budget=1_000_000, attendees=200):
@@ -101,7 +101,7 @@ def test_flagged_review_replans_only_the_affected_specialists(client, monkeypatc
     monkeypatch.setattr(event_workflow, "_review", review_once_with_a_mismatch)
     event = create_event(client, location="Pune", attendees=120, budget=1500000)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
-    snap = wait_for(client, run_id, {"completed", "error", "paused"})
+    snap = approve_plan(client, run_id)
     assert snap["run"]["status"] == "completed", [e["type"] for e in snap["events"]]
 
     assert [e["stepId"] for e in of_type(snap, "step_completed") if e["stepId"] == "replan"]

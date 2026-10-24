@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Event Pilot: How the Task Was Done, Phase by Phase</title>
+<style>
+  :root { --ink:#172d2b; --muted:#647370; --line:#dce5e1; --wash:#f4f7f5; --paper:#fff; --teal:#19756d; --teal-dark:#0f5a54; --lime:#d7ed74; --orange:#d9893d; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Inter, system-ui, Segoe UI, sans-serif; background:var(--wash); color:var(--ink); line-height:1.55; }
+  header { background:var(--teal-dark); color:#fff; padding:40px 24px 32px; }
+  header h1 { margin:0 0 6px; font-size:28px; }
+  header p { margin:0; color:#d6ebe7; max-width:820px; }
+  main { max-width:960px; margin:0 auto; padding:24px; }
+  section { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin:18px 0; }
+  h2 { margin:0 0 10px; font-size:20px; color:var(--teal-dark); }
+  h3 { margin:14px 0 6px; font-size:15px; }
+  .meta { color:var(--muted); font-size:13px; }
+  .phase { border-left:4px solid var(--teal); padding-left:16px; }
+  .phase.local { border-left-color:var(--orange); }
+  .tag { display:inline-block; font-size:12px; border-radius:999px; padding:2px 10px; margin-right:6px; background:var(--wash); border:1px solid var(--line); }
+  .tag.local { background:#fbeedd; border-color:#f0cf9f; }
+  table { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+  code { background:var(--wash); padding:1px 5px; border-radius:5px; font-size:13px; }
+  ul { margin:6px 0 0 18px; padding:0; }
+  li { margin:3px 0; }
+  .note { background:#fdf7e6; border:1px solid #efe0ae; border-radius:10px; padding:12px 14px; font-size:14px; }
+  .done { color:#237748; font-weight:600; }
+  .partial { color:#8a6100; font-weight:600; }
+  .open { color:#b3261e; font-weight:600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Event Pilot: How the Task Was Done, Phase by Phase</h1>
+  <p>A record of the work on <code>origin/main</code> and the local commits, from the first commit (16 Oct 2026) to the current state (23 Oct 2026). Built from the git history.</p>
+</header>
+<main>
+
+<section>
+  <h2>Contributors</h2>
+  <table>
+    <tr><th>Contributor</th><th>Commits</th><th>Dates</th><th>Main contribution</th></tr>
+    <tr><td><strong>BHARGAV</strong></td><td>1</td><td>16 Oct</td><td>Repository set-up: the initial README template.</td></tr>
+    <tr><td><strong>Indushree</strong></td><td>19</td><td>16–23 Oct</td><td>The first planning system and its UI, the brief and guided chat, the PDF blueprint, the reviewer and demo documents, and the latest workflow hardening.</td></tr>
+    <tr><td><strong>subash</strong></td><td>3 (plus 2 local)</td><td>18–23 Oct</td><td>Live planning runs, hybrid search, MCP tools, plan editing by chat, the Eventa rebrand, coordination and replanning, and the plan exports.</td></tr>
+  </table>
+  <p class="meta">Commit counts are on <code>origin/main</code> (24 commits). The two local commits are not pushed.</p>
+</section>
+
+<section class="phase">
+  <h2>Phase 0: Repository set-up</h2>
+  <p class="meta"><span class="tag">16 Oct</span><span class="tag">BHARGAV</span><span class="tag">1 commit</span></p>
+  <ul>
+    <li><code>97dd7f5</code> Initial commit: the GitLab README template.</li>
+  </ul>
+</section>
+
+<section class="phase">
+  <h2>Phase 1: First planning system and UI</h2>
+  <p class="meta"><span class="tag">16 Oct</span><span class="tag">Indushree</span><span class="tag">13 commits</span></p>
+  <p>The multi-agent planner, its first React UI, and the first PDF export of approved plans.</p>
+  <ul>
+    <li><code>edc96ab</code> Add the EventPilot autonomous planning system (46 files).</li>
+    <li><code>1fc5d5f</code>, <code>c477069</code>, <code>2ec1ebf</code>, <code>c9a71a4</code> Setup and demo documents (uv setup, end-to-end approval guide, demo guide, PDF preview in the guide).</li>
+    <li><code>bc828ec</code> Use a neutral objective for new events.</li>
+    <li><code>ff86321</code>, <code>fb5bb40</code>, <code>b2c9d28</code> Export approved plans as themed PDFs, redesign the blueprint, and fix overlapping text.</li>
+    <li><code>07de21c</code> Draft blueprint preview; <code>5e11970</code> pre-approval export lock.</li>
+    <li><code>d7416b9</code> Save and switch between event workspaces; <code>1bbb954</code> risk decisions scaled to event complexity; <code>f3113b3</code> show API persistence status.</li>
+    <li><code>7e01501</code> Planner guidance tailored to the event type; <code>4bdc30f</code> manager plan synthesis restored in the workflow.</li>
+    <li><code>4c0f66e</code> Conversational planning workflow (brief intake through the chat).</li>
+  </ul>
+</section>
+
+<section class="phase">
+  <h2>Phase 2: Guided chat and knowledge retrieval</h2>
+  <p class="meta"><span class="tag">17 Oct</span><span class="tag">Indushree</span><span class="tag">1 commit</span></p>
+  <ul>
+    <li><code>29820ba</code> Guided chat and pgvector knowledge retrieval (25 files).</li>
+  </ul>
+</section>
+
+<section class="phase">
+  <h2>Phase 3: Live runs, dynamic brief and free tools</h2>
+  <p class="meta"><span class="tag">18 Oct</span><span class="tag">subash</span><span class="tag">1 commit</span></p>
+  <ul>
+    <li><code>8287f49</code> Live planning runs with streamed events and recovery; hybrid venue search (BM25 with semantic search); the dynamic brief that asks only for what is missing; free MCP tools for weather and travel (89 files).</li>
+  </ul>
+</section>
+
+<section class="phase">
+  <h2>Phase 4: Plan editing, saved conversations and protection</h2>
+  <p class="meta"><span class="tag">18 Oct</span><span class="tag">subash</span><span class="tag">1 commit</span></p>
+  <ul>
+    <li><code>7dcee2c</code> Change a finished plan by chat, re-running only the affected specialists; saved conversations; rate limits, a body-size cap, prompt-injection screening and one live run per event (26 files).</li>
+  </ul>
+</section>
+
+<section class="phase">
+  <h2>Phase 5: Event Pilot rebrand, Eventa UI and coordination</h2>
+  <p class="meta"><span class="tag">19 Oct</span><span class="tag">subash</span><span class="tag">1 commit</span></p>
+  <ul>
+    <li><code>cac72c5</code> Renamed the product to Event Pilot. Merged the Eventa chat UI (streaming answers, step cards, recovery cards, option chips, the step drawer). Added the coordination step that cross-checks the teams, targeted replanning, and the venue handoff to the other specialists (76 files).</li>
+  </ul>
+</section>
+
+<section class="phase">
+  <h2>Phase 6: Workflow completion and hardening</h2>
+  <p class="meta"><span class="tag">22–23 Oct</span><span class="tag">Indushree</span><span class="tag">2 commits</span></p>
+  <ul>
+    <li><code>e67e6c2</code> Complete the planning workflow (45 files).</li>
+    <li><code>8fcf706</code> Harden the planning workflow; add the LangGraph workflow diagram generator, a resilience and performance note, and reviewer materials (27 files).</li>
+  </ul>
+</section>
+
+<section class="phase local">
+  <h2>Phase 7: Exports, theme and fixes (local, not pushed)</h2>
+  <p class="meta"><span class="tag">23 Oct</span><span class="tag">subash</span><span class="tag local">2 local commits</span></p>
+  <ul>
+    <li><code>c16b183</code> Plan downloads: a PDF blueprint and a 7-slide PPTX brochure, built from the saved plan. A green theme in the earlier palette. Fixes for model budget-line field names and for a venue returned as an object. Replay timings taken from the server.</li>
+    <li><code>1b04272</code> Merge of <code>origin/main</code>. The one conflict, in <code>requirements.txt</code>, kept both dependency sets. The app entry now uses Indushree's UI.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Current state</h2>
+  <table>
+    <tr><th>Area</th><th>Status</th><th>Notes</th></tr>
+    <tr><td>Brief intake, option chips and warnings</td><td class="done">Done</td><td>Backend and tests in place.</td></tr>
+    <tr><td>Planning run: specialists, coordination, manager, review and replan</td><td class="done">Done</td><td>Backend tests cover the replan loop.</td></tr>
+    <tr><td>Recovery of failed steps</td><td class="done">Done</td><td>Options, custom text, retry and skip.</td></tr>
+    <tr><td>Live streaming and replay</td><td class="done">Done</td><td>SSE with <code>Last-Event-ID</code>.</td></tr>
+    <tr><td>Plan downloads (PDF and PPTX)</td><td class="partial">Partial</td><td>Backend endpoints built and tested locally. Not pushed. The Indushree UI has a PDF button; no PPTX button.</td></tr>
+    <tr><td>Plan editing by chat</td><td class="partial">Partial</td><td>Backend endpoint exists; the current UI does not call it.</td></tr>
+    <tr><td>Plan workspace (budget, risk tabs, approval)</td><td class="partial">Partial</td><td>In Indushree's UI, not in the Eventa UI.</td></tr>
+    <tr><td>Backend test suite</td><td class="open">Not run here</td><td>The virtualenv is blocked by Device Guard on this machine. Last run before the merge: 54 passed.</td></tr>
+    <tr><td>Push to <code>origin/main</code></td><td class="open">Not done</td><td>Local <code>main</code> is 2 commits ahead.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Open decisions</h2>
+  <ul>
+    <li>Which UI is the product: Indushree's (currently active) or Eventa's.</li>
+    <li>Whether to restore the PPTX button and the green theme in the active UI.</li>
+    <li>When to run the backend tests and push.</li>
+  </ul>
+  <p class="note">This document describes the history. The commit messages and file counts show what changed; the reasons behind each change are in the commit bodies and in the team's own notes.</p>
+</section>
+
+</main>
+</body>
+</html>

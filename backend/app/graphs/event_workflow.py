@@ -1,11 +1,24 @@
 """Manager-led LangGraph workflow with streamed steps and human-in-the-loop recovery.
 
-    START ─┬─ logistics ──┐
-           ├─ finance ────┤
-           ├─ schedule ───┤
-           ├─ requirements┼─▶ event_manager ─▶ review_plan ─┬─▶ recommendations ─▶ END
-           ├─ marketing ──┤                      ▲          │
-           └─ risk ───────┘                      └─ reflection (once, if review fails)
+    START ─▶ receptionist ─▶ manager_intake ─▶ logistics ─┬─ finance ────┐
+    (takes the brief)        (splits the work)           ├─ schedule ───┤
+                                          ├─ requirements┼─▶ coordination ─▶ event_manager ─▶ review_plan ─▶ plan_judge
+                                          ├─ marketing ──┤                        ▲                            │
+                                          └─ risk ───────┘                        │      rules or judge fail   │ judge satisfied
+                                                                                  └──── replan ◀───────────────┤ (feedback to the
+                                                                                        (up to max_replans)    │  flagged specialists)
+                                                                                                               ▼
+                 manager_intake ◀── revise ── approval ◀── recommendations
+       (re-splits the owner's feedback)          │
+                 │                               └── approve ──▶ END
+                 └──────────▶ replan ──▶ coordination ─▶ ... (until the owner approves)
+
+The Event Manager splits the work, the specialists complete their parts, and the
+manager reviews them: it approves, or sends feedback to the owning specialist and
+re-runs only that part. When the manager is satisfied, the owner reviews the plan.
+If the owner sends it back, the manager reads the feedback, re-splits it to the
+right specialists, and the loop repeats until the owner and the manager are both
+satisfied.
 
 Every node reports progress through `emit()` (step_started → tool_call →
 step_verifying → step_completed). When a step fails, the recovery assistant
@@ -31,6 +44,7 @@ from langgraph.types import interrupt
 from app.agents import llm
 from app.agents.checks import CHECK_TEXT, verify
 from app.agents.fmt import inr
+from app.agents.judge import judge_plan
 from app.agents.recovery import RecoveryProposal, explain_failure
 from app.agents.specialists import ROLES, normalise_budget_lines, run_specialist
 from app.core.guard import DATA_RULE, wrap_user
@@ -38,24 +52,29 @@ from app.core.config import settings
 from app.graphs.emit import emit
 from app.graphs.state import EventPlanningState
 from app.models.event import EventBrief, EventPlan
+from app.models.run import RecoveryOption
 from app.services.azure_planner import abuild_plan_with_model
 from app.services.planning import compose_rule_plan
 
 SPECIALISTS = ["logistics_agent", "finance_agent", "schedule_agent", "requirements_agent", "marketing_agent", "risk_operations_agent"]
 
 # What the UI shows in `plan_created`. ids are node names; kinds pick hints and icons.
+# `lane` groups steps for the UI: reception -> split (manager) -> specialists -> review (manager) -> owner.
 STEPS: list[dict[str, Any]] = [
-    {"id": "logistics_agent", "title": "Find a venue", "goal": "Shortlist venues that fit the guests, city and venue budget.", "kind": "logistics", "agent": "Logistics", "group": "parallel"},
-    {"id": "finance_agent", "title": "Draft the budget", "goal": "Split the budget into six lines with a contingency reserve.", "kind": "finance", "agent": "Budget & Finance", "group": "parallel"},
-    {"id": "schedule_agent", "title": "Build the agenda", "goal": "Plan the event-day agenda without clashes.", "kind": "schedule", "agent": "Schedule", "group": "parallel"},
-    {"id": "requirements_agent", "title": "List operational needs", "goal": "Name what the event needs to run, and who owns it.", "kind": "requirements", "agent": "Requirements", "group": "parallel"},
-    {"id": "marketing_agent", "title": "Plan guest communication", "goal": "Choose channels and send dates; nothing goes out without approval.", "kind": "marketing", "agent": "Marketing", "group": "parallel"},
-    {"id": "risk_operations_agent", "title": "Assess risks", "goal": "Build a risk register with a fallback for every high risk.", "kind": "risk", "agent": "Risk & Operations", "group": "parallel"},
-    {"id": "coordination", "title": "Compare the team's plans", "goal": "Check that the venue, its rent and the budget agree across the specialists.", "kind": "coordinate", "agent": "Event Manager", "group": "sequential"},
-    {"id": "event_manager", "title": "Combine into one plan", "goal": "Merge the specialists' work into a single plan within budget.", "kind": "manager", "agent": "Event Manager", "group": "sequential"},
-    {"id": "review_plan", "title": "Review the plan", "goal": "Check budget arithmetic, agenda times and risk coverage.", "kind": "review", "agent": "Event Manager", "group": "sequential"},
-    {"id": "replan", "title": "Re-plan the flagged parts", "goal": "Re-run only the specialists the review points to, using its feedback.", "kind": "reflection", "agent": "Event Manager", "group": "sequential"},
-    {"id": "recommendations", "title": "Write recommendations", "goal": "Summarise the plan and the top next steps for you.", "kind": "recommend", "agent": "Event Manager", "group": "sequential"},
+    {"id": "receptionist", "title": "Receive the brief", "goal": "Check the brief is complete and hand it to the Event Manager.", "kind": "intake", "agent": "Receptionist", "group": "sequential", "lane": "reception"},
+    {"id": "manager_intake", "title": "Split the work", "goal": "Turn the brief into the team's plan: what each specialist must cover.", "kind": "manager", "agent": "Event Manager", "group": "sequential", "lane": "split"},
+    {"id": "logistics_agent", "title": "Find a venue", "goal": "Shortlist venues that fit the guests, city and venue budget.", "kind": "logistics", "agent": "Logistics", "group": "parallel", "lane": "specialists"},
+    {"id": "finance_agent", "title": "Draft the budget", "goal": "Split the budget into six lines with a contingency reserve.", "kind": "finance", "agent": "Budget & Finance", "group": "parallel", "lane": "specialists"},
+    {"id": "schedule_agent", "title": "Build the agenda", "goal": "Plan the event-day agenda without clashes.", "kind": "schedule", "agent": "Schedule", "group": "parallel", "lane": "specialists"},
+    {"id": "requirements_agent", "title": "List operational needs", "goal": "Name what the event needs to run, and who owns it.", "kind": "requirements", "agent": "Requirements", "group": "parallel", "lane": "specialists"},
+    {"id": "marketing_agent", "title": "Plan guest communication", "goal": "Choose channels and send dates; nothing goes out without approval.", "kind": "marketing", "agent": "Marketing", "group": "parallel", "lane": "specialists"},
+    {"id": "risk_operations_agent", "title": "Assess risks", "goal": "Build a risk register with a fallback for every high risk.", "kind": "risk", "agent": "Risk & Operations", "group": "parallel", "lane": "specialists"},
+    {"id": "coordination", "title": "Compare the team's plans", "goal": "Check that the venue, its rent and the budget agree across the specialists.", "kind": "coordinate", "agent": "Event Manager", "group": "sequential", "lane": "review"},
+    {"id": "event_manager", "title": "Combine into one plan", "goal": "Merge the specialists' work into a single plan within budget.", "kind": "manager", "agent": "Event Manager", "group": "sequential", "lane": "review"},
+    {"id": "review_plan", "title": "Review the plan", "goal": "Check budget arithmetic, agenda times and risk coverage.", "kind": "review", "agent": "Event Manager", "group": "sequential", "lane": "review"},
+    {"id": "replan", "title": "Re-plan the flagged parts", "goal": "Re-run only the specialists the review points to, using its feedback.", "kind": "reflection", "agent": "Event Manager", "group": "sequential", "lane": "review"},
+    {"id": "approval", "title": "Approve the plan", "goal": "Nothing is final until you approve it, or send it back to the Event Manager.", "kind": "approve", "agent": "Event owner", "group": "sequential", "lane": "owner"},
+    {"id": "recommendations", "title": "Write recommendations", "goal": "Summarise the plan and the top next steps for you.", "kind": "recommend", "agent": "Event Manager", "group": "sequential", "lane": "owner"},
 ]
 STEP_BY_ID = {step["id"]: step for step in STEPS}
 
@@ -168,6 +187,15 @@ async def manager_attempt(event: dict[str, Any], context: dict[str, Any], overri
             plan, raw = await abuild_plan_with_model(llm.get_chat_model(), brief, context, None)
         return {"ok": True, "plan": _reconcile_manager_plan(plan.model_dump(mode="json"), context, brief.budget), "usage": llm.usage_of(raw), "mode": "llm"}
     except Exception as error:
+        return {"ok": False, "error": str(error) or error.__class__.__name__}
+
+
+@task
+async def judge_attempt(event: dict[str, Any], plan: dict[str, Any], reports: dict[str, Any]) -> dict[str, Any]:
+    try:
+        judgement, usage = await judge_plan(event, plan, reports)
+        return {"ok": True, "judgement": judgement.model_dump(mode="json"), "usage": usage}
+    except Exception as error:  # returned, not raised, as with the other tasks
         return {"ok": False, "error": str(error) or error.__class__.__name__}
 
 
@@ -309,11 +337,12 @@ async def review_plan(state: EventPlanningState) -> dict[str, Any]:
     issues = _review(state["event"], state["final_plan"], state)
     approved = not issues
     verification = {"check": "Budget sums, 12-hour times, 2–5 risks", "passed": approved, "reason": "All checks passed" if approved else " ".join(issues)}
-    did = ["Checked budget arithmetic, agenda times and risk count"] + (["Found issues; the affected specialists will re-plan"] if issues and pass_number <= settings.max_replans else [])
+    manager_round = state.get("manager_round", 0)
+    did = ["Checked budget arithmetic, agenda times and risk count"] + (["Found issues; the affected specialists will re-plan"] if issues and manager_round < settings.max_replans else [])
     emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:review_plan:{pass_number}")
     if approved and pass_number == 1:
         emit({"type": "step_skipped", "stepId": "replan", "reason": "Not needed — the review passed"}, dedupe="skipped:replan")
-    if not approved and pass_number > settings.max_replans:
+    if not approved and manager_round >= settings.max_replans:
         emit({"type": "notice", "message": f"Still open after {settings.max_replans} re-plans: " + " ".join(issues)})
     return {"review": {"approved": approved, "issues": issues}, "steps": {"review_plan": {"status": "completed", "passes": pass_number}}}
 
@@ -384,30 +413,96 @@ async def coordination(state: EventPlanningState) -> dict[str, Any]:
     return {"conflicts": {"items": items}, "steps": {"coordination": {"status": "completed"}}}
 
 
-def owners_for(issues: list[str]) -> list[str]:
+def owners_for(issues: list[str], default: tuple[str, ...] = ("finance_agent",)) -> list[str]:
     text = " ".join(issues).lower()
     owners: list[str] = []
     for keywords, steps in REPLAN_OWNERS:
         if any(word in text for word in keywords):
             owners += [step for step in steps if step not in owners]
-    return owners or ["finance_agent"]
+    return owners or list(default)
+
+
+async def receptionist(state: EventPlanningState) -> dict[str, Any]:
+    """Receives the brief, checks it is complete, and hands it to the Event Manager. Rule-based: no model call."""
+    event = _event(state)
+    emit({"type": "step_started", "stepId": "receptionist", "attempt": 1, "at": _now()}, dedupe="started:receptionist")
+    did = [
+        f"Received the brief for {event.name}: {event.attendees} guests in {event.location} on {event.event_date:%d %b %Y}, budget {inr(event.budget)}",
+        "Handed it to the Event Manager to split the work",
+    ]
+    verification = {"check": "Brief complete", "passed": True, "reason": "All required fields are present"}
+    emit({"type": "step_completed", "stepId": "receptionist", "summary": _summary(did, verification, {}), "at": _now()}, dedupe="completed:receptionist")
+    return {"steps": {"receptionist": {"status": "completed"}}}
+
+
+def _sent_back(state: EventPlanningState) -> bool:
+    return (state.get("approval") or {}).get("decision") == "revise"
+
+
+def route_intake(state: EventPlanningState) -> str:
+    """A plan the owner sent back goes to the manager's re-split, then straight to the affected specialists."""
+    return "replan" if _sent_back(state) else "logistics_agent"
+
+
+async def _resplit(state: EventPlanningState) -> dict[str, Any]:
+    """The owner sent the plan back: the Event Manager reads the feedback and assigns it to the owning specialists."""
+    human_rounds = state.get("human_rounds", 0)
+    feedback = [text for text in (state.get("feedback") or []) if text]
+    if feedback:
+        owners = owners_for(feedback, default=tuple(SPECIALISTS))
+    else:  # no specific change: only the specialists the last review flagged are re-run
+        issues = list((state.get("review") or {}).get("issues") or [])
+        owners = owners_for(issues) if issues else []
+    names = [ROLES[step_id].agent for step_id in owners if step_id in ROLES]
+    emit({"type": "step_started", "stepId": "manager_intake", "attempt": human_rounds + 1, "at": _now()}, dedupe=f"started:manager_intake:round{human_rounds}")
+    if feedback:
+        did = [f"Your feedback: {' '.join(feedback)}", f"Re-split to: {', '.join(names)}" if names else "No specialist matches the feedback; the Event Manager rebuilds the combined plan"]
+    else:
+        did = [f"Re-split to: {', '.join(names)}" if names else "No specialist needs to change; the Event Manager rebuilds the combined plan"]
+    verification = {"check": "Feedback assigned to the specialists", "passed": True, "reason": f"{len(names)} specialist(s) assigned" if names else "Rebuilt by the Event Manager"}
+    emit({"type": "step_completed", "stepId": "manager_intake", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:manager_intake:round{human_rounds}")
+    return {"manager_round": 0, "steps": {"manager_intake": {"status": "completed", "round": human_rounds}}}
+
+
+async def manager_intake(state: EventPlanningState) -> dict[str, Any]:
+    """The Event Manager reads the brief first and sets what each specialist must cover; after an owner's send-back it re-splits the feedback."""
+    if _sent_back(state):
+        return await _resplit(state)
+    rev = state.get("revision_count", 0)
+    event = _event(state)
+    emit({"type": "step_started", "stepId": "manager_intake", "attempt": 1, "at": _now()}, dedupe=f"started:manager_intake:{rev}")
+    did = [
+        f"Brief: {event.attendees} guests in {event.location} on {event.event_date:%d %b %Y}, budget {inr(event.budget)}",
+        "Delegated to Logistics first, because the venue sets the budget and travel; then Budget, Schedule, Requirements, Marketing and Risk run in parallel",
+        "After they report: coordination, plan review, a judge, then your approval",
+    ]
+    verification = {"check": "Brief read and work delegated", "passed": True, "reason": "Six specialists assigned"}
+    emit({"type": "step_completed", "stepId": "manager_intake", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:manager_intake:{rev}")
+    return {"steps": {"manager_intake": {"status": "completed"}}}
 
 
 async def replan(state: EventPlanningState) -> dict[str, Any]:
     """Re-run only the specialists the review points to, giving each the review's feedback."""
     rev = state.get("revision_count", 0) + 1
-    issues = list(state["review"]["issues"])
+    human = [text for text in (state.get("feedback") or []) if text]  # what the owner asked to change
+    issues = human or list(state["review"]["issues"])
+    notes: dict[str, list[str]] = state["review"].get("notes") or {}  # the LLM judge's notes, per specialist
     emit({"type": "step_started", "stepId": "replan", "attempt": rev, "at": _now()}, dedupe=f"started:replan:{rev}")
     event = _event(state)
     current: dict[str, Any] = {}
     rerun: list[str] = []
     kept: list[str] = []
     usage: dict[str, int] = {}
-    for step_id in owners_for(issues):
+    if human:  # a named area re-runs its owner; an unnamed change re-runs every specialist
+        owners = owners_for(issues, default=tuple(SPECIALISTS))
+    else:
+        owners = owners_for(issues) if issues else []
+    owners += [step_id for step_id in notes if step_id not in owners]
+    for step_id in owners:
         role = ROLES[step_id]
         view = {**state, **current}  # later owners build on the reports already re-run
         base = dict((state.get("step_overrides") or {}).get(step_id) or {})
-        overrides = {**base, "feedback": issues}
+        overrides = {**base, "feedback": issues + list(notes.get(step_id, []))}
         if step_id != "logistics_agent":
             overrides["handoff"] = _handoff(view)
         emit({"type": "step_started", "stepId": step_id, "attempt": rev, "at": _now()}, dedupe=f"started:{step_id}:{rev}:replan")
@@ -426,15 +521,89 @@ async def replan(state: EventPlanningState) -> dict[str, Any]:
     did = [f"Re-ran {', '.join(rerun)} with the review's feedback" if rerun else "Nothing could be re-run, so the current reports stand"]
     if kept:
         did.append(f"Kept the previous report for {', '.join(kept)}")
-    verification = {"check": CHECK_TEXT["replan"], "passed": bool(rerun), "reason": " ".join(issues)}
+    reasons = issues + [note for step_notes in notes.values() for note in step_notes]
+    verification = {"check": CHECK_TEXT["replan"], "passed": bool(rerun), "reason": " ".join(reasons)}
     emit({"type": "step_completed", "stepId": "replan", "summary": _summary(did, verification, usage), "at": _now()}, dedupe=f"completed:replan:{rev}")
-    return {**current, "revision_count": rev, "usage": usage, "steps": {"replan": {"status": "completed", "passes": rev}}}
+    return {**current, "revision_count": rev, "manager_round": state.get("manager_round", 0) + 1, "usage": usage, "feedback": [], "steps": {"replan": {"status": "completed", "passes": rev}}}
+
+
+async def plan_judge(state: EventPlanningState) -> dict[str, Any]:
+    """An LLM reads the whole plan. If it isn't good enough, its notes go to the specialists who own each problem."""
+    rev = state.get("revision_count", 0)
+    emit({"type": "step_verifying", "stepId": "review_plan", "check": "Judging the whole plan as the Event Manager"}, dedupe=f"judging:{rev}")
+    result = await judge_attempt(state["event"], state["final_plan"], _context(state))
+    if not result.get("ok"):  # rule checks still stand; the judge is an extra check, not a gate that can break the run
+        emit({"type": "notice", "message": f"The plan judge was unavailable ({result.get('error')}), so only the rule checks were applied."}, dedupe=f"notice:judge:{rev}")
+        return {}
+    usage = result.get("usage", {})
+    judgement = result["judgement"]
+    feedback = [] if judgement["satisfied"] else judgement["feedback"]
+    if not feedback:
+        verification = {"check": "Judged as a whole", "passed": True, "reason": "Good enough for the owner to review"}
+        emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary(["The Event Manager judged the whole plan: good enough for you to review"], verification, usage), "at": _now()}, dedupe=f"judged:{rev}")
+        return {"usage": usage}
+    notes: dict[str, list[str]] = {}
+    for item in feedback:
+        notes.setdefault(item["owner"], []).append(item["note"])
+    reasons = " ".join(item["note"] for item in feedback)
+    verification = {"check": "Judged as a whole", "passed": False, "reason": reasons}
+    emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary([f"The Event Manager sent {len(feedback)} change(s) back to the specialists"], verification, usage), "at": _now()}, dedupe=f"judged:{rev}")
+    if state.get("manager_round", 0) >= settings.max_replans:
+        emit({"type": "notice", "message": f"Still open after {settings.max_replans} re-plans: {reasons}"}, dedupe=f"notice:judge:{rev}")
+    return {"review": {"approved": False, "issues": [], "notes": notes}, "usage": usage}
+
+
+async def approval(state: EventPlanningState) -> dict[str, Any]:
+    """The owner's last check: nothing is final until they approve, or send the plan back to the Event Manager."""
+    rev = state.get("revision_count", 0)
+    if not state.get("interactive", True) or state.get("operation") == "plan-edit":  # no owner to ask, or the owner made this change in the chat
+        emit({"type": "step_completed", "stepId": "approval", "summary": _summary(["Approved automatically: no owner was asked"], {"check": "Owner approval", "passed": True, "reason": "Not asked for this run"}, {}), "at": _now()}, dedupe=f"completed:approval:{rev}")
+        return {"approval": {"decision": "approve"}, "steps": {"approval": {"status": "completed"}}}
+    emit({"type": "step_started", "stepId": "approval", "attempt": 1, "at": _now()}, dedupe=f"started:approval:{rev}")
+    error = "Waiting for your approval"
+    proposal = RecoveryProposal(
+        summary="The plan is ready. Approve it, or send it back to the Event Manager to rebuild.",
+        cause=error,
+        options=[
+            RecoveryOption(id="approve", label="Approve the plan", description="Mark the plan final and write the recommendations.", action="retry_with", patch={"decision": "approve"}),
+            RecoveryOption(id="revise", label="Send back with changes", description="The Event Manager re-splits your feedback to the right specialists, then checks and asks you again.", action="retry_with", patch={"decision": "revise"}),
+        ],
+        customPrompt="What should change? For example: move the venue, lower catering",
+        source="rules",
+    )
+    emit({"type": "step_failed", "stepId": "approval", "error": error, "attempt": 1, "retryable": True, "recovery": proposal.model_dump()}, dedupe=f"failed:approval:{rev}")
+    choice = interrupt({"step_id": "approval", "attempt": 1, "error": error, "proposal": proposal.model_dump(), "overrides": {}})
+    emit({"type": "run_resumed", "stepId": "approval", "action": choice.get("action"), "label": choice.get("label", "")}, dedupe=f"resumed:approval:{rev}")
+    if (choice.get("patch") or {}).get("decision") == "revise":
+        request = (choice.get("feedback") or "").strip()
+        did = [f"Changes asked by you: {request}"] if request else ["Asked to rebuild the plan without specific changes"]
+        verification = {"check": "Owner approval", "passed": False, "reason": "Sent back for changes"}
+        emit({"type": "step_completed", "stepId": "approval", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:approval:{rev}")
+        return {"approval": {"decision": "revise", "feedback": request}, "feedback": [request] if request else [], "human_rounds": state.get("human_rounds", 0) + 1, "steps": {"approval": {"status": "completed", "sent_back": True}}}
+    verification = {"check": "Owner approval", "passed": True, "reason": "Approved by you"}
+    emit({"type": "step_completed", "stepId": "approval", "summary": _summary(["Approved by you"], verification, {}), "at": _now()}, dedupe=f"completed:approval:{rev}")
+    return {"approval": {"decision": "approve"}, "steps": {"approval": {"status": "completed"}}}
 
 
 def route_after_review(state: EventPlanningState) -> str:
-    if not state["review"]["approved"] and state.get("revision_count", 0) < settings.max_replans:
+    """Rule checks passed: the LLM judge reads the whole plan next. Otherwise re-plan, or move on at the limit."""
+    if state["review"]["approved"]:
+        return "plan_judge"
+    return _route_revision(state)
+
+
+def route_after_judge(state: EventPlanningState) -> str:
+    return _route_revision(state)
+
+
+def _route_revision(state: EventPlanningState) -> str:
+    if not state["review"]["approved"] and state.get("manager_round", 0) < settings.max_replans:
         return "replan"
-    return "recommendations"
+    return "approval"  # out of automatic replans: the owner decides with the issues in front of them
+
+
+def route_after_approval(state: EventPlanningState) -> str:
+    return "manager_intake" if state["approval"]["decision"] == "revise" else "recommendations"
 
 
 def _rule_recommendations(event: dict[str, Any], plan: dict[str, Any], context: dict[str, Any]) -> str:
@@ -500,14 +669,24 @@ def build_graph():
     workflow.add_node("event_manager", event_manager)
     workflow.add_node("review_plan", review_plan)
     workflow.add_node("replan", replan)
+    workflow.add_node("plan_judge", plan_judge)
     workflow.add_node("recommendations", recommendations)
-    workflow.add_edge(START, "logistics_agent")  # the venue comes first; everyone else builds on it
+    workflow.add_node("approval", approval)
+    workflow.add_node("manager_intake", manager_intake)
+    workflow.add_node("receptionist", receptionist)
+    workflow.add_edge(START, "receptionist")  # the receptionist takes the brief in
+    workflow.add_edge("receptionist", "manager_intake")  # ...and hands it to the Event Manager, who splits the work
+    # First pass: the venue comes first and everyone else builds on it. After the owner sends the plan back,
+    # the manager's re-split goes straight to the affected specialists via replan.
+    workflow.add_conditional_edges("manager_intake", route_intake, {"logistics_agent": "logistics_agent", "replan": "replan"})
     for step_id in others:
         workflow.add_edge("logistics_agent", step_id)
     workflow.add_edge(others, "coordination")  # waits for all five (completed or skipped)
     workflow.add_edge("coordination", "event_manager")
     workflow.add_edge("event_manager", "review_plan")
-    workflow.add_conditional_edges("review_plan", route_after_review, {"replan": "replan", "recommendations": "recommendations"})
+    workflow.add_conditional_edges("review_plan", route_after_review, {"plan_judge": "plan_judge", "replan": "replan", "approval": "approval"})
+    workflow.add_conditional_edges("plan_judge", route_after_judge, {"replan": "replan", "approval": "approval"})
     workflow.add_edge("replan", "coordination")
+    workflow.add_conditional_edges("approval", route_after_approval, {"manager_intake": "manager_intake", "recommendations": "recommendations"})
     workflow.add_edge("recommendations", END)
     return workflow

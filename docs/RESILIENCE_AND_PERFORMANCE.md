@@ -10,7 +10,7 @@ limit unnecessary work, handle recoverable failure, and protect the planning API
 |---|---|---|
 | Parallel delegation | Independent specialist nodes fan out from the shared LangGraph event state, then converge at the Event Manager. | Reduces wall-clock planning time compared with a fully sequential workflow. |
 | LLM concurrency limit | `MAX_PARALLEL_LLM_CALLS` uses an asyncio semaphore. | Prevents six simultaneous specialists from exhausting Azure deployment throughput. |
-| Bounded reflection | Review sends only failed plans through the affected re-plan path; retries are limited. | Avoids unbounded self-correction loops and unnecessary model calls. |
+| Bounded reflection | Review sends only failed plans through the affected re-plan path; the manager's automatic re-plans are capped at `max_replans`. The owner's send-backs are re-split by the manager and repeat until the owner approves. | Avoids unbounded self-correction loops and unnecessary model calls; the owner stays in control of the final loop. |
 | Tool-result cache | Identical MCP calls reuse a result for `TOOL_CACHE_TTL_S`. | Reduces latency and external-service load during retries or replay. |
 | HTTP and embedding caches | Free-service responses and embedding vectors are persisted locally when available. | Keeps repeat demonstrations quick and less dependent on network availability. |
 | Scoped plan edits | Plan-chat interpretation selects only affected specialists for a change. | A schedule or budget edit does not recreate every part of a valid plan. |

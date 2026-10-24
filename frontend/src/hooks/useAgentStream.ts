@@ -93,6 +93,7 @@ const STEP_KIND: Record<string, StepKind> = {
   reflection: "budget",
   recommend: "activities",
   coordinate: "availability",
+  intake: "itinerary",
 };
 
 const emptyRun = (runId = "", now = Date.now()): RunState => ({
@@ -314,6 +315,8 @@ export interface AgentApi {
   answerPatch: (label: string, patch: Record<string, string>) => void;
   /** Keeps a warning as it is and carries on. */
   keepWarning: (warningId: string) => void;
+  /** Starts a planning run for a saved event and shows its steps in the chat. */
+  replan: (eventId: string, label: string) => void;
   /** Answers a failed step with an option or the user's own words. */
   resolveStep: (msgId: string, stepId: string, choice: { optionId?: string; customText?: string }) => Promise<ResolveResult>;
   stop: () => void;
@@ -480,6 +483,26 @@ export function useAgentStream(): AgentApi {
     [runTurn],
   );
 
+  const replan = useCallback(
+    async (eventId: string, label: string) => {
+      if (stateRef.current.activeMessageId) return;
+      const now = Date.now();
+      const user: ChatMessage = { id: uid("u"), role: "user", content: label, createdAt: now };
+      const agent: AgentMessage = { id: uid("a"), role: "agent", createdAt: now, run: emptyRun("", now) };
+      dispatch({ type: "user_sent", user, agent, title: label });
+      dispatch({ type: "set_event", id: eventId, title: label });
+      try {
+        const { run_id } = await api.startRun(eventId);
+        dispatch({ type: "reset_run", msgId: agent.id, runId: run_id });
+        attachStream(agent.id, run_id);
+      } catch (error) {
+        dispatch({ type: "event", msgId: agent.id, event: { type: "error", message: errorMessage(error) }, at: Date.now() });
+        dispatch({ type: "closed", msgId: agent.id });
+      }
+    },
+    [attachStream],
+  );
+
   const stop = useCallback(() => {
     const id = stateRef.current.activeMessageId;
     if (!id) return;
@@ -496,8 +519,14 @@ export function useAgentStream(): AgentApi {
     return msg?.role === "agent" ? msg.run.runId : "";
   };
 
-  const resolveStep = (msgId: string, stepId: string, choice: { optionId?: string; customText?: string }) =>
-    api.resolveStep(runIdOf(msgId), stepId, choice);
+  const resolveStep = (msgId: string, stepId: string, choice: { optionId?: string; customText?: string }) => {
+    // The approval step is the owner's decision on the plan, not a recovery choice.
+    if (stepId === "approval") {
+      const decision = choice.optionId === "approve" ? "approve" : "revise";
+      return api.decidePlan(runIdOf(msgId), decision, choice.customText ?? "");
+    }
+    return api.resolveStep(runIdOf(msgId), stepId, choice);
+  };
 
   const openSession = useCallback(
     async (id: string) => {
@@ -538,14 +567,17 @@ export function useAgentStream(): AgentApi {
       send,
       answerOption,
       answerPatch,
+      replan: (eventId, label) => replan(eventId, label),
       keepWarning,
       resolveStep,
       stop,
       retryStep: (msgId, stepId) => {
+        if (stepId === "approval") return; // retrying the approval would approve the plan; use the decision card
         // A 409 means the step was already resumed; the stream shows its real state.
         api.retryStep(runIdOf(msgId), stepId).catch(() => undefined);
       },
       skipStep: (msgId, stepId) => {
+        if (stepId === "approval") return; // the plan needs the owner's decision
         dispatch({ type: "step_skipped", msgId, stepId, at: Date.now() });
         api.skipStep(runIdOf(msgId), stepId).catch(() => undefined);
       },

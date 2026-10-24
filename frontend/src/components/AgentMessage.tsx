@@ -113,7 +113,7 @@ function RecoveryCard({
               type="button"
               disabled={busy}
               title={option.description || undefined}
-              onClick={() => send({ optionId: option.id })}
+              onClick={() => (step.id === "approval" && option.id === "revise" ? document.getElementById(inputId)?.focus() : send({ optionId: option.id }))}
               className="rounded-full border border-border bg-surface px-3 py-1.5 text-[13px] text-ink transition-colors duration-150 hover:border-accent/50 hover:text-accent disabled:opacity-40"
             >
               {option.label}
