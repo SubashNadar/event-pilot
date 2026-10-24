@@ -529,6 +529,512 @@
      "note": "Cool evenings; arrange heaters for open-air dinners."
     }
    ]
+  },
+  "Kolkata": {
+   "lat": 22.5726,
+   "lon": 88.3639,
+   "hubs": [
+    {
+     "name": "Netaji Subhas Chandra Bose International Airport",
+     "kind": "airport",
+     "lat": 22.6547,
+     "lon": 88.4467
+    },
+    {
+     "name": "Howrah Junction",
+     "kind": "railway station",
+     "lat": 22.5839,
+     "lon": 88.3422
+    }
+   ],
+   "areas": {
+    "New Town": [
+     22.5867,
+     88.479
+    ],
+    "Park Street": [
+     22.552,
+     88.352
+    ],
+    "Salt Lake": [
+     22.58,
+     88.41
+    ],
+    "Ballygunge": [
+     22.528,
+     88.365
+    ],
+    "Rajarhat": [
+     22.623,
+     88.442
+    ],
+    "Howrah": [
+     22.5958,
+     88.2636
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain and waterlogging in low areas; keep outdoor parts under cover."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Cool, dry winter: peak wedding season with higher prices and early bookings."
+    }
+   ]
+  },
+  "Ahmedabad": {
+   "lat": 23.0225,
+   "lon": 72.5714,
+   "hubs": [
+    {
+     "name": "Sardar Vallabhbhai Patel International Airport",
+     "kind": "airport",
+     "lat": 23.0772,
+     "lon": 72.6347
+    },
+    {
+     "name": "Ahmedabad Junction",
+     "kind": "railway station",
+     "lat": 23.0258,
+     "lon": 72.5873
+    }
+   ],
+   "areas": {
+    "Satellite": [
+     23.03,
+     72.517
+    ],
+    "Navrangpura": [
+     23.0364,
+     72.5566
+    ],
+    "SG Highway": [
+     23.05,
+     72.51
+    ],
+    "Bodakdev": [
+     23.04,
+     72.507
+    ],
+    "GIFT City": [
+     23.161,
+     72.685
+    ],
+    "Prahlad Nagar": [
+     23.011,
+     72.507
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      4,
+      5,
+      6
+     ],
+     "risk": "High",
+     "note": "Extreme afternoon heat: schedule outdoor events for the evening."
+    },
+    {
+     "months": [
+      10,
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Pleasant season: peak demand for weddings and corporate events."
+    }
+   ]
+  },
+  "Lucknow": {
+   "lat": 26.8467,
+   "lon": 80.9462,
+   "hubs": [
+    {
+     "name": "Chaudhary Charan Singh International Airport",
+     "kind": "airport",
+     "lat": 26.7606,
+     "lon": 80.8893
+    },
+    {
+     "name": "Lucknow Charbagh",
+     "kind": "railway station",
+     "lat": 26.832,
+     "lon": 80.922
+    }
+   ],
+   "areas": {
+    "Gomti Nagar": [
+     26.855,
+     80.995
+    ],
+    "Hazratganj": [
+     26.85,
+     80.94
+    ],
+    "Aliganj": [
+     26.892,
+     80.945
+    ],
+    "Indira Nagar": [
+     26.88,
+     80.98
+    ],
+    "Alambagh": [
+     26.81,
+     80.902
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      5,
+      6
+     ],
+     "risk": "High",
+     "note": "Summer heat above 40 °C: keep guests in air-conditioned halls or evening slots."
+    },
+    {
+     "months": [
+      7,
+      8,
+      9
+     ],
+     "risk": "Medium",
+     "note": "Monsoon humidity: check drainage and covered parking."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Mild winter: the best season for garden lawns."
+    }
+   ]
+  },
+  "Chandigarh": {
+   "lat": 30.7333,
+   "lon": 76.7794,
+   "hubs": [
+    {
+     "name": "Chandigarh International Airport",
+     "kind": "airport",
+     "lat": 30.6735,
+     "lon": 76.7885
+    },
+    {
+     "name": "Chandigarh Railway Station",
+     "kind": "railway station",
+     "lat": 30.7046,
+     "lon": 76.8011
+    }
+   ],
+   "areas": {
+    "Sector 17": [
+     30.741,
+     76.783
+    ],
+    "Sector 35": [
+     30.727,
+     76.756
+    ],
+    "Mohali": [
+     30.7046,
+     76.7179
+    ],
+    "Panchkula": [
+     30.6942,
+     76.8606
+    ],
+    "Zirakpur": [
+     30.6425,
+     76.8173
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      12,
+      1
+     ],
+     "risk": "Medium",
+     "note": "Winter fog can delay travel; plan arrival times with buffers."
+    },
+    {
+     "months": [
+      5,
+      6
+     ],
+     "risk": "High",
+     "note": "Dry heat: indoor halls or evening garden events."
+    },
+    {
+     "months": [
+      7,
+      8
+     ],
+     "risk": "Medium",
+     "note": "Monsoon showers: keep a covered backup space."
+    }
+   ]
+  },
+  "Kochi": {
+   "lat": 9.9312,
+   "lon": 76.2673,
+   "hubs": [
+    {
+     "name": "Cochin International Airport",
+     "kind": "airport",
+     "lat": 10.152,
+     "lon": 76.4019
+    },
+    {
+     "name": "Ernakulam Junction",
+     "kind": "railway station",
+     "lat": 9.9816,
+     "lon": 76.2999
+    }
+   ],
+   "areas": {
+    "Marine Drive": [
+     9.98,
+     76.279
+    ],
+    "Kakkanad": [
+     10.0159,
+     76.3419
+    ],
+    "Edappally": [
+     10.0261,
+     76.3085
+    ],
+    "Fort Kochi": [
+     9.9658,
+     76.2421
+    ],
+    "Aluva": [
+     10.1004,
+     76.357
+    ],
+    "Thevara": [
+     9.9495,
+     76.2918
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Southwest monsoon: heavy rain on most days; prefer halls with covered access."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season with the most stable weather."
+    }
+   ]
+  },
+  "Visakhapatnam": {
+   "lat": 17.6868,
+   "lon": 83.2185,
+   "hubs": [
+    {
+     "name": "Visakhapatnam Airport",
+     "kind": "airport",
+     "lat": 17.7211,
+     "lon": 83.2245
+    },
+    {
+     "name": "Visakhapatnam Railway Station",
+     "kind": "railway station",
+     "lat": 17.7213,
+     "lon": 83.2977
+    }
+   ],
+   "areas": {
+    "Rushikonda": [
+     17.783,
+     83.388
+    ],
+    "MVP Colony": [
+     17.737,
+     83.326
+    ],
+    "Madhurawada": [
+     17.813,
+     83.391
+    ],
+    "Gajuwaka": [
+     17.69,
+     83.205
+    ],
+    "Beach Road": [
+     17.714,
+     83.327
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      10,
+      11,
+      12
+     ],
+     "risk": "High",
+     "note": "Northeast monsoon and cyclone season: check the forecast and keep a rain plan."
+    },
+    {
+     "months": [
+      4,
+      5,
+      6
+     ],
+     "risk": "Medium",
+     "note": "Hot and humid: beach venues are best in the evening."
+    }
+   ]
+  },
+  "Indore": {
+   "lat": 22.7196,
+   "lon": 75.8577,
+   "hubs": [
+    {
+     "name": "Devi Ahilyabai Holkar International Airport",
+     "kind": "airport",
+     "lat": 22.7218,
+     "lon": 75.8011
+    },
+    {
+     "name": "Indore Junction",
+     "kind": "railway station",
+     "lat": 22.7189,
+     "lon": 75.8748
+    }
+   ],
+   "areas": {
+    "Vijay Nagar": [
+     22.753,
+     75.893
+    ],
+    "Palasia": [
+     22.724,
+     75.887
+    ],
+    "Scheme 54": [
+     22.748,
+     75.888
+    ],
+    "Rau": [
+     22.64,
+     75.81
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      4,
+      5,
+      6
+     ],
+     "risk": "High",
+     "note": "Hot afternoons: schedule outdoor events for the evening."
+    },
+    {
+     "months": [
+      7,
+      8,
+      9
+     ],
+     "risk": "Medium",
+     "note": "Monsoon: short heavy showers, so keep a covered backup."
+    }
+   ]
+  },
+  "Guwahati": {
+   "lat": 26.1445,
+   "lon": 91.7362,
+   "hubs": [
+    {
+     "name": "Lokpriya Gopinath Bordoloi International Airport",
+     "kind": "airport",
+     "lat": 26.1061,
+     "lon": 91.5859
+    },
+    {
+     "name": "Guwahati Railway Station",
+     "kind": "railway station",
+     "lat": 26.182,
+     "lon": 91.746
+    }
+   ],
+   "areas": {
+    "Dispur": [
+     26.1433,
+     91.7898
+    ],
+    "Beltola": [
+     26.128,
+     91.782
+    ],
+    "Khanapara": [
+     26.13,
+     91.8
+    ],
+    "Six Mile": [
+     26.15,
+     91.745
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon floods are common: confirm road access and have a dry route to the venue."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Cool dry season: the best time for outdoor events."
+    }
+   ]
   }
  }
 }

@@ -35,7 +35,7 @@
 <body>
 <header>
   <h1>Event Pilot: How the Task Was Done, Phase by Phase</h1>
-  <p>A record of the work on <code>origin/main</code> and the local commits, from the first commit (16 Oct 2026) to the current state (23 Oct 2026). Built from the git history.</p>
+  <p>A record of the work on <code>origin/main</code> and the local commits, from the first commit (16 Oct 2026) to the current state (24 Oct 2026). Built from the git history.</p>
 </header>
 <main>
 
@@ -43,11 +43,12 @@
   <h2>Contributors</h2>
   <table>
     <tr><th>Contributor</th><th>Commits</th><th>Dates</th><th>Main contribution</th></tr>
-    <tr><td><strong>BHARGAV</strong></td><td>1</td><td>16 Oct</td><td>Repository set-up: the initial README template.</td></tr>
-    <tr><td><strong>Indushree</strong></td><td>19</td><td>16–23 Oct</td><td>The first planning system and its UI, the brief and guided chat, the PDF blueprint, the reviewer and demo documents, and the latest workflow hardening.</td></tr>
-    <tr><td><strong>subash</strong></td><td>3 (plus 2 local)</td><td>18–23 Oct</td><td>Live planning runs, hybrid search, MCP tools, plan editing by chat, the Eventa rebrand, coordination and replanning, and the plan exports.</td></tr>
+    <tr><td><strong>BHARGAV</strong></td><td>1</td><td>16 Oct</td><td>Repository set-up: the initial README template. Uses the email <code>bhargavbcs@gmail.com</code>, the same email as two of Indushree's commits (see note).</td></tr>
+    <tr><td><strong>Indushree</strong></td><td>21</td><td>16–24 Oct</td><td>The first planning system and its UI, the brief and guided chat, the PDF blueprint, the reviewer and demo documents, the workflow hardening, and the latest planning errors, chat validation and overview navigation.</td></tr>
+    <tr><td><strong>subash</strong></td><td>4 (plus 4 local)</td><td>18–24 Oct</td><td>Live planning runs, hybrid search, MCP tools, plan editing by chat, the Event Pilot rebrand, coordination and replanning, the plan exports, LangGraph PNG export, prompt fencing, and the manager send-back loop.</td></tr>
   </table>
-  <p class="meta">Commit counts are on <code>origin/main</code> (24 commits). The two local commits are not pushed.</p>
+  <p class="meta">Commit counts are on <code>origin/main</code> (26 commits). The four local commits are not pushed.</p>
+  <p class="note">Note: the commit author names <strong>BHARGAV</strong> and <strong>Indushree</strong> are different, but the commits <code>97dd7f5</code> (BHARGAV), <code>8fcf706</code> and <code>d605387</code> (Indushree) all use <code>bhargavbcs@gmail.com</code>. That shared email suggests one person used both names. Git records only the display name and email, so this is an inference, not confirmed.</p>
 </section>
 
 <section class="phase">
@@ -60,7 +61,7 @@
 
 <section class="phase">
   <h2>Phase 1: First planning system and UI</h2>
-  <p class="meta"><span class="tag">16 Oct</span><span class="tag">Indushree</span><span class="tag">13 commits</span></p>
+  <p class="meta"><span class="tag">16 Oct</span><span class="tag">Indushree</span><span class="tag">17 commits</span></p>
   <p>The multi-agent planner, its first React UI, and the first PDF export of approved plans.</p>
   <ul>
     <li><code>edc96ab</code> Add the EventPilot autonomous planning system (46 files).</li>
@@ -115,12 +116,37 @@
   </ul>
 </section>
 
+<section class="phase">
+  <h2>Phase 7: LangGraph PNG export and project config</h2>
+  <p class="meta"><span class="tag">23 Oct</span><span class="tag">subash</span><span class="tag">1 commit, pushed</span></p>
+  <ul>
+    <li><code>f3d361b</code> Export the planning workflow as a LangGraph PNG; add <code>pyproject.toml</code> (2 files, 54 lines added).</li>
+  </ul>
+</section>
+
 <section class="phase local">
-  <h2>Phase 7: Exports, theme and fixes (local, not pushed)</h2>
+  <h2>Phase 8: Exports, theme and fixes (local, not pushed)</h2>
   <p class="meta"><span class="tag">23 Oct</span><span class="tag">subash</span><span class="tag local">2 local commits</span></p>
   <ul>
-    <li><code>c16b183</code> Plan downloads: a PDF blueprint and a 7-slide PPTX brochure, built from the saved plan. A green theme in the earlier palette. Fixes for model budget-line field names and for a venue returned as an object. Replay timings taken from the server.</li>
+    <li><code>c16b183</code> Plan downloads: a PDF blueprint and a 7-slide PPTX brochure, built from the saved plan. A green theme in the earlier palette. Fixes for model budget-line field names and for a venue returned as an object. Replay timings taken from the server (15 files).</li>
     <li><code>1b04272</code> Merge of <code>origin/main</code>. The one conflict, in <code>requirements.txt</code>, kept both dependency sets. The app entry now uses Indushree's UI.</li>
+  </ul>
+</section>
+
+<section class="phase local">
+  <h2>Phase 9: Prompt safety and manager send-back loop (local, not pushed)</h2>
+  <p class="meta"><span class="tag">23–24 Oct</span><span class="tag">subash</span><span class="tag local">2 local commits</span></p>
+  <ul>
+    <li><code>7df1c37</code> Fence user and tool text in every LLM prompt (4 files).</li>
+    <li><code>3bd1f8a</code> Manager-led send-back loop, receptionist intake, and the swimlane workflow (51 files).</li>
+  </ul>
+</section>
+
+<section class="phase">
+  <h2>Phase 10: Planning errors, chat validation and overview navigation</h2>
+  <p class="meta"><span class="tag">24 Oct</span><span class="tag">Indushree</span><span class="tag">1 commit, pushed</span></p>
+  <ul>
+    <li><code>d605387</code> Improve planning errors, chat validation, and overview navigation (26 files).</li>
   </ul>
 </section>
 
@@ -129,14 +155,17 @@
   <table>
     <tr><th>Area</th><th>Status</th><th>Notes</th></tr>
     <tr><td>Brief intake, option chips and warnings</td><td class="done">Done</td><td>Backend and tests in place.</td></tr>
-    <tr><td>Planning run: specialists, coordination, manager, review and replan</td><td class="done">Done</td><td>Backend tests cover the replan loop.</td></tr>
+    <tr><td>Planning run: specialists, coordination, manager, review and replan</td><td class="done">Done</td><td>Backend tests cover the replan loop. The manager send-back loop and receptionist intake were added on 24 Oct (local, not pushed).</td></tr>
     <tr><td>Recovery of failed steps</td><td class="done">Done</td><td>Options, custom text, retry and skip.</td></tr>
     <tr><td>Live streaming and replay</td><td class="done">Done</td><td>SSE with <code>Last-Event-ID</code>.</td></tr>
+    <tr><td>Prompt safety (fencing user and tool text)</td><td class="partial">Partial</td><td>Committed locally (<code>7df1c37</code>). Tests not run here.</td></tr>
     <tr><td>Plan downloads (PDF and PPTX)</td><td class="partial">Partial</td><td>Backend endpoints built and tested locally. Not pushed. The Indushree UI has a PDF button; no PPTX button.</td></tr>
+    <tr><td>LangGraph workflow diagram</td><td class="done">Done</td><td>PNG export pushed in <code>f3d361b</code>. Generator from Indushree's <code>8fcf706</code>.</td></tr>
     <tr><td>Plan editing by chat</td><td class="partial">Partial</td><td>Backend endpoint exists; the current UI does not call it.</td></tr>
-    <tr><td>Plan workspace (budget, risk tabs, approval)</td><td class="partial">Partial</td><td>In Indushree's UI, not in the Eventa UI.</td></tr>
+    <tr><td>Plan workspace (budget, risk tabs, approval)</td><td class="partial">Partial</td><td>In Indushree's UI, not in the Eventa UI. Overview navigation was improved in <code>d605387</code>.</td></tr>
     <tr><td>Backend test suite</td><td class="open">Not run here</td><td>The virtualenv is blocked by Device Guard on this machine. Last run before the merge: 54 passed.</td></tr>
-    <tr><td>Push to <code>origin/main</code></td><td class="open">Not done</td><td>Local <code>main</code> is 2 commits ahead.</td></tr>
+    <tr><td>Uncommitted work</td><td class="open">Present</td><td>Modified files in the backend, frontend and <code>scripts/</code>, plus untracked items (<code>.agents/</code>, <code>.claude/</code>, <code>skills-lock.json</code>, a workflow PNG, a new <code>PlanPreview.tsx</code>). Not in any commit.</td></tr>
+    <tr><td>Sync with <code>origin/main</code></td><td class="open">Diverged</td><td>Local <code>main</code> has 4 commits that origin lacks. Origin has 2 that local lacks: <code>f3d361b</code> and <code>d605387</code>.</td></tr>
   </table>
 </section>
 
@@ -145,7 +174,8 @@
   <ul>
     <li>Which UI is the product: Indushree's (currently active) or Eventa's.</li>
     <li>Whether to restore the PPTX button and the green theme in the active UI.</li>
-    <li>When to run the backend tests and push.</li>
+    <li>How to reconcile the diverged <code>main</code> with <code>origin/main</code> (merge or rebase), and when to push.</li>
+    <li>When to run the backend tests, and whether to commit the uncommitted work.</li>
   </ul>
   <p class="note">This document describes the history. The commit messages and file counts show what changed; the reasons behind each change are in the commit bodies and in the team's own notes.</p>
 </section>

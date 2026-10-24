@@ -2,6 +2,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { ChevronDown, CornerDownLeft, Loader2, MessageCircleQuestion, RotateCcw, SkipForward, Sparkles } from "lucide-react";
 import type { ResolveChoice, ResolveResult, StepState } from "../types";
+import PlanPreview from "./PlanPreview";
 
 interface Props {
   step: StepState;
@@ -55,16 +56,18 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
     }
   };
 
+  const review = Boolean(proposal.preview);  // an approval to review, not an error to fix
   const options = proposal.options.filter((o) => o.action !== "skip");
   const skip = proposal.options.find((o) => o.action === "skip");
   const disabled = !canResolve || busy !== null;
 
   return (
-    <div role="group" aria-label={`Recovery options for ${step.title}`} className={clsx("rounded-xl border border-danger/25 bg-danger/[0.04]", compact ? "mt-2 px-3 py-2.5" : "px-3.5 py-3")}>
+    <div role="group" aria-label={`Recovery options for ${step.title}`} className={clsx("rounded-xl border", review ? "border-accent/30 bg-accent-soft/40" : "border-danger/25 bg-danger/[0.04]", compact ? "mt-2 px-3 py-2.5" : "px-3.5 py-3")}>
       <p className="flex items-start gap-1.5 text-[13.5px] font-medium leading-snug text-ink">
         {proposal.source === "llm" && <Sparkles size={14} className="mt-0.5 shrink-0 text-accent" aria-label="Explained by EventPilot" />}
         {proposal.summary}
       </p>
+      {proposal.preview && <PlanPreview preview={proposal.preview} compact={compact} />}
       {proposal.cause && (
         <button type="button" onClick={() => setShowCause((s) => !s)} aria-expanded={showCause} className="mt-1 inline-flex items-center gap-1 text-[12px] text-muted hover:text-ink">
           <ChevronDown size={12} className={clsx("transition-transform duration-150", showCause && "rotate-180")} aria-hidden />

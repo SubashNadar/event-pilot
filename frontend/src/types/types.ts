@@ -184,6 +184,8 @@ export interface RecoveryOption {
   patch: Record<string, unknown>;
 }
 
+import type { PlanPreview } from "../run/types";
+
 /** What went wrong with a failed step, and the ways forward the planner suggests. */
 export interface RecoveryProposal {
   summary: string;
@@ -191,6 +193,8 @@ export interface RecoveryProposal {
   options: RecoveryOption[];
   customPrompt: string;
   source: "llm" | "rules";
+  /** For the approval step: the generated plan, so the owner can review it before deciding. */
+  preview?: PlanPreview | null;
 }
 
 /** A doubt about the brief (budget too low, short notice, unknown city), with fixes to choose from. */

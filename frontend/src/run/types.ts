@@ -70,12 +70,24 @@ export interface RecoveryOption {
   patch: Record<string, unknown>;
 }
 
+/** The generated plan, shown to the owner before they approve or send it back. */
+export interface PlanPreview {
+  venue: string;
+  venue_detail?: string;
+  budget_forecast: number;
+  approved_budget?: number;
+  budget_lines: { category: string; amount: number }[];
+  agenda: { time: string; activity: string; owner: string }[];
+  risks: { level: string; title: string; recommended_action: string }[];
+}
+
 export interface RecoveryProposal {
   summary: string;
   cause: string;
   options: RecoveryOption[];
   customPrompt: string;
   source: "llm" | "rules";
+  preview?: PlanPreview | null;
 }
 
 export interface Usage {
@@ -171,6 +183,9 @@ export type ConnectionState = "idle" | "connected" | "reconnecting" | "reconnect
 export type ResolveChoice = { option_id: string } | { custom_text: string };
 
 export interface ResolveResult {
-  status: "resumed" | "queued" | "needs_clarification";
+  status: "resumed" | "queued" | "needs_clarification" | "edit_started";
   question?: string | null;
+  /** Set when the owner's change started a plan-edit run; the panel follows that run. */
+  run_id?: string | null;
+  changes?: string[];
 }

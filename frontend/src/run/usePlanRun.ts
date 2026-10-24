@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cancelRun, resolveStep, startRun, streamUrl, type StartRunOptions } from "./api";
+import { cancelRun, continueRun as continueRunApi, resolveStep, startRun, streamUrl, type StartRunOptions } from "./api";
 import { emptyRun, isTerminal, reduceRun } from "./reducer";
 import type { AgentEvent, ConnectionState, ResolveChoice, ResolveResult, RunState } from "./types";
 
@@ -78,21 +78,30 @@ export function usePlanRun() {
   const resolve = useCallback(
     async (stepId: string, choice: ResolveChoice): Promise<ResolveResult> => {
       if (!run) throw new Error("No active run");
-      return resolveStep(run.runId, stepId, choice);
+      const result = await resolveStep(run.runId, stepId, choice);
+      if (result.status === "edit_started" && result.run_id) attach(result.run_id);  // follow the edited plan
+      return result;
     },
-    [run],
+    [run, attach],
   );
 
   const cancel = useCallback(async () => {
     if (run && !isTerminal(run.status)) await cancelRun(run.runId);
   }, [run]);
 
+  /** Resume the run from its checkpoint, then re-attach so the timeline shows it moving again. */
+  const continueRun = useCallback(async () => {
+    if (!run) throw new Error("No active run");
+    await continueRunApi(run.runId);
+    attach(run.runId);
+  }, [run, attach]);
+
   const reset = useCallback(() => {
     close();
     setRun(null);
   }, [close]);
 
-  return { run, connection, start, attach, resolve, cancel, reset };
+  return { run, connection, start, attach, resolve, cancel, continueRun, reset };
 }
 
 export type PlanRunApi = ReturnType<typeof usePlanRun>;

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import { AlertTriangle, ArrowRight, ExternalLink, GitBranch, Image, Info, ListChecks, RotateCcw, Square } from "lucide-react";
+import { AlertTriangle, ArrowRight, ExternalLink, GitBranch, Image, Info, ListChecks, Play, RotateCcw, Square } from "lucide-react";
 import type { PlanRunApi } from "../usePlanRun";
 import type { ResolveChoice, StepKind } from "../types";
 import { isTerminal } from "../reducer";
@@ -27,9 +27,11 @@ const OPERATION_LABEL: Record<string, string> = { "plan-generation": "New plan",
  * failed steps, the streamed recommendations and the hand-off to the plan.
  */
 export default function RunPanel({ planRun, eventName, onReviewPlan, onRestart }: Props) {
-  const { run, connection, resolve, cancel } = planRun;
+  const { run, connection, resolve, cancel, continueRun } = planRun;
   const [selected, setSelected] = useState<string | null>(null);
   const [stopping, setStopping] = useState(false);
+  const [resuming, setResuming] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
   const [runView, setRunView] = useState<"timeline" | "graph" | "png">("timeline");
   const live = useRef<HTMLParagraphElement>(null);
 
@@ -79,8 +81,8 @@ export default function RunPanel({ planRun, eventName, onReviewPlan, onRestart }
   const headline =
     status === "completed" ? "Your plan is ready" :
     status === "awaiting_input" ? `Waiting for your decision on ${waiting.length || 1} step${waiting.length === 1 ? "" : "s"}` :
-    status === "stopped" ? "You stopped this plan" :
-    status === "error" ? "The planning run stopped" :
+    status === "stopped" ? "You stopped this plan. Continue to pick up where it left off." :
+    status === "error" ? "The planning run stopped. Continue to pick up where it left off." :
     status === "answering" ? "Writing your recommendations" :
     "Your planning team is working";
 
@@ -117,9 +119,29 @@ export default function RunPanel({ planRun, eventName, onReviewPlan, onRestart }
                 <Square size={11} aria-hidden /> Stop
               </button>
             )}
+            {(status === "error" || status === "stopped") && (
+              <button
+                type="button"
+                disabled={resuming}
+                onClick={async () => {
+                  setResuming(true);
+                  setResumeError(null);
+                  try {
+                    await continueRun();
+                  } catch (error) {
+                    setResumeError(error instanceof Error ? error.message : "Couldn't continue this run. Try again.");
+                  } finally {
+                    setResuming(false);
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-1.5 text-[12.5px] font-medium text-bg hover:opacity-90 disabled:opacity-50"
+              >
+                <Play size={12} aria-hidden /> Continue
+              </button>
+            )}
             {(status === "error" || status === "stopped") && onRestart && (
-              <button type="button" onClick={onRestart} className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-1.5 text-[12.5px] font-medium text-bg hover:opacity-90">
-                <RotateCcw size={12} aria-hidden /> Start again
+              <button type="button" onClick={onRestart} className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-[12.5px] font-medium text-muted hover:bg-surface-2 hover:text-ink">
+                <RotateCcw size={12} aria-hidden /> Start over
               </button>
             )}
             {plan && (
@@ -128,6 +150,7 @@ export default function RunPanel({ planRun, eventName, onReviewPlan, onRestart }
               </button>
             )}
           </div>
+          {resumeError && <p role="alert" className="w-full text-[12.5px] text-danger">{resumeError}</p>}
         </header>
 
         <ConnectionBanner state={connection} />

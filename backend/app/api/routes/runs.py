@@ -10,6 +10,7 @@ from fastapi.responses import Response
 from sse_starlette.sse import EventSourceResponse
 
 from app.agents.recovery import SKIP_LABELS, interpret_custom
+from app.models.event import EventBrief
 from app.core.guard import clean_text, screen
 from app.graphs.event_workflow import STEPS, build_graph
 from pydantic import BaseModel, Field
@@ -108,6 +109,36 @@ def _choice(option) -> dict:
     return {"action": option.action, "patch": option.patch, "label": option.label, "option_id": option.id}
 
 
+async def _send_back_as_edit(run_id: str, text: str) -> ResolveStepResponse | None:
+    """An owner's send-back that names a concrete change (a city, venue, budget, date, guests or agenda item)
+    is applied the same way the plan chat applies it: the brief changes, the affected agents re-run, and the
+    rest of the plan stays. Returns None when the text isn't a change, so the normal feedback path takes it."""
+    from app.agents.plan_edit import interpret, prepare, reports_matching_plan
+
+    run = _run_or_404(run_id)
+    event = run_manager.event_for(run)
+    plan = await run_manager.paused_plan(run_id)
+    if plan is None:
+        return None
+    reports = await run_manager.previous_reports(run_id)
+    edit, _mode = await interpret(text, event, plan, reports)
+    if not edit.is_change():
+        if edit.question:
+            return ResolveStepResponse(status="needs_clarification", question=edit.question)
+        return None
+    prepared = prepare(edit, event, plan, reports)
+    if prepared.question:
+        return ResolveStepResponse(status="needs_clarification", question=prepared.question)
+    if not prepared.steps:
+        return None
+    new_event = EventBrief.model_validate({**event.model_dump(), **prepared.brief}) if prepared.brief else event
+    if new_event != event:
+        save_event(new_event)
+    await run_manager.cancel(run_id)  # the paused plan is replaced by the edited one
+    new_run = await run_manager.start_edit(new_event, reports_matching_plan(reports, plan), prepared.overrides, run.session_id)
+    return ResolveStepResponse(status="edit_started", run_id=new_run, changes=prepared.changes)
+
+
 @router.post("/runs/{run_id}/steps/{step_id}/resolve", response_model=ResolveStepResponse)
 async def resolve_step(run_id: str, step_id: str, payload: ResolveStepRequest) -> ResolveStepResponse:
     run = _run_or_404(run_id)
@@ -124,6 +155,10 @@ async def resolve_step(run_id: str, step_id: str, payload: ResolveStepRequest) -
             text = clean_text(payload.custom_text, 500)
             if screen(text):
                 return ResolveStepResponse(status="needs_clarification", question="Tell me what to change for this step, e.g. a different area, guest count or budget share.")
+            if step_id == "approval":  # the owner's own words on the plan: apply a concrete change as an edit
+                edited = await _send_back_as_edit(run_id, text)
+                if edited is not None:
+                    return edited
             option, question = await interpret_custom(step_id, text, run_manager.event_for(run), pending.get("overrides") or {})
             if option is None:
                 return ResolveStepResponse(status="needs_clarification", question=question)
@@ -155,6 +190,17 @@ async def skip_step(run_id: str, step_id: str) -> ResolveStepResponse:
     except RunConflict as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
     return ResolveStepResponse(status=result)
+
+
+@router.post("/runs/{run_id}/continue")
+async def continue_run(run_id: str) -> dict[str, str]:
+    """Resume a stopped, errored or interrupted run from its checkpoint."""
+    try:
+        return {"status": await run_manager.continue_run(run_id)}
+    except RunNotFound as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except RunConflict as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
 
 
 @router.post("/runs/{run_id}/cancel", status_code=status.HTTP_204_NO_CONTENT)

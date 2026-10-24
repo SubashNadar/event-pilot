@@ -9,7 +9,12 @@
   "tier1": [
    "Hyderabad",
    "Chennai",
-   "Pune"
+   "Pune",
+   "Kolkata",
+   "Ahmedabad",
+   "Lucknow",
+   "Chandigarh",
+   "Kochi"
   ],
   "destination": [
    "Goa",
@@ -74,6 +79,57 @@
    "jaipur",
    "pink city",
    "amer"
+  ],
+  "Kolkata": [
+   "kolkata",
+   "calcutta",
+   "howrah",
+   "salt lake",
+   "new town"
+  ],
+  "Ahmedabad": [
+   "ahmedabad",
+   "amdavad",
+   "gandhinagar",
+   "gift city"
+  ],
+  "Lucknow": [
+   "lucknow",
+   "lko",
+   "gomti nagar",
+   "hazratganj"
+  ],
+  "Chandigarh": [
+   "chandigarh",
+   "chandigarh tricity",
+   "mohali",
+   "panchkula",
+   "zirakpur"
+  ],
+  "Kochi": [
+   "kochi",
+   "cochin",
+   "ernakulam",
+   "kakkanad",
+   "edappally",
+   "fort kochi"
+  ],
+  "Visakhapatnam": [
+   "visakhapatnam",
+   "vizag",
+   "vishakhapatnam",
+   "vskp"
+  ],
+  "Indore": [
+   "indore",
+   "indor"
+  ],
+  "Guwahati": [
+   "guwahati",
+   "gauhati",
+   "dispur",
+   "beltola",
+   "khanapara"
   ]
  },
  "event_types": [

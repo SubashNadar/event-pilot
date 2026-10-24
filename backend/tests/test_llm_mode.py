@@ -139,7 +139,7 @@ def test_llm_recovery_options_are_validated_and_custom_text_is_interpreted(clien
     assert [o["id"] for o in recovery["options"]] == ["nearby", "unverified", "retry", "skip"]  # 'bad' patch dropped, retry + skip added
 
     question = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "somewhere nice"}).json()
-    assert question == {"status": "needs_clarification", "question": "Which area or guest count?", "option": None}
+    assert question["status"] == "needs_clarification" and question["question"] == "Which area or guest count?" and question["option"] is None
 
     resumed = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "Try a beach venue in Goa, keep 200 guests"}).json()
     assert resumed["status"] == "resumed" and resumed["option"]["patch"] == {"location": "Goa", "allow_unverified": True}

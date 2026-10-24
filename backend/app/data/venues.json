@@ -704,6 +704,774 @@
     "folk performances"
    ],
    "description": "Restored haveli courtyard with folk performances for mehendi, sangeet and cultural evenings."
+  },
+  {
+   "id": "v045",
+   "name": "New Town Lakeside Banquets",
+   "city": "Kolkata",
+   "area": "New Town",
+   "location": "New Town, Kolkata",
+   "type": "banquet hall",
+   "capacity": 400,
+   "rental_inr": 190000,
+   "features": [
+    "lake view",
+    "in-house catering",
+    "valet"
+   ],
+   "description": "Air-conditioned banquet hall beside the lake with Bengali and multi-cuisine catering."
+  },
+  {
+   "id": "v046",
+   "name": "Park Street Rooftop Lounge",
+   "city": "Kolkata",
+   "area": "Park Street",
+   "location": "Park Street, Kolkata",
+   "type": "rooftop",
+   "capacity": 180,
+   "rental_inr": 110000,
+   "features": [
+    "city view",
+    "bar",
+    "standard AV"
+   ],
+   "description": "Rooftop lounge in the heart of the city; good for launches and evening networking."
+  },
+  {
+   "id": "v047",
+   "name": "Salt Lake Convention Hall",
+   "city": "Kolkata",
+   "area": "Salt Lake",
+   "location": "Salt Lake, Kolkata",
+   "type": "convention centre",
+   "capacity": 650,
+   "rental_inr": 320000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Large convention hall with a stage, green rooms and parking for coaches."
+  },
+  {
+   "id": "v048",
+   "name": "Ballygunge Heritage Courtyard",
+   "city": "Kolkata",
+   "area": "Ballygunge",
+   "location": "Ballygunge, Kolkata",
+   "type": "heritage",
+   "capacity": 220,
+   "rental_inr": 150000,
+   "features": [
+    "courtyard",
+    "old-world setting",
+    "dining hall"
+   ],
+   "description": "Restored heritage house with an open courtyard; suits family weddings and cultural evenings."
+  },
+  {
+   "id": "v049",
+   "name": "Rajarhat Workshop Studio",
+   "city": "Kolkata",
+   "area": "Rajarhat",
+   "location": "Rajarhat, Kolkata",
+   "type": "workshop studio",
+   "capacity": 120,
+   "rental_inr": 60000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Bright studio with movable tables and two breakout rooms; built for workshops and trainings."
+  },
+  {
+   "id": "v050",
+   "name": "Howrah Riverside Lawns",
+   "city": "Kolkata",
+   "area": "Howrah",
+   "location": "Howrah, Kolkata",
+   "type": "lawn",
+   "capacity": 500,
+   "rental_inr": 210000,
+   "features": [
+    "covered ceremony space",
+    "river view",
+    "parking"
+   ],
+   "description": "Open lawns on the riverside with a covered ceremony area and wide parking."
+  },
+  {
+   "id": "v051",
+   "name": "Satellite Garden Lawns",
+   "city": "Ahmedabad",
+   "area": "Satellite",
+   "location": "Satellite, Ahmedabad",
+   "type": "lawn",
+   "capacity": 500,
+   "rental_inr": 200000,
+   "features": [
+    "covered ceremony space",
+    "parking",
+    "garden"
+   ],
+   "description": "Landscaped lawns with a covered mandap area; suits weddings and sangeet nights."
+  },
+  {
+   "id": "v052",
+   "name": "Navrangpura Banquet House",
+   "city": "Ahmedabad",
+   "area": "Navrangpura",
+   "location": "Navrangpura, Ahmedabad",
+   "type": "banquet hall",
+   "capacity": 300,
+   "rental_inr": 160000,
+   "features": [
+    "in-house catering",
+    "valet",
+    "AC hall"
+   ],
+   "description": "Air-conditioned banquet hall with Gujarati and multi-cuisine catering."
+  },
+  {
+   "id": "v053",
+   "name": "SG Highway Convention Centre",
+   "city": "Ahmedabad",
+   "area": "SG Highway",
+   "location": "SG Highway, Ahmedabad",
+   "type": "convention centre",
+   "capacity": 800,
+   "rental_inr": 350000,
+   "features": [
+    "stage",
+    "breakout rooms",
+    "large parking area"
+   ],
+   "description": "Large convention centre on SG Highway for conferences, expos and big receptions."
+  },
+  {
+   "id": "v054",
+   "name": "Bodakdev Rooftop Terrace",
+   "city": "Ahmedabad",
+   "area": "Bodakdev",
+   "location": "Bodakdev, Ahmedabad",
+   "type": "rooftop",
+   "capacity": 200,
+   "rental_inr": 115000,
+   "features": [
+    "city view",
+    "standard AV",
+    "bar"
+   ],
+   "description": "Rooftop terrace with city views; good for product launches and birthday parties."
+  },
+  {
+   "id": "v055",
+   "name": "GIFT City Workshop Studio",
+   "city": "Ahmedabad",
+   "area": "GIFT City",
+   "location": "GIFT City, Ahmedabad",
+   "type": "workshop studio",
+   "capacity": 150,
+   "rental_inr": 75000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Modern studio inside the GIFT City campus, with fast Wi-Fi and flexible seating."
+  },
+  {
+   "id": "v056",
+   "name": "Prahlad Nagar Hotel Ballroom",
+   "city": "Ahmedabad",
+   "area": "Prahlad Nagar",
+   "location": "Prahlad Nagar, Ahmedabad",
+   "type": "hotel ballroom",
+   "capacity": 350,
+   "rental_inr": 230000,
+   "features": [
+    "stage",
+    "in-house catering",
+    "valet"
+   ],
+   "description": "Hotel ballroom with a stage and in-house catering for corporate dinners and galas."
+  },
+  {
+   "id": "v057",
+   "name": "Gomti Nagar Garden Pavilion",
+   "city": "Lucknow",
+   "area": "Gomti Nagar",
+   "location": "Gomti Nagar, Lucknow",
+   "type": "lawn",
+   "capacity": 420,
+   "rental_inr": 170000,
+   "features": [
+    "covered ceremony space",
+    "parking",
+    "garden"
+   ],
+   "description": "Garden pavilion with lawns and a covered area; suits weddings and receptions."
+  },
+  {
+   "id": "v058",
+   "name": "Hazratganj Heritage Hall",
+   "city": "Lucknow",
+   "area": "Hazratganj",
+   "location": "Hazratganj, Lucknow",
+   "type": "heritage",
+   "capacity": 260,
+   "rental_inr": 140000,
+   "features": [
+    "heritage setting",
+    "dining hall",
+    "standard AV"
+   ],
+   "description": "Heritage hall with arched interiors, popular for mehfil-style evenings and receptions."
+  },
+  {
+   "id": "v059",
+   "name": "Aliganj Banquets",
+   "city": "Lucknow",
+   "area": "Aliganj",
+   "location": "Aliganj, Lucknow",
+   "type": "banquet hall",
+   "capacity": 330,
+   "rental_inr": 150000,
+   "features": [
+    "in-house catering",
+    "valet",
+    "AC hall"
+   ],
+   "description": "Air-conditioned banquet hall with Awadhi and North Indian catering."
+  },
+  {
+   "id": "v060",
+   "name": "Indira Nagar Workshop Studio",
+   "city": "Lucknow",
+   "area": "Indira Nagar",
+   "location": "Indira Nagar, Lucknow",
+   "type": "workshop studio",
+   "capacity": 110,
+   "rental_inr": 55000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Studio with movable tables and projector; built for trainings and small conferences."
+  },
+  {
+   "id": "v061",
+   "name": "Alambagh Convention Centre",
+   "city": "Lucknow",
+   "area": "Alambagh",
+   "location": "Alambagh, Lucknow",
+   "type": "convention centre",
+   "capacity": 600,
+   "rental_inr": 260000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Convention centre with a stage and green rooms for conferences and large functions."
+  },
+  {
+   "id": "v062",
+   "name": "Indira Nagar Farmhouse Retreat",
+   "city": "Lucknow",
+   "area": "Indira Nagar",
+   "location": "Indira Nagar, Lucknow",
+   "type": "farmhouse",
+   "capacity": 350,
+   "rental_inr": 130000,
+   "features": [
+    "open lawns",
+    "parking",
+    "bonfire area"
+   ],
+   "description": "Farmhouse with open lawns and a bonfire area; suits offsites and private parties."
+  },
+  {
+   "id": "v063",
+   "name": "Sector 17 Plaza Banquets",
+   "city": "Chandigarh",
+   "area": "Sector 17",
+   "location": "Sector 17, Chandigarh",
+   "type": "banquet hall",
+   "capacity": 300,
+   "rental_inr": 170000,
+   "features": [
+    "in-house catering",
+    "valet",
+    "AC hall"
+   ],
+   "description": "Central banquet hall with Punjabi and multi-cuisine catering and easy access from the tricity."
+  },
+  {
+   "id": "v064",
+   "name": "Sector 35 Garden Lawns",
+   "city": "Chandigarh",
+   "area": "Sector 35",
+   "location": "Sector 35, Chandigarh",
+   "type": "lawn",
+   "capacity": 450,
+   "rental_inr": 200000,
+   "features": [
+    "covered ceremony space",
+    "garden",
+    "parking"
+   ],
+   "description": "Garden lawns with a covered ceremony area; popular for weddings and anniversary parties."
+  },
+  {
+   "id": "v065",
+   "name": "Mohali Convention Centre",
+   "city": "Chandigarh",
+   "area": "Mohali",
+   "location": "Mohali, Chandigarh",
+   "type": "convention centre",
+   "capacity": 700,
+   "rental_inr": 330000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Large convention centre for conferences, expos and big receptions."
+  },
+  {
+   "id": "v066",
+   "name": "Panchkula Hills Resort",
+   "city": "Chandigarh",
+   "area": "Panchkula",
+   "location": "Panchkula, Chandigarh",
+   "type": "resort",
+   "capacity": 250,
+   "rental_inr": 150000,
+   "features": [
+    "rooms",
+    "pool",
+    "hill view"
+   ],
+   "description": "Hill resort with rooms and a pool; good for offsites and destination-style weddings."
+  },
+  {
+   "id": "v067",
+   "name": "Zirakpur Workshop Studio",
+   "city": "Chandigarh",
+   "area": "Zirakpur",
+   "location": "Zirakpur, Chandigarh",
+   "type": "workshop studio",
+   "capacity": 120,
+   "rental_inr": 60000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Workshop studio with flexible seating and two breakout rooms."
+  },
+  {
+   "id": "v068",
+   "name": "Sector 17 Rooftop Lounge",
+   "city": "Chandigarh",
+   "area": "Sector 17",
+   "location": "Sector 17, Chandigarh",
+   "type": "rooftop",
+   "capacity": 180,
+   "rental_inr": 110000,
+   "features": [
+    "city view",
+    "bar",
+    "standard AV"
+   ],
+   "description": "Rooftop lounge in Sector 17 with evening views; good for launches and receptions."
+  },
+  {
+   "id": "v069",
+   "name": "Marine Drive Waterfront Hall",
+   "city": "Kochi",
+   "area": "Marine Drive",
+   "location": "Marine Drive, Kochi",
+   "type": "hotel ballroom",
+   "capacity": 350,
+   "rental_inr": 230000,
+   "features": [
+    "backwater view",
+    "valet",
+    "in-house catering"
+   ],
+   "description": "Waterfront ballroom on Marine Drive with backwater views and in-house Kerala catering."
+  },
+  {
+   "id": "v070",
+   "name": "Kakkanad Convention Centre",
+   "city": "Kochi",
+   "area": "Kakkanad",
+   "location": "Kakkanad, Kochi",
+   "type": "convention centre",
+   "capacity": 600,
+   "rental_inr": 300000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Convention centre for IT conferences, expos and large corporate events."
+  },
+  {
+   "id": "v071",
+   "name": "Fort Kochi Heritage Courtyard",
+   "city": "Kochi",
+   "area": "Fort Kochi",
+   "location": "Fort Kochi, Kochi",
+   "type": "heritage",
+   "capacity": 200,
+   "rental_inr": 140000,
+   "features": [
+    "courtyard",
+    "heritage setting",
+    "dining hall"
+   ],
+   "description": "Heritage courtyard in Fort Kochi; suits small weddings and cultural evenings."
+  },
+  {
+   "id": "v072",
+   "name": "Edappally Banquet Hall",
+   "city": "Kochi",
+   "area": "Edappally",
+   "location": "Edappally, Kochi",
+   "type": "banquet hall",
+   "capacity": 300,
+   "rental_inr": 150000,
+   "features": [
+    "in-house catering",
+    "AC hall",
+    "parking"
+   ],
+   "description": "Air-conditioned banquet hall with sadya and multi-cuisine catering."
+  },
+  {
+   "id": "v073",
+   "name": "Aluva Riverside Lawns",
+   "city": "Kochi",
+   "area": "Aluva",
+   "location": "Aluva, Kochi",
+   "type": "lawn",
+   "capacity": 450,
+   "rental_inr": 190000,
+   "features": [
+    "covered ceremony space",
+    "river view",
+    "parking"
+   ],
+   "description": "Riverside lawns with a covered ceremony area and wide parking."
+  },
+  {
+   "id": "v074",
+   "name": "Thevara Workshop Studio",
+   "city": "Kochi",
+   "area": "Thevara",
+   "location": "Thevara, Kochi",
+   "type": "workshop studio",
+   "capacity": 100,
+   "rental_inr": 55000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Studio with movable tables and fast Wi-Fi; built for workshops and hackathons."
+  },
+  {
+   "id": "v075",
+   "name": "Rushikonda Beach Resort",
+   "city": "Visakhapatnam",
+   "area": "Rushikonda",
+   "location": "Rushikonda, Visakhapatnam",
+   "type": "beach resort",
+   "capacity": 250,
+   "rental_inr": 240000,
+   "features": [
+    "beach access",
+    "rooms",
+    "pool"
+   ],
+   "description": "Beachfront resort with lawns facing the sea; for destination weddings and offsites."
+  },
+  {
+   "id": "v076",
+   "name": "MVP Colony Convention Centre",
+   "city": "Visakhapatnam",
+   "area": "MVP Colony",
+   "location": "MVP Colony, Visakhapatnam",
+   "type": "convention centre",
+   "capacity": 650,
+   "rental_inr": 280000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Convention centre for conferences, college fests and big receptions."
+  },
+  {
+   "id": "v077",
+   "name": "Madhurawada Lawns",
+   "city": "Visakhapatnam",
+   "area": "Madhurawada",
+   "location": "Madhurawada, Visakhapatnam",
+   "type": "lawn",
+   "capacity": 420,
+   "rental_inr": 170000,
+   "features": [
+    "covered ceremony space",
+    "garden",
+    "parking"
+   ],
+   "description": "Open lawns with a covered ceremony space; good for weddings and sangeet evenings."
+  },
+  {
+   "id": "v078",
+   "name": "Beach Road Hotel Ballroom",
+   "city": "Visakhapatnam",
+   "area": "Beach Road",
+   "location": "Beach Road, Visakhapatnam",
+   "type": "hotel ballroom",
+   "capacity": 350,
+   "rental_inr": 210000,
+   "features": [
+    "sea view",
+    "in-house catering",
+    "valet"
+   ],
+   "description": "Hotel ballroom on Beach Road with sea views and in-house catering."
+  },
+  {
+   "id": "v079",
+   "name": "Gajuwaka Banquet Hall",
+   "city": "Visakhapatnam",
+   "area": "Gajuwaka",
+   "location": "Gajuwaka, Visakhapatnam",
+   "type": "banquet hall",
+   "capacity": 300,
+   "rental_inr": 120000,
+   "features": [
+    "in-house catering",
+    "AC hall",
+    "parking"
+   ],
+   "description": "Air-conditioned banquet hall with Andhra meals and multi-cuisine catering."
+  },
+  {
+   "id": "v080",
+   "name": "MVP Colony Workshop Studio",
+   "city": "Visakhapatnam",
+   "area": "MVP Colony",
+   "location": "MVP Colony, Visakhapatnam",
+   "type": "workshop studio",
+   "capacity": 110,
+   "rental_inr": 50000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Workshop studio with projector and breakout rooms for trainings and offsites."
+  },
+  {
+   "id": "v081",
+   "name": "Vijay Nagar Banquets",
+   "city": "Indore",
+   "area": "Vijay Nagar",
+   "location": "Vijay Nagar, Indore",
+   "type": "banquet hall",
+   "capacity": 320,
+   "rental_inr": 150000,
+   "features": [
+    "in-house catering",
+    "valet",
+    "AC hall"
+   ],
+   "description": "Air-conditioned banquet hall with Malwi and multi-cuisine catering."
+  },
+  {
+   "id": "v082",
+   "name": "Palasia Rooftop Terrace",
+   "city": "Indore",
+   "area": "Palasia",
+   "location": "Palasia, Indore",
+   "type": "rooftop",
+   "capacity": 180,
+   "rental_inr": 100000,
+   "features": [
+    "city view",
+    "bar",
+    "standard AV"
+   ],
+   "description": "Rooftop terrace in Palasia; good for birthday parties and evening networking."
+  },
+  {
+   "id": "v083",
+   "name": "Scheme 54 Convention Centre",
+   "city": "Indore",
+   "area": "Scheme 54",
+   "location": "Scheme 54, Indore",
+   "type": "convention centre",
+   "capacity": 600,
+   "rental_inr": 240000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Convention centre for conferences, expos and large receptions."
+  },
+  {
+   "id": "v084",
+   "name": "Rau Farmhouse Retreat",
+   "city": "Indore",
+   "area": "Rau",
+   "location": "Rau, Indore",
+   "type": "farmhouse",
+   "capacity": 350,
+   "rental_inr": 130000,
+   "features": [
+    "open lawns",
+    "parking",
+    "bonfire area"
+   ],
+   "description": "Farmhouse with open lawns; suits offsites, mehendi and private parties."
+  },
+  {
+   "id": "v085",
+   "name": "Vijay Nagar Workshop Studio",
+   "city": "Indore",
+   "area": "Vijay Nagar",
+   "location": "Vijay Nagar, Indore",
+   "type": "workshop studio",
+   "capacity": 110,
+   "rental_inr": 50000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Workshop studio with movable tables and reliable Wi-Fi."
+  },
+  {
+   "id": "v086",
+   "name": "Palasia Heritage Haveli",
+   "city": "Indore",
+   "area": "Palasia",
+   "location": "Palasia, Indore",
+   "type": "heritage",
+   "capacity": 220,
+   "rental_inr": 120000,
+   "features": [
+    "courtyard",
+    "heritage setting",
+    "dining hall"
+   ],
+   "description": "Restored haveli with a courtyard; suits family weddings and cultural evenings."
+  },
+  {
+   "id": "v087",
+   "name": "Dispur Convention Centre",
+   "city": "Guwahati",
+   "area": "Dispur",
+   "location": "Dispur, Guwahati",
+   "type": "convention centre",
+   "capacity": 550,
+   "rental_inr": 230000,
+   "features": [
+    "stage",
+    "green rooms",
+    "large parking area"
+   ],
+   "description": "Convention centre near the state secretariat for conferences and government-linked events."
+  },
+  {
+   "id": "v088",
+   "name": "Beltola Garden Lawns",
+   "city": "Guwahati",
+   "area": "Beltola",
+   "location": "Beltola, Guwahati",
+   "type": "lawn",
+   "capacity": 400,
+   "rental_inr": 150000,
+   "features": [
+    "covered ceremony space",
+    "garden",
+    "parking"
+   ],
+   "description": "Garden lawns with a covered ceremony area; suits weddings and receptions."
+  },
+  {
+   "id": "v089",
+   "name": "Khanapara Banquet Hall",
+   "city": "Guwahati",
+   "area": "Khanapara",
+   "location": "Khanapara, Guwahati",
+   "type": "banquet hall",
+   "capacity": 300,
+   "rental_inr": 130000,
+   "features": [
+    "in-house catering",
+    "AC hall",
+    "parking"
+   ],
+   "description": "Air-conditioned banquet hall with Assamese thali and multi-cuisine catering."
+  },
+  {
+   "id": "v090",
+   "name": "Six Mile Hotel Ballroom",
+   "city": "Guwahati",
+   "area": "Six Mile",
+   "location": "Six Mile, Guwahati",
+   "type": "hotel ballroom",
+   "capacity": 300,
+   "rental_inr": 160000,
+   "features": [
+    "stage",
+    "in-house catering",
+    "valet"
+   ],
+   "description": "Hotel ballroom with a stage; good for corporate dinners and award nights."
+  },
+  {
+   "id": "v091",
+   "name": "Dispur Workshop Studio",
+   "city": "Guwahati",
+   "area": "Dispur",
+   "location": "Dispur, Guwahati",
+   "type": "workshop studio",
+   "capacity": 120,
+   "rental_inr": 50000,
+   "features": [
+    "projector",
+    "breakout rooms",
+    "reliable wi-fi"
+   ],
+   "description": "Workshop studio with projector and breakout rooms for trainings."
+  },
+  {
+   "id": "v092",
+   "name": "Khanapara Hill Resort",
+   "city": "Guwahati",
+   "area": "Khanapara",
+   "location": "Khanapara, Guwahati",
+   "type": "resort",
+   "capacity": 180,
+   "rental_inr": 140000,
+   "features": [
+    "rooms",
+    "hill view",
+    "garden"
+   ],
+   "description": "Hill resort with rooms and gardens; suits offsites and small destination weddings."
   }
  ]
 }

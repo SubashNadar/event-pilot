@@ -562,8 +562,9 @@ async def approval(state: EventPlanningState) -> dict[str, Any]:
     emit({"type": "step_started", "stepId": "approval", "attempt": 1, "at": _now()}, dedupe=f"started:approval:{rev}")
     error = "Waiting for your approval"
     proposal = RecoveryProposal(
-        summary="The plan is ready. Approve it, or send it back to the Event Manager to rebuild.",
+        summary="The plan is ready. Review it below, then approve it or send it back with what to change.",
         cause=error,
+        preview={**state["final_plan"], "approved_budget": state["event"]["budget"]},
         options=[
             RecoveryOption(id="approve", label="Approve the plan", description="Mark the plan final and write the recommendations.", action="retry_with", patch={"decision": "approve"}),
             RecoveryOption(id="revise", label="Send back with changes", description="The Event Manager re-splits your feedback to the right specialists, then checks and asks you again.", action="retry_with", patch={"decision": "revise"}),

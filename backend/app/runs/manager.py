@@ -106,6 +106,11 @@ class RunManager:
         values = snapshot.values or {}
         return {key: values.get(key) or {} for key in ("logistics", "finance", "schedule", "requirements", "marketing", "risks")}
 
+    async def paused_plan(self, run_id: str) -> dict[str, Any] | None:
+        """The plan a run has built so far, for the owner to review while it is paused."""
+        snapshot = await self.graph.aget_state({"configurable": {"thread_id": run_id}})
+        return (snapshot.values or {}).get("final_plan")
+
     def on_outcome(self, run_id: str, **hooks: Any) -> None:
         self._hooks[run_id] = hooks
 
@@ -229,6 +234,25 @@ class RunManager:
             return "queued"
         store.set_pending_choices(run_id, {})
         self._spawn(run_id, Command(resume=pending), self._run_config(run))
+        return "resumed"
+
+    async def continue_run(self, run_id: str) -> str:
+        """Pick a stopped, errored or interrupted run up from its checkpoint, where it left off.
+
+        Paused runs continue through their pending decisions (see `resolve`), so they are not restarted here.
+        """
+        run = self._require(run_id)
+        if run_id in self._tasks:
+            return "running"
+        if run.status == "paused":
+            raise RunConflict("This run is waiting for your decision on a step")
+        if run.status == "completed":
+            raise RunConflict("This run has already finished")
+        config = self._run_config(run)
+        snapshot = await self.graph.aget_state(config)
+        if not snapshot.next:
+            raise RunConflict("There is nothing left to continue in this run")
+        self._spawn(run_id, None, config)  # None input: LangGraph resumes from the last checkpoint
         return "resumed"
 
     async def cancel(self, run_id: str) -> None:

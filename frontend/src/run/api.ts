@@ -26,6 +26,9 @@ export const resolveStep = (runId: string, stepId: string, choice: ResolveChoice
 
 export const cancelRun = (runId: string) => request<void>(`/runs/${runId}/cancel`, { method: "POST" });
 
+/** Resume a stopped, errored or interrupted run from its checkpoint. */
+export const continueRun = (runId: string) => request<{ status: string }>(`/runs/${runId}/continue`, { method: "POST" });
+
 export const streamUrl = (runId: string) => `${API_BASE_URL}/runs/${runId}/stream`;
 
 /** Static PNG rendered from the backend's compiled LangGraph definition. */

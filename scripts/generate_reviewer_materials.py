@@ -105,6 +105,8 @@ def line(slide, x1, y1, x2, y2, color=TEAL):
     connector = slide.shapes.add_connector(1, PInches(x1), PInches(y1), PInches(x2), PInches(y2))
     connector.line.color.rgb = rgb(color); connector.line.width = PPt(1.2)
 
+GRAPH_PNG = OUT / "workflow-graph.png"
+
 def build_presentation():
     prs = Presentation(); prs.slide_width = PInches(13.333); prs.slide_height = PInches(7.5)
     # 1 title
@@ -113,7 +115,7 @@ def build_presentation():
     add_ppt_text(slide, "EP", .65, 1.08, 1.1, .3, 25, NAVY, True, align=PP_ALIGN.CENTER)
     add_ppt_text(slide, "EventPilot", .65, 2.35, 8, .65, 36, WHITE, True, font="Aptos Display")
     add_ppt_text(slide, "Autonomous Event Planning Team", .65, 3.07, 9, .45, 20, LIME, True)
-    add_ppt_text(slide, "A manager-led multi-agent system for creating reviewable, traceable event plans.", .65, 3.7, 9.2, .48, 16, "D8E7E2")
+    add_ppt_text(slide, "A manager-led multi-agent system that plans, checks itself, and waits for your approval.", .65, 3.7, 10.5, .48, 16, "D8E7E2")
     rect(slide, .65, 5.28, 4.45, .8, TEAL, TEAL, True)
     add_ppt_text(slide, "React  •  FastAPI  •  LangGraph  •  MCP  •  Azure OpenAI  •  Langfuse", .9, 5.56, 4.0, .2, 9, WHITE, True, align=PP_ALIGN.CENTER)
     add_ppt_text(slide, "Course 4 End Project  |  Reviewer Presentation", .65, 6.8, 7, .25, 10, "B5CBC5")
@@ -124,76 +126,109 @@ def build_presentation():
     card(slide, 8.83, 2.55, 3.85, 2.55, "Project goal", "Create a practical plan through specialist collaboration, then make every important step inspectable by a reviewer.", "6A9E4E")
     # 3 solution
     slide = base_slide(prs, "02 / Solution", "One brief becomes a governed planning workspace", "The interface turns multi-agent output into actions a planner can review, revise, approve, and export.")
-    for i, (t, b) in enumerate([("1. Capture", "Conversational brief: event, date, location, attendees, budget, objective"), ("2. Coordinate", "Specialists work in parallel through a shared LangGraph state"), ("3. Validate", "Manager synthesis and bounded review/reflection protect constraints"), ("4. Decide", "Human reviews risks, revises budget, approves, and exports")]):
-        x = .65 + i*3.08; rect(slide, x, 2.75, 2.62, 2.15, WHITE, LINE, True); rect(slide, x+.2, 2.98, .44, .44, LIME, LIME, True)
+    for i, (t, b) in enumerate([
+        ("1. Capture", "A brief-intake graph asks for each missing field and checks budget and lead time against benchmarks"),
+        ("2. Delegate", "Receptionist hands the brief to the Event Manager, who splits it; Logistics picks the venue first"),
+        ("3. Check", "Five specialists run in parallel, then coordination, rule review and an LLM judge send fixes back"),
+        ("4. Decide", "You approve, or send the plan back in your own words; the manager re-splits it until you agree")]):
+        x = .65 + i*3.08; rect(slide, x, 2.75, 2.62, 2.35, WHITE, LINE, True); rect(slide, x+.2, 2.98, .44, .44, LIME, LIME, True)
         add_ppt_text(slide, str(i+1), x+.2, 3.1, .44, .15, 11, NAVY, True, align=PP_ALIGN.CENTER)
         add_ppt_text(slide, t, x+.2, 3.62, 2.15, .25, 14, INK, True)
-        add_ppt_text(slide, b, x+.2, 4.02, 2.16, .65, 10, MUTED)
+        add_ppt_text(slide, b, x+.2, 4.02, 2.2, .95, 10, MUTED)
     # 4 architecture
     slide = base_slide(prs, "03 / Architecture", "A clear separation of experience, orchestration, tools, and evidence")
-    layers = [("React workspace", "Brief, chat, plan sections, risks, approval, PDF export", "DFF0EA"), ("FastAPI service", "Typed APIs, persistence, streaming run state", "E9F4EF"), ("LangGraph workflow", "Parallel specialists → manager → review → bounded reflection", "DFF0EA"), ("MCP and integrations", "Controlled planning tools and structured tool results", "E9F4EF"), ("Evidence", "SQLite saved events and Langfuse traces", "DFF0EA")]
+    layers = [("React workspace", "Brief chat, live planning run, plan chat, approval, PDF export", "DFF0EA"),
+              ("FastAPI service", "Typed APIs, rate limits, guardrails, SSE streaming with replay", "E9F4EF"),
+              ("LangGraph workflows", "Brief intake, planning run (9 node types), plan-chat edits", "DFF0EA"),
+              ("MCP and integrations", "11 read-only tools: catalogue, weather, holidays, travel, vendors", "E9F4EF"),
+              ("Evidence", "SQLite plans + checkpoints; Langfuse traces per run", "DFF0EA")]
     for i,(a,b,c) in enumerate(layers):
-        y=2.32+i*.78; rect(slide, .78,y,7.25,.58,c,TEAL,True); add_ppt_text(slide,a,.98,y+.16,2.2,.18,11,TEAL,True); add_ppt_text(slide,b,3.25,y+.16,4.52,.18,10,INK)
-    card(slide, 8.45, 2.35, 4.1, 3.55, "Design principle", "The model is not the whole application. Typed state, tool boundaries, validation, persistence, approval, and tracing make the output reviewable.", ORANGE)
+        y=2.32+i*.78; rect(slide, .78,y,7.25,.58,c,TEAL,True); add_ppt_text(slide,a,.98,y+.16,2.2,.18,11,TEAL,True); add_ppt_text(slide,b,3.25,y+.16,4.6,.18,10,INK)
+    card(slide, 8.45, 2.35, 4.1, 3.55, "Design principle", "The model is not the whole application. Typed state, tool boundaries, rule checks, checkpoints, human interrupts, and tracing make the output reviewable.", ORANGE)
     # 5 graph
-    slide = base_slide(prs, "04 / LangGraph", "A state machine for coordinated planning", "The Planning Run workflow graph visualizes this orchestration in the UI.")
-    node(slide,"Event brief",.7,3.25,1.45,.62,LIME,NAVY,"shared state")
-    for i,label in enumerate(["Logistics","Finance","Schedule","Requirements","Marketing","Risk ops"]):
-        x=2.65+(i%3)*1.65; y=2.55+(i//3)*1.05; node(slide,label,x,y,1.38,.55,MINT,TEAL,"MCP-assisted"); line(slide,2.15,3.56,x,y+.27)
-    node(slide,"Event manager",7.85,3.25,1.6,.62,"DFF0EA",TEAL,"synthesis");
-    for y in (2.82,3.87): line(slide,7.6,y,7.85,3.56)
-    node(slide,"Review",10.05,3.25,1.25,.62,"FFF1E7",ORANGE,"checks")
-    node(slide,"Final plan",11.72,3.25,1.05,.62,LIME,NAVY,"or retry")
-    line(slide,9.45,3.56,10.05,3.56); line(slide,11.3,3.56,11.72,3.56)
-    add_ppt_text(slide,"If validation detects a budget, arithmetic, or time-format issue, the graph permits one reflection pass with review feedback.",.85,5.35,11.4,.4,12,MUTED,align=PP_ALIGN.CENTER)
-    # 6 agents
-    slide = base_slide(prs, "05 / Agent team", "Specialists own a discipline; the manager owns the combined decision")
-    agents=[("Logistics","Venue capacity, accessibility, travel"),("Budget & Finance","Allocation, guardrails, contingency"),("Schedule","Agenda sequencing and timing checks"),("Requirements","Operational needs by event type and scale"),("Marketing","Guest communication and RSVP readiness"),("Risk & Operations","Crowd flow, fallback and monitoring actions")]
-    for i,(a,b) in enumerate(agents): card(slide,.7+(i%3)*4.1,2.35+(i//3)*1.6,3.72,1.25,a,b,TEAL if i!=5 else ORANGE)
-    add_ppt_text(slide,"Event Manager: combines bounded specialist reports into one structured plan. Review node: checks the outcome before it reaches the human decision point.",.8,5.82,11.7,.45,13,INK,True,align=PP_ALIGN.CENTER)
-    # 7 MCP
-    slide = base_slide(prs, "06 / MCP", "Tools ground specialist work in controlled planning evidence", "MCP turns a tool call into a structured, traceable part of the workflow.")
-    tools=["Venue search","Budget validation","Schedule conflict check","Event requirements","Marketing readiness","Operational risk assessment"]
-    for i,t in enumerate(tools):
-        x=.75+(i%3)*4.13; y=2.52+(i//3)*1.14; rect(slide,x,y,3.68,.78,WHITE,LINE,True); rect(slide,x+.18,y+.19,.34,.34,LIME,LIME,True); add_ppt_text(slide,"✓",x+.18,y+.25,.34,.15,10,NAVY,True,align=PP_ALIGN.CENTER); add_ppt_text(slide,t,x+.68,y+.25,2.74,.18,12,INK,True)
-    card(slide,.78,5.15,11.8,.82,"Safety boundary","The current MCP tools are deterministic and read-only. Live Maps, email, calendar, and write actions are deliberately deferred until credentials and human approval controls are in place.",ORANGE)
-    # 8 frontend
-    slide = base_slide(prs, "07 / User experience", "A planning workspace designed for real decisions, not just generated prose")
-    steps=[("Plan with AI","Capture a conversational brief and maintain a planning conversation."),("Overview","See planning status, budget, confidence, readiness, and open risks."),("Workspace","Inspect logistics, budget, schedule, marketing, and risk recommendations."),("Planning Run","View timeline or workflow graph; inspect tools, recovery, and trace context."),("Approval & PDF","Preview a draft at any time; allow final export only after explicit approval.")]
+    slide = base_slide(prs, "04 / LangGraph", "The planning run: four lanes, two feedback loops")
+    pic = slide.shapes.add_picture(str(GRAPH_PNG), PInches(.85), PInches(1.78), width=PInches(11.65))
+    pic.crop_top = 0.17  # the PNG carries its own heading; the slide title replaces it
+    pic.height = int(pic.width * (920 * (1 - 0.17)) / 1800)
+    # 6 loops and human in the loop
+    slide = base_slide(prs, "05 / Control loops", "The graph checks itself, then hands the decision to you", "Three places where the run stops, explains, and changes course.")
+    card(slide, .65, 2.45, 3.85, 3.05, "Manager loop  ·  automatic", "review_plan runs rule checks (budget sums, 12-hour times, 2–5 risks, venue and rent match Logistics). plan_judge, an LLM, reads the whole plan. Either can route to replan, which re-runs only the flagged specialists. Capped at 2 re-plans.", ORANGE)
+    card(slide, 4.74, 2.45, 3.85, 3.05, "Owner loop  ·  you decide", "approval pauses the graph with interrupt(). Approve, and recommendations stream out. Send it back with words like \"lower catering\", and manager_intake re-splits your feedback to the owning specialists. Repeats until you approve.", TEAL)
+    card(slide, 8.83, 2.45, 3.85, 3.05, "Step recovery  ·  any node", "If a step fails, the recovery assistant explains why and offers options (retry, adjust inputs, skip) plus a custom answer. Work runs inside @task, so a resumed run reads finished attempts from the SQLite checkpoint instead of repeating them.", "6A9E4E")
+    add_ppt_text(slide, "Every node streams step_started → tool_call → step_verifying → step_completed to the UI.", .65, 5.85, 12.0, .3, 13, INK, True, align=PP_ALIGN.CENTER)
+    # 7 agents
+    slide = base_slide(prs, "06 / Agent team", "Specialists own a discipline; the manager owns the plan")
+    card(slide, .7, 2.2, 5.9, 1.15, "Receptionist", "Checks the brief is complete and hands it on. Rule-based, no model call.", "6A9E4E")
+    card(slide, 6.83, 2.2, 5.8, 1.15, "Event Manager", "Splits the work, coordinates, combines, judges, re-plans, writes recommendations.", ORANGE)
+    agents=[("Logistics  ·  runs first","Venue, rent quote, travel access"),("Budget & Finance","Six budget lines, contingency, vendors"),("Schedule","Agenda without clashes or holidays"),("Requirements","Operational needs and owners"),("Marketing","Channels, send dates, invite draft"),("Risk & Operations","Risk register, weather, fallbacks")]
+    for i,(a,b) in enumerate(agents): card(slide,.7+(i%3)*4.03,3.65+(i//3)*1.4,3.75,1.15,a,b,TEAL)
+    add_ppt_text(slide,"Logistics hands its venue and rent to the other five, so they all plan around the same decision.",.7,6.55,11.9,.3,12,MUTED,align=PP_ALIGN.CENTER)
+    # 8 MCP
+    slide = base_slide(prs, "07 / MCP", "Tools ground specialist work in controlled planning evidence", "11 read-only tools behind an MCP server, with free web data and an offline fallback.")
+    groups = [("Lookups", ["search_venues", "vendor_search", "travel_access", "weather_outlook", "holiday_check", "guest_message_draft"], TEAL),
+              ("Checks", ["validate_budget", "check_schedule_conflicts", "get_event_requirements", "assess_marketing", "assess_operational_risks"], ORANGE)]
+    for g, (label, tools, col) in enumerate(groups):
+        y0 = 2.4 + g*1.45
+        add_ppt_text(slide, label.upper(), .75, y0, 2, .22, 10, col, True, font="Aptos Mono")
+        for i, t in enumerate(tools):
+            x = .75 + i*2.03; y = y0 + .35
+            rect(slide, x, y, 1.88, .62, WHITE, LINE, True)
+            add_ppt_text(slide, t, x+.04, y+.2, 1.8, .2, 8, INK, True, font="Aptos Mono", align=PP_ALIGN.CENTER)
+    card(slide,.78,5.4,11.8,1.05,"Safety boundary","Tools only read: per-specialist allowlists, 40 calls per run, timeouts, 10-minute cache. Nothing is booked or sent.",ORANGE)
+    # 9 frontend
+    slide = base_slide(prs, "08 / User experience", "A workspace built for real decisions, not just prose")
+    steps=[("Plan with AI","Guided brief chat; options come from benchmarks for the city, guest count and event type."),
+           ("Planning Run","Watch each step stream live, as a timeline or the lane graph; tools and checks shown per step."),
+           ("Recovery prompts","A failed step explains itself and asks you to retry, adjust, skip, or type your own fix."),
+           ("Approval","Approve the plan, or send it back with changes; the manager re-splits them."),
+           ("Plan chat","\"Move dinner to 9 PM\" re-runs only the affected specialists; others are kept."),
+           ("Export","Preview a draft PDF at any time; the final PDF only after approval.")]
     for i,(a,b) in enumerate(steps):
-        y=2.22+i*.72; rect(slide,.82,y,.55,.45,LIME,LIME,True); add_ppt_text(slide,str(i+1),.82,y+.14,.55,.12,10,NAVY,True,align=PP_ALIGN.CENTER); add_ppt_text(slide,a,1.63,y+.08,2.3,.18,12,TEAL,True); add_ppt_text(slide,b,4.0,y+.08,7.7,.35,10,INK)
-    # 9 quality governance
-    slide = base_slide(prs, "08 / Quality and control", "Plan - Act - Check is implemented as a bounded, reviewable loop")
-    for i,(a,b,c) in enumerate([("Plan","Manager creates a typed, structured plan.",TEAL),("Act","Specialists use bounded MCP tools and share reports.","6A9E4E"),("Check","Review verifies budget limit, arithmetic, agenda format, and risk count.",ORANGE),("Refine","One retry is permitted with specific review feedback.",TEAL)]):
-        x=.72+i*3.12; rect(slide,x,2.7,2.62,1.8,WHITE,LINE,True); rect(slide,x+.18,2.95,.44,.44,c,c,True); add_ppt_text(slide,str(i+1),x+.18,3.08,.44,.12,11,WHITE,True,align=PP_ALIGN.CENTER); add_ppt_text(slide,a,x+.18,3.58,2.1,.2,14,INK,True); add_ppt_text(slide,b,x+.18,3.92,2.1,.42,10,MUTED)
-    add_ppt_text(slide,"Human approval remains the final control before an approved PDF can be exported.",.72,5.35,11.8,.3,14,TEAL,True,align=PP_ALIGN.CENTER)
-    # 10 observability
-    slide = base_slide(prs, "09 / Observability", "Langfuse makes the AI workflow visible without exposing private reasoning")
-    card(slide,.72,2.45,3.65,2.5,"What a reviewer sees","Plan-generation and budget-revision traces, Azure generation, structured output, latency, tokens, and cost.",TEAL)
-    card(slide,4.83,2.45,3.65,2.5,"What a tool span shows","Tool name, input, result summary, timing, and failures for MCP-backed planning calls.","6A9E4E")
-    card(slide,8.94,2.45,3.65,2.5,"Why it matters","A reviewer can connect the user brief to the workflow, AI generation, tool use, and final plan evidence.",ORANGE)
-    # 11 demo
-    slide = base_slide(prs, "10 / Live demo", "A concise 8-minute reviewer walkthrough", "Suggested scenario: a 350-guest wedding reception in Whitefield, Bengaluru with a ₹12,00,000 budget.")
-    demo=[("1 min","Open Plan with AI; enter the brief and identify the captured requirements."),("2 min","Generate the plan; show the Planning Run timeline and Workflow graph."),("2 min","Open the workspace: venue, budget, agenda, marketing, and risk actions."),("1 min","Reduce budget by 20%; show revised values and the new trace."),("1 min","Open Langfuse: generation, model, tool observations, latency and cost."),("1 min","Preview draft PDF; resolve decisions, approve, and export the final PDF.")]
+        y=2.15+i*.72; rect(slide,.82,y,.55,.45,LIME,LIME,True); add_ppt_text(slide,str(i+1),.82,y+.14,.55,.12,10,NAVY,True,align=PP_ALIGN.CENTER); add_ppt_text(slide,a,1.63,y+.08,2.3,.18,12,TEAL,True); add_ppt_text(slide,b,4.0,y+.08,8.4,.35,10,INK)
+    # 10 quality governance
+    slide = base_slide(prs, "09 / Quality and control", "Plan - Act - Check - Refine, with two independent checks")
+    for i,(a,b,c) in enumerate([("Plan","Manager splits the brief; Logistics settles the venue first.",TEAL),("Act","Specialists use allowlisted MCP tools; coordination compares their reports.","6A9E4E"),("Check","Rule review, then an LLM judge that names which specialist should fix what.",ORANGE),("Refine","Only flagged specialists re-run with the feedback, up to 2 times.",TEAL)]):
+        x=.72+i*3.12; rect(slide,x,2.7,2.62,2.0,WHITE,LINE,True); rect(slide,x+.18,2.95,.44,.44,c,c,True); add_ppt_text(slide,str(i+1),x+.18,3.08,.44,.12,11,WHITE,True,align=PP_ALIGN.CENTER); add_ppt_text(slide,a,x+.18,3.58,2.1,.2,14,INK,True); add_ppt_text(slide,b,x+.18,3.92,2.25,.65,10,MUTED)
+    add_ppt_text(slide,"Your approval is the final control: the run pauses until you approve or send it back.",.72,5.35,11.8,.3,14,TEAL,True,align=PP_ALIGN.CENTER)
+    # 11 observability and resilience
+    slide = base_slide(prs, "10 / Observability and resilience", "Every run can be traced, paused, resumed, and replayed")
+    card(slide,.72,2.45,3.65,2.7,"Langfuse traces","One trace per run, tagged by operation: Azure generations, MCP tool spans, latency, tokens, and cost.",TEAL)
+    card(slide,4.83,2.45,3.65,2.7,"Checkpoints","LangGraph state is saved to SQLite per run, so a paused run resumes where it stopped and the browser can replay events.","6A9E4E")
+    card(slide,8.94,2.45,3.65,2.7,"Guardrails","Rate limits, request-size limits, prompt-injection screening, user-data fencing, and at most 3 parallel LLM calls.",ORANGE)
+    # 12 demo
+    slide = base_slide(prs, "11 / Live demo", "A concise 9-minute reviewer walkthrough", "Suggested scenario: a 350-guest wedding reception in Whitefield, Bengaluru with a ₹12,00,000 budget.")
+    demo=[("1 min","Plan with AI: enter the brief; point out the benchmark warnings and suggested options."),
+          ("2 min","Generate: watch the lanes fill — receptionist, split, Logistics first, five in parallel."),
+          ("1 min","Recovery: a step fails (EVENTPILOT_FAIL_ONCE); read the explanation and pick a fix."),
+          ("1 min","Review: show coordination, rule checks, the judge's notes, and the re-planned specialists."),
+          ("2 min","Approval: send it back (\"lower catering\"); watch the manager re-split, then approve."),
+          ("1 min","Plan chat: \"move dinner to 9 PM\"; only Schedule re-runs."),
+          ("1 min","Langfuse trace, then export the approved PDF.")]
     for i,(time,text) in enumerate(demo):
         y=2.25+i*.56; add_ppt_text(slide,time,.85,y, .7,.2,10,ORANGE,True,font="Aptos Mono"); rect(slide,1.7,y+.03,10.45,.34,WHITE,LINE,True); add_ppt_text(slide,text,1.92,y+.11,10.0,.15,10,INK)
-    # 12 requirements
-    slide = base_slide(prs, "11 / Delivery status", "The README's core course requirements are implemented")
-    rows=[("Multi-agent roles","Six specialist nodes plus event manager"),("State-machine workflow","Compiled LangGraph fan-out, convergence, review and routing"),("Reflection","One bounded retry using review feedback"),("MCP","Internal streamable HTTP server, tools, resource, client and fallback"),("Observability","Langfuse generation, Azure and MCP tool observations"),("Persistence and UI","SQLite saved plans; React workspace, approvals and PDF export")]
+    # 13 requirements
+    slide = base_slide(prs, "12 / Delivery status", "The README's core course requirements are implemented")
+    rows=[("Multi-agent roles","Receptionist, Event Manager, and six specialists"),
+          ("Hierarchical delegation","Manager splits the brief; Logistics first, five in parallel"),
+          ("State-machine workflow","Compiled LangGraph with conditional routing and interrupts"),
+          ("Reflection","Rule review + LLM judge; flagged specialists re-plan, max 2"),
+          ("Human in the loop","Owner approval and send-back; per-step recovery choices"),
+          ("MCP","11 read-only tools, streamable HTTP server, client and offline fallback"),
+          ("Observability and tests","Langfuse traces; offline pytest suite for runs, recovery and tools")]
     for i,(a,b) in enumerate(rows):
-        y=2.22+i*.55; rect(slide,.74,y,.72,.34,LIME,LIME,True); add_ppt_text(slide,"DONE",.74,y+.11,.72,.12,7,NAVY,True,align=PP_ALIGN.CENTER); add_ppt_text(slide,a,1.72,y+.09,2.45,.16,11,TEAL,True); add_ppt_text(slide,b,4.25,y+.09,7.75,.25,10,INK)
-    # 13 limitations
-    slide = base_slide(prs, "12 / Scope", "Deliberate course-demo boundaries and production next steps")
-    card(slide,.72,2.4,3.65,2.75,"Current demo scope","SQLite is suitable for a local course demonstration. MCP tools are deterministic and read-only. Approval is required before final export.",TEAL)
-    card(slide,4.83,2.4,3.65,2.75,"Production enhancements","Hosted database, authentication, multi-user roles, live vendor inventory, Map/Calendar/Email integrations, and broader evaluation datasets.","6A9E4E")
+        y=2.15+i*.55; rect(slide,.74,y,.72,.34,LIME,LIME,True); add_ppt_text(slide,"DONE",.74,y+.11,.72,.12,7,NAVY,True,align=PP_ALIGN.CENTER); add_ppt_text(slide,a,1.72,y+.09,2.45,.16,11,TEAL,True); add_ppt_text(slide,b,4.25,y+.09,7.75,.25,10,INK)
+    # 14 limitations
+    slide = base_slide(prs, "13 / Scope", "Deliberate course-demo boundaries and production next steps")
+    card(slide,.72,2.4,3.65,2.75,"Current demo scope","SQLite for plans and checkpoints. MCP tools read only. The LLM judge runs only when Azure OpenAI is configured; otherwise rule checks apply.",TEAL)
+    card(slide,4.83,2.4,3.65,2.75,"Production enhancements","Hosted database, authentication, multi-user roles, live vendor inventory, calendar and email actions behind approval, and evaluation datasets.","6A9E4E")
     card(slide,8.94,2.4,3.65,2.75,"Why this is credible","The system prioritizes reliable orchestration and inspectability over claiming unsupported real-world booking or autonomous write actions.",ORANGE)
-    # 14 close
-    slide = base_slide(prs, "13 / Close", "EventPilot demonstrates autonomous coordination with human accountability")
+    # 15 close
+    slide = base_slide(prs, "14 / Close", "EventPilot demonstrates autonomous coordination with human accountability")
     rect(slide,.72,2.35,11.85,2.2,NAVY,NAVY,True)
     add_ppt_text(slide,"From one event brief to an inspectable, approved plan",1.05,2.85,11.2,.35,23,WHITE,True,font="Aptos Display",align=PP_ALIGN.CENTER)
-    add_ppt_text(slide,"LangGraph coordinates the team. MCP provides controlled evidence. Langfuse explains the run. The planner retains the final decision.",1.05,3.52,11.2,.35,13,"D8E7E2",align=PP_ALIGN.CENTER)
+    add_ppt_text(slide,"LangGraph coordinates the team and loops until the manager and you agree. MCP grounds the work. Langfuse explains the run.",1.05,3.52,11.2,.35,13,"D8E7E2",align=PP_ALIGN.CENTER)
     add_ppt_text(slide,"Questions and live demonstration",.72,5.35,11.85,.35,18,TEAL,True,align=PP_ALIGN.CENTER)
-    # 15 thank you
+    # 16 thank you
     slide = prs.slides.add_slide(prs.slide_layouts[6]); slide.background.fill.solid(); slide.background.fill.fore_color.rgb = rgb(NAVY)
     rect(slide, 0, 0, 13.333, .12, LIME)
     rect(slide, 5.82, 1.55, 1.68, 1.68, LIME, LIME, True)

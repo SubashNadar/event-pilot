@@ -140,7 +140,7 @@ export default function StepItem({ msgId, step, index, isLast, now, selected, ca
         </span>
       </button>
 
-      {step.status === "failed" && canRetry && (
+      {step.status === "failed" && canRetry && step.id !== "approval" && (  // the approval step is decided in its own card
         <div className="mb-1 mt-1 flex flex-wrap items-center gap-2">
           <button
             type="button"

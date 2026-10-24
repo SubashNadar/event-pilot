@@ -156,6 +156,21 @@ MONEY = r"(?:₹|rs\.?|inr)?\s*[\d,]+(?:\.\d+)?\s*(?:lakhs?|lacs?|l|crores?|cr|k
 TIME = r"\d{1,2}(?:[:.]\d{2})?\s*(?:a\.?m\.?|p\.?m\.?)|noon|midnight"
 
 
+_NOT_A_PLACE = {"the", "a", "an", "my", "our", "it", "this", "that", "same", "another", "different", "one", "here", "there", "location", "city", "area", "venue", "evening", "morning", "night", "afternoon", "date", "time", "budget", "guests", "dinner", "lunch", "breakfast"}
+_MONTHS = ("january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december")
+
+
+def _named_city(text: str) -> str | None:
+    """A city the owner names after 'to', 'into', 'in' or 'at', even when the catalogue doesn't cover it.
+    Logistics then reports that no venue data exists for it, instead of the planner asking again."""
+    for match in re.finditer(r"\b(?:to|into|in|at)\s+([A-Za-z]+(?:\s[A-Za-z]+)?)", text, re.IGNORECASE):
+        words = match.group(1).split()
+        if words[0].lower() in _NOT_A_PLACE or words[0][:3].lower() in {m[:3] for m in _MONTHS}:
+            continue
+        return " ".join(w.capitalize() for w in words)
+    return None
+
+
 def rule_parse(message: str, today: date | None = None) -> PlanEdit:
     today = today or date.today()
     text = " " + message.strip() + " "
@@ -196,8 +211,10 @@ def rule_parse(message: str, today: date | None = None) -> PlanEdit:
         edit.budget_inr = amount
     if re.search(r"\b(?:move|shift|postpone|prepone|change|reschedule)\b.*\b(?:date|day|to|on)\b", lowered) and (parsed := _parse_date(text, today)):
         edit.event_date = parsed
-    if not edit.venue and re.search(r"\b(?:move|shift|relocate|change)\b.*\b(?:city|location|area|to|in)\b", lowered) and (place := _parse_location(text)):
-        edit.location = place
+    if not edit.venue and re.search(r"\b(?:move|shift|relocate|change)\b.*\b(?:city|location|area|to|in)\b", message.lower()):
+        place = _parse_location(message) or (_named_city(message) if re.search(r"\b(?:location|city|area)\b|\b(?:move|shift|relocate)\s+(?:the\s+)?(?:event|it|wedding|party|function|plan)\b", lowered) else None)
+        if place:
+            edit.location = place
     if not edit.is_change():
         if message.strip().endswith("?") or re.match(r"\s*(what|how|which|when|why|is|are|can|do|does|will)\b", message, re.I):
             edit.answer = ""  # filled from the plan by `answer_from_plan`
@@ -296,7 +313,8 @@ def prepare(edit: PlanEdit, event: EventBrief, plan: dict[str, Any], reports: di
             prepared.changes.append(f"date to {new_date:%a %d %b %Y}")
             for step in ("schedule_agent", "marketing_agent", "risk_operations_agent"):
                 _add(prepared, step)
-    if edit.location and edit.location.strip().lower() != event.location.lower():
+    moved = bool(edit.location and edit.location.strip().lower() != event.location.lower())
+    if moved:
         location = edit.location.strip()
         prepared.brief["location"] = location
         prepared.changes.append(f"location to {location}")
@@ -327,8 +345,8 @@ def prepare(edit: PlanEdit, event: EventBrief, plan: dict[str, Any], reports: di
         if decisions["logistics"].get("rental_inr") != venue["rental_inr"]:
             _add(prepared, "finance_agent")  # rent changed, so the budget lines are redone
         prepared.changes.append(f"venue to {venue['name']}")
-    elif "logistics_agent" in prepared.overrides and decisions["logistics"].get("venue"):
-        # Keep the chosen venue when it still fits; otherwise Logistics picks the best fit.
+    elif "logistics_agent" in prepared.overrides and decisions["logistics"].get("venue") and not moved:
+        # Keep the chosen venue when it still fits; a new city means Logistics searches there again.
         _add(prepared, "logistics_agent", venue=decisions["logistics"]["venue"], venue_soft=True)
     if edit.venue_type:
         _add(prepared, "logistics_agent", venue_type=edit.venue_type)

@@ -8,6 +8,7 @@ import { copyText, formatDuration, formatUsd } from "../lib/format";
 import { traceUrl } from "../lib/langfuse";
 import { API_BASE_URL } from "../lib/config";
 import MemoryRecall from "./MemoryRecall";
+import PlanPreview from "../run/components/PlanPreview";
 import PlannerLoader from "./PlannerLoader";
 import StepTimeline from "./StepTimeline";
 import StreamingMarkdown from "./StreamingMarkdown";
@@ -102,7 +103,8 @@ function RecoveryCard({
         <AlertTriangle size={16} className="mt-0.5 shrink-0 text-warn" aria-hidden />
         <div className="min-w-0">
           <p className="font-medium">{proposal?.summary ?? `I'm stuck on “${step.title}”.`}</p>
-          <p className="mt-1 text-muted">Pick one of these, or tell me what you'd like instead. Everything else in the plan is kept.</p>
+          <p className="mt-1 text-muted">{step.id === "approval" ? "Review the plan below. Approve it, or send it back with what to change." : "Pick one of these, or tell me what you'd like instead. Everything else in the plan is kept."}</p>
+          {proposal?.preview && <PlanPreview preview={proposal.preview} />}
         </div>
       </div>
       {proposal && proposal.options.length > 0 && (

@@ -3057,6 +3057,2998 @@
    ],
    "description": "Two-camera live stream with a confidence monitor and technician for hybrid sessions.",
    "package_inr": 115000
+  },
+  {
+   "id": "vd153",
+   "name": "Hooghly Kitchen Caterers",
+   "city": "Kolkata",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Bengali fish and rice thalis and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 765,
+   "min_guests": 50
+  },
+  {
+   "id": "vd154",
+   "name": "Hooghly Table Catering Co.",
+   "city": "Kolkata",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Bengali fish and rice thalis, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1305,
+   "min_guests": 50
+  },
+  {
+   "id": "vd155",
+   "name": "Saffron & Hooghly Banquets",
+   "city": "Kolkata",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Bengali fish and rice thalis prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2160,
+   "min_guests": 100
+  },
+  {
+   "id": "vd156",
+   "name": "Hooghly Florals & Decor",
+   "city": "Kolkata",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in pandal-inspired arches and marigold garlands, from a standard design catalogue.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd157",
+   "name": "Marigold Hooghly Designs",
+   "city": "Kolkata",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in pandal-inspired arches and marigold garlands, with matching table styling.",
+   "package_inr": 250000
+  },
+  {
+   "id": "vd158",
+   "name": "Hooghly Atelier Events",
+   "city": "Kolkata",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with pandal-inspired arches and marigold garlands, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 595000
+  },
+  {
+   "id": "vd159",
+   "name": "Hooghly Frames",
+   "city": "Kolkata",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd160",
+   "name": "Hooghly Lens Co.",
+   "city": "Kolkata",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd161",
+   "name": "Hooghly Cinematics",
+   "city": "Kolkata",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 315000
+  },
+  {
+   "id": "vd162",
+   "name": "Hooghly Sound Rentals",
+   "city": "Kolkata",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd163",
+   "name": "Hooghly Audio Visual",
+   "city": "Kolkata",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 95000
+  },
+  {
+   "id": "vd164",
+   "name": "Hooghly Live Production",
+   "city": "Kolkata",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 215000
+  },
+  {
+   "id": "vd165",
+   "name": "DJ Hooghly",
+   "city": "Kolkata",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of Rabindra Sangeet and Bollywood.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd166",
+   "name": "Hooghly Band Company",
+   "city": "Kolkata",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing Rabindra Sangeet and Bollywood, with a DJ for after-dinner sets.",
+   "package_inr": 115000
+  },
+  {
+   "id": "vd167",
+   "name": "Hooghly Live Music Collective",
+   "city": "Kolkata",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with Rabindra Sangeet and Bollywood, plus a host and a sound check.",
+   "package_inr": 280000
+  },
+  {
+   "id": "vd168",
+   "name": "Hooghly Mehendi Art",
+   "city": "Kolkata",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd169",
+   "name": "Henna by Hooghly",
+   "city": "Kolkata",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd170",
+   "name": "Hooghly AV Rentals",
+   "city": "Kolkata",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd171",
+   "name": "Hooghly Event Tech",
+   "city": "Kolkata",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd172",
+   "name": "Sabarmati Kitchen Caterers",
+   "city": "Ahmedabad",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Gujarati thali and farsan snacks and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 810,
+   "min_guests": 50
+  },
+  {
+   "id": "vd173",
+   "name": "Sabarmati Table Catering Co.",
+   "city": "Ahmedabad",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Gujarati thali and farsan snacks, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1380,
+   "min_guests": 50
+  },
+  {
+   "id": "vd174",
+   "name": "Saffron & Sabarmati Banquets",
+   "city": "Ahmedabad",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Gujarati thali and farsan snacks prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2280,
+   "min_guests": 100
+  },
+  {
+   "id": "vd175",
+   "name": "Sabarmati Florals & Decor",
+   "city": "Ahmedabad",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in Kutch mirror-work and brass lamps, from a standard design catalogue.",
+   "package_inr": 95000
+  },
+  {
+   "id": "vd176",
+   "name": "Marigold Sabarmati Designs",
+   "city": "Ahmedabad",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in Kutch mirror-work and brass lamps, with matching table styling.",
+   "package_inr": 260000
+  },
+  {
+   "id": "vd177",
+   "name": "Sabarmati Atelier Events",
+   "city": "Ahmedabad",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with Kutch mirror-work and brass lamps, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 625000
+  },
+  {
+   "id": "vd178",
+   "name": "Sabarmati Frames",
+   "city": "Ahmedabad",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd179",
+   "name": "Sabarmati Lens Co.",
+   "city": "Ahmedabad",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 145000
+  },
+  {
+   "id": "vd180",
+   "name": "Sabarmati Cinematics",
+   "city": "Ahmedabad",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 330000
+  },
+  {
+   "id": "vd181",
+   "name": "Sabarmati Sound Rentals",
+   "city": "Ahmedabad",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd182",
+   "name": "Sabarmati Audio Visual",
+   "city": "Ahmedabad",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 100000
+  },
+  {
+   "id": "vd183",
+   "name": "Sabarmati Live Production",
+   "city": "Ahmedabad",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 230000
+  },
+  {
+   "id": "vd184",
+   "name": "DJ Sabarmati",
+   "city": "Ahmedabad",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of garba and Bollywood.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd185",
+   "name": "Sabarmati Band Company",
+   "city": "Ahmedabad",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing garba and Bollywood, with a DJ for after-dinner sets.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd186",
+   "name": "Sabarmati Live Music Collective",
+   "city": "Ahmedabad",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with garba and Bollywood, plus a host and a sound check.",
+   "package_inr": 295000
+  },
+  {
+   "id": "vd187",
+   "name": "Sabarmati Mehendi Art",
+   "city": "Ahmedabad",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd188",
+   "name": "Henna by Sabarmati",
+   "city": "Ahmedabad",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd189",
+   "name": "Sabarmati AV Rentals",
+   "city": "Ahmedabad",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd190",
+   "name": "Sabarmati Event Tech",
+   "city": "Ahmedabad",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd191",
+   "name": "Gomti Kitchen Caterers",
+   "city": "Lucknow",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Awadhi kebabs, biryani and sheermal and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 720,
+   "min_guests": 50
+  },
+  {
+   "id": "vd192",
+   "name": "Gomti Table Catering Co.",
+   "city": "Lucknow",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Awadhi kebabs, biryani and sheermal, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1230,
+   "min_guests": 50
+  },
+  {
+   "id": "vd193",
+   "name": "Saffron & Gomti Banquets",
+   "city": "Lucknow",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Awadhi kebabs, biryani and sheermal prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2040,
+   "min_guests": 100
+  },
+  {
+   "id": "vd194",
+   "name": "Gomti Florals & Decor",
+   "city": "Lucknow",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in Nawabi drapes and chandelier-style lighting, from a standard design catalogue.",
+   "package_inr": 85000
+  },
+  {
+   "id": "vd195",
+   "name": "Marigold Gomti Designs",
+   "city": "Lucknow",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in Nawabi drapes and chandelier-style lighting, with matching table styling.",
+   "package_inr": 235000
+  },
+  {
+   "id": "vd196",
+   "name": "Gomti Atelier Events",
+   "city": "Lucknow",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with Nawabi drapes and chandelier-style lighting, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 560000
+  },
+  {
+   "id": "vd197",
+   "name": "Gomti Frames",
+   "city": "Lucknow",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd198",
+   "name": "Gomti Lens Co.",
+   "city": "Lucknow",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd199",
+   "name": "Gomti Cinematics",
+   "city": "Lucknow",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 300000
+  },
+  {
+   "id": "vd200",
+   "name": "Gomti Sound Rentals",
+   "city": "Lucknow",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd201",
+   "name": "Gomti Audio Visual",
+   "city": "Lucknow",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd202",
+   "name": "Gomti Live Production",
+   "city": "Lucknow",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 205000
+  },
+  {
+   "id": "vd203",
+   "name": "DJ Gomti",
+   "city": "Lucknow",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of ghazal and qawwali.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd204",
+   "name": "Gomti Band Company",
+   "city": "Lucknow",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing ghazal and qawwali, with a DJ for after-dinner sets.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd205",
+   "name": "Gomti Live Music Collective",
+   "city": "Lucknow",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with ghazal and qawwali, plus a host and a sound check.",
+   "package_inr": 265000
+  },
+  {
+   "id": "vd206",
+   "name": "Gomti Mehendi Art",
+   "city": "Lucknow",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd207",
+   "name": "Henna by Gomti",
+   "city": "Lucknow",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd208",
+   "name": "Gomti AV Rentals",
+   "city": "Lucknow",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd209",
+   "name": "Gomti Event Tech",
+   "city": "Lucknow",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 100000
+  },
+  {
+   "id": "vd210",
+   "name": "Sukhna Kitchen Caterers",
+   "city": "Chandigarh",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Punjabi dhaba-style buffets and makki di roti and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd211",
+   "name": "Sukhna Table Catering Co.",
+   "city": "Chandigarh",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Punjabi dhaba-style buffets and makki di roti, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1450,
+   "min_guests": 50
+  },
+  {
+   "id": "vd212",
+   "name": "Saffron & Sukhna Banquets",
+   "city": "Chandigarh",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Punjabi dhaba-style buffets and makki di roti prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2400,
+   "min_guests": 100
+  },
+  {
+   "id": "vd213",
+   "name": "Sukhna Florals & Decor",
+   "city": "Chandigarh",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in phulkari motifs and marigold canopies, from a standard design catalogue.",
+   "package_inr": 100000
+  },
+  {
+   "id": "vd214",
+   "name": "Marigold Sukhna Designs",
+   "city": "Chandigarh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in phulkari motifs and marigold canopies, with matching table styling.",
+   "package_inr": 275000
+  },
+  {
+   "id": "vd215",
+   "name": "Sukhna Atelier Events",
+   "city": "Chandigarh",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with phulkari motifs and marigold canopies, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 660000
+  },
+  {
+   "id": "vd216",
+   "name": "Sukhna Frames",
+   "city": "Chandigarh",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd217",
+   "name": "Sukhna Lens Co.",
+   "city": "Chandigarh",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 155000
+  },
+  {
+   "id": "vd218",
+   "name": "Sukhna Cinematics",
+   "city": "Chandigarh",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 350000
+  },
+  {
+   "id": "vd219",
+   "name": "Sukhna Sound Rentals",
+   "city": "Chandigarh",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd220",
+   "name": "Sukhna Audio Visual",
+   "city": "Chandigarh",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd221",
+   "name": "Sukhna Live Production",
+   "city": "Chandigarh",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 240000
+  },
+  {
+   "id": "vd222",
+   "name": "DJ Sukhna",
+   "city": "Chandigarh",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of bhangra and Punjabi pop.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd223",
+   "name": "Sukhna Band Company",
+   "city": "Chandigarh",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing bhangra and Punjabi pop, with a DJ for after-dinner sets.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd224",
+   "name": "Sukhna Live Music Collective",
+   "city": "Chandigarh",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with bhangra and Punjabi pop, plus a host and a sound check.",
+   "package_inr": 310000
+  },
+  {
+   "id": "vd225",
+   "name": "Sukhna Mehendi Art",
+   "city": "Chandigarh",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd226",
+   "name": "Henna by Sukhna",
+   "city": "Chandigarh",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd227",
+   "name": "Sukhna AV Rentals",
+   "city": "Chandigarh",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd228",
+   "name": "Sukhna Event Tech",
+   "city": "Chandigarh",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 115000
+  },
+  {
+   "id": "vd229",
+   "name": "Backwater Kitchen Caterers",
+   "city": "Kochi",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Kerala sadya and seafood and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 810,
+   "min_guests": 50
+  },
+  {
+   "id": "vd230",
+   "name": "Backwater Table Catering Co.",
+   "city": "Kochi",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Kerala sadya and seafood, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1380,
+   "min_guests": 50
+  },
+  {
+   "id": "vd231",
+   "name": "Saffron & Backwater Banquets",
+   "city": "Kochi",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Kerala sadya and seafood prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2280,
+   "min_guests": 100
+  },
+  {
+   "id": "vd232",
+   "name": "Backwater Florals & Decor",
+   "city": "Kochi",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in banana-leaf motifs and brass nilavilakku lamps, from a standard design catalogue.",
+   "package_inr": 95000
+  },
+  {
+   "id": "vd233",
+   "name": "Marigold Backwater Designs",
+   "city": "Kochi",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in banana-leaf motifs and brass nilavilakku lamps, with matching table styling.",
+   "package_inr": 260000
+  },
+  {
+   "id": "vd234",
+   "name": "Backwater Atelier Events",
+   "city": "Kochi",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with banana-leaf motifs and brass nilavilakku lamps, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 625000
+  },
+  {
+   "id": "vd235",
+   "name": "Backwater Frames",
+   "city": "Kochi",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd236",
+   "name": "Backwater Lens Co.",
+   "city": "Kochi",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 145000
+  },
+  {
+   "id": "vd237",
+   "name": "Backwater Cinematics",
+   "city": "Kochi",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 330000
+  },
+  {
+   "id": "vd238",
+   "name": "Backwater Sound Rentals",
+   "city": "Kochi",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd239",
+   "name": "Backwater Audio Visual",
+   "city": "Kochi",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 100000
+  },
+  {
+   "id": "vd240",
+   "name": "Backwater Live Production",
+   "city": "Kochi",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 230000
+  },
+  {
+   "id": "vd241",
+   "name": "DJ Backwater",
+   "city": "Kochi",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of Malayalam film hits and chenda drums.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd242",
+   "name": "Backwater Band Company",
+   "city": "Kochi",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing Malayalam film hits and chenda drums, with a DJ for after-dinner sets.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd243",
+   "name": "Backwater Live Music Collective",
+   "city": "Kochi",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with Malayalam film hits and chenda drums, plus a host and a sound check.",
+   "package_inr": 295000
+  },
+  {
+   "id": "vd244",
+   "name": "Backwater Mehendi Art",
+   "city": "Kochi",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd245",
+   "name": "Henna by Backwater",
+   "city": "Kochi",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd246",
+   "name": "Backwater AV Rentals",
+   "city": "Kochi",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd247",
+   "name": "Backwater Event Tech",
+   "city": "Kochi",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd248",
+   "name": "Rushi Kitchen Caterers",
+   "city": "Visakhapatnam",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Andhra meals and seafood fry and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 680,
+   "min_guests": 50
+  },
+  {
+   "id": "vd249",
+   "name": "Rushi Table Catering Co.",
+   "city": "Visakhapatnam",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Andhra meals and seafood fry, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1160,
+   "min_guests": 50
+  },
+  {
+   "id": "vd250",
+   "name": "Saffron & Rushi Banquets",
+   "city": "Visakhapatnam",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Andhra meals and seafood fry prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 1920,
+   "min_guests": 100
+  },
+  {
+   "id": "vd251",
+   "name": "Rushi Florals & Decor",
+   "city": "Visakhapatnam",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in tropical beach-side florals and palm-leaf panels, from a standard design catalogue.",
+   "package_inr": 80000
+  },
+  {
+   "id": "vd252",
+   "name": "Marigold Rushi Designs",
+   "city": "Visakhapatnam",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in tropical beach-side florals and palm-leaf panels, with matching table styling.",
+   "package_inr": 220000
+  },
+  {
+   "id": "vd253",
+   "name": "Rushi Atelier Events",
+   "city": "Visakhapatnam",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with tropical beach-side florals and palm-leaf panels, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 530000
+  },
+  {
+   "id": "vd254",
+   "name": "Rushi Frames",
+   "city": "Visakhapatnam",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd255",
+   "name": "Rushi Lens Co.",
+   "city": "Visakhapatnam",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd256",
+   "name": "Rushi Cinematics",
+   "city": "Visakhapatnam",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 280000
+  },
+  {
+   "id": "vd257",
+   "name": "Rushi Sound Rentals",
+   "city": "Visakhapatnam",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd258",
+   "name": "Rushi Audio Visual",
+   "city": "Visakhapatnam",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 85000
+  },
+  {
+   "id": "vd259",
+   "name": "Rushi Live Production",
+   "city": "Visakhapatnam",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 190000
+  },
+  {
+   "id": "vd260",
+   "name": "DJ Rushi",
+   "city": "Visakhapatnam",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of Telugu film hits and folk.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd261",
+   "name": "Rushi Band Company",
+   "city": "Visakhapatnam",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing Telugu film hits and folk, with a DJ for after-dinner sets.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd262",
+   "name": "Rushi Live Music Collective",
+   "city": "Visakhapatnam",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with Telugu film hits and folk, plus a host and a sound check.",
+   "package_inr": 250000
+  },
+  {
+   "id": "vd263",
+   "name": "Rushi Mehendi Art",
+   "city": "Visakhapatnam",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 10000
+  },
+  {
+   "id": "vd264",
+   "name": "Henna by Rushi",
+   "city": "Visakhapatnam",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd265",
+   "name": "Rushi AV Rentals",
+   "city": "Visakhapatnam",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd266",
+   "name": "Rushi Event Tech",
+   "city": "Visakhapatnam",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd267",
+   "name": "Malwa Kitchen Caterers",
+   "city": "Indore",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Malwi poha-jalebi and chaat counters and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 680,
+   "min_guests": 50
+  },
+  {
+   "id": "vd268",
+   "name": "Malwa Table Catering Co.",
+   "city": "Indore",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Malwi poha-jalebi and chaat counters, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1160,
+   "min_guests": 50
+  },
+  {
+   "id": "vd269",
+   "name": "Saffron & Malwa Banquets",
+   "city": "Indore",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Malwi poha-jalebi and chaat counters prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 1920,
+   "min_guests": 100
+  },
+  {
+   "id": "vd270",
+   "name": "Malwa Florals & Decor",
+   "city": "Indore",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in Malwa-style brass lamps and jharokha frames, from a standard design catalogue.",
+   "package_inr": 80000
+  },
+  {
+   "id": "vd271",
+   "name": "Marigold Malwa Designs",
+   "city": "Indore",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in Malwa-style brass lamps and jharokha frames, with matching table styling.",
+   "package_inr": 220000
+  },
+  {
+   "id": "vd272",
+   "name": "Malwa Atelier Events",
+   "city": "Indore",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with Malwa-style brass lamps and jharokha frames, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 530000
+  },
+  {
+   "id": "vd273",
+   "name": "Malwa Frames",
+   "city": "Indore",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd274",
+   "name": "Malwa Lens Co.",
+   "city": "Indore",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd275",
+   "name": "Malwa Cinematics",
+   "city": "Indore",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 280000
+  },
+  {
+   "id": "vd276",
+   "name": "Malwa Sound Rentals",
+   "city": "Indore",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd277",
+   "name": "Malwa Audio Visual",
+   "city": "Indore",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 85000
+  },
+  {
+   "id": "vd278",
+   "name": "Malwa Live Production",
+   "city": "Indore",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 190000
+  },
+  {
+   "id": "vd279",
+   "name": "DJ Malwa",
+   "city": "Indore",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of Malwi folk and Bollywood.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd280",
+   "name": "Malwa Band Company",
+   "city": "Indore",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing Malwi folk and Bollywood, with a DJ for after-dinner sets.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd281",
+   "name": "Malwa Live Music Collective",
+   "city": "Indore",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with Malwi folk and Bollywood, plus a host and a sound check.",
+   "package_inr": 250000
+  },
+  {
+   "id": "vd282",
+   "name": "Malwa Mehendi Art",
+   "city": "Indore",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 10000
+  },
+  {
+   "id": "vd283",
+   "name": "Henna by Malwa",
+   "city": "Indore",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd284",
+   "name": "Malwa AV Rentals",
+   "city": "Indore",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd285",
+   "name": "Malwa Event Tech",
+   "city": "Indore",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd286",
+   "name": "Brahmaputra Kitchen Caterers",
+   "city": "Guwahati",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "veg and non-veg menus",
+    "buffet service",
+    "live counter"
+   ],
+   "description": "Buffet with Assamese thali and North-East dishes and one live counter; good for large guest counts on a tight budget.",
+   "per_plate_inr": 720,
+   "min_guests": 50
+  },
+  {
+   "id": "vd287",
+   "name": "Brahmaputra Table Catering Co.",
+   "city": "Guwahati",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "corporate",
+    "conference"
+   ],
+   "features": [
+    "multi-cuisine buffet",
+    "Jain menu",
+    "live counters",
+    "service staff"
+   ],
+   "description": "Multi-cuisine buffet featuring Assamese thali and North-East dishes, with a Jain menu, three live counters and uniformed staff.",
+   "per_plate_inr": 1230,
+   "min_guests": 50
+  },
+  {
+   "id": "vd288",
+   "name": "Saffron & Brahmaputra Banquets",
+   "city": "Guwahati",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala",
+    "corporate"
+   ],
+   "features": [
+    "plated dinner",
+    "chef's tasting",
+    "bar service",
+    "premium crockery"
+   ],
+   "description": "Plated or premium buffet with Assamese thali and North-East dishes prepared by a chef, a tasting session, bar staff and premium crockery.",
+   "per_plate_inr": 2040,
+   "min_guests": 100
+  },
+  {
+   "id": "vd289",
+   "name": "Brahmaputra Florals & Decor",
+   "city": "Guwahati",
+   "category": "decor",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "corporate",
+    "reception"
+   ],
+   "features": [
+    "stage backdrop",
+    "floral entrance",
+    "basic lighting"
+   ],
+   "description": "Stage backdrop, entrance flowers and warm lighting in gamosa motifs and bamboo-and-cane styling, from a standard design catalogue.",
+   "package_inr": 85000
+  },
+  {
+   "id": "vd290",
+   "name": "Marigold Brahmaputra Designs",
+   "city": "Guwahati",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "custom stage",
+    "entrance arch",
+    "table styling"
+   ],
+   "description": "Custom stage and entrance design in gamosa motifs and bamboo-and-cane styling, with matching table styling.",
+   "package_inr": 235000
+  },
+  {
+   "id": "vd291",
+   "name": "Brahmaputra Atelier Events",
+   "city": "Guwahati",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "full venue transformation",
+    "bespoke stage",
+    "lighting design"
+   ],
+   "description": "Full venue transformation with gamosa motifs and bamboo-and-cane styling, a bespoke stage, lighting design and a dedicated design team.",
+   "package_inr": 560000
+  },
+  {
+   "id": "vd292",
+   "name": "Brahmaputra Frames",
+   "city": "Guwahati",
+   "category": "photography",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "corporate",
+    "workshop",
+    "conference"
+   ],
+   "features": [
+    "1 photographer",
+    "edited photos in 7 days"
+   ],
+   "description": "One photographer for up to six hours, with edited photos delivered within a week.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd293",
+   "name": "Brahmaputra Lens Co.",
+   "city": "Guwahati",
+   "category": "photography",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "2 photographers",
+    "candid album",
+    "highlight reel"
+   ],
+   "description": "Two photographers and a candid-led album, with edited highlights in about two weeks.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd294",
+   "name": "Brahmaputra Cinematics",
+   "city": "Guwahati",
+   "category": "photography",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "photo and cinematic video",
+    "drone shots",
+    "printed album"
+   ],
+   "description": "Photo and cinematic video team with drone shots, same-day edits and a printed album.",
+   "package_inr": 300000
+  },
+  {
+   "id": "vd295",
+   "name": "Brahmaputra Sound Rentals",
+   "city": "Guwahati",
+   "category": "sound_light",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "workshop",
+    "corporate"
+   ],
+   "features": [
+    "PA system",
+    "2 wireless mics",
+    "basic lights"
+   ],
+   "description": "PA system with two wireless microphones and basic stage lights for up to 150 guests.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd296",
+   "name": "Brahmaputra Audio Visual",
+   "city": "Guwahati",
+   "category": "sound_light",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "line-array sound",
+    "LED wash lights",
+    "stage monitor"
+   ],
+   "description": "Line-array sound, LED wash lights and a stage monitor for up to 400 guests.",
+   "package_inr": 90000
+  },
+  {
+   "id": "vd297",
+   "name": "Brahmaputra Live Production",
+   "city": "Guwahati",
+   "category": "sound_light",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "conference",
+    "product launch"
+   ],
+   "features": [
+    "sound engineer",
+    "LED wall",
+    "moving lights",
+    "backup power"
+   ],
+   "description": "Full live production with a sound engineer, LED wall, moving lights and backup power.",
+   "package_inr": 205000
+  },
+  {
+   "id": "vd298",
+   "name": "DJ Brahmaputra",
+   "city": "Guwahati",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "birthday",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "DJ for 4 hours"
+   ],
+   "description": "A DJ for four hours with a playlist of Assamese folk and Bihu.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd299",
+   "name": "Brahmaputra Band Company",
+   "city": "Guwahati",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet",
+    "reception",
+    "gala"
+   ],
+   "features": [
+    "live band",
+    "DJ for after-dinner sets"
+   ],
+   "description": "A live band playing Assamese folk and Bihu, with a DJ for after-dinner sets.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd300",
+   "name": "Brahmaputra Live Music Collective",
+   "city": "Guwahati",
+   "category": "entertainment",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "gala",
+    "product launch"
+   ],
+   "features": [
+    "premium live act",
+    "host",
+    "sound check"
+   ],
+   "description": "A premium live act with Assamese folk and Bihu, plus a host and a sound check.",
+   "package_inr": 265000
+  },
+  {
+   "id": "vd301",
+   "name": "Brahmaputra Mehendi Art",
+   "city": "Guwahati",
+   "category": "mehendi",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "2 artists",
+    "bridal hands"
+   ],
+   "description": "Two artists for bridal hands and close family; quick service for a sangeet or haldi.",
+   "package_inr": 15000
+  },
+  {
+   "id": "vd302",
+   "name": "Henna by Brahmaputra",
+   "city": "Guwahati",
+   "category": "mehendi",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "sangeet"
+   ],
+   "features": [
+    "3 artists",
+    "bridal and full-arm designs"
+   ],
+   "description": "Three artists for bridal and full-arm designs; suits a longer pre-wedding session.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd303",
+   "name": "Brahmaputra AV Rentals",
+   "city": "Guwahati",
+   "category": "av_production",
+   "tier": "value",
+   "suits": [
+    "workshop",
+    "conference",
+    "corporate"
+   ],
+   "features": [
+    "projector",
+    "screen",
+    "clicker",
+    "Wi-Fi hotspot"
+   ],
+   "description": "Projector, screen, presentation clicker and a backup Wi-Fi hotspot for a training room.",
+   "package_inr": 25000
+  },
+  {
+   "id": "vd304",
+   "name": "Brahmaputra Event Tech",
+   "city": "Guwahati",
+   "category": "av_production",
+   "tier": "standard",
+   "suits": [
+    "conference",
+    "corporate",
+    "product launch"
+   ],
+   "features": [
+    "2 projectors",
+    "confidence monitor",
+    "wireless mics",
+    "technician"
+   ],
+   "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
+   "package_inr": 100000
   }
  ]
 }
