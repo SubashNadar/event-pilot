@@ -199,7 +199,7 @@ async def plan_chat(event_id: UUID, payload: PlanChatRequest) -> PlanChatRespons
         return reply("clarify", "I can't use that value for the brief. What should it be instead?")
     if new_event != event:
         save_event(new_event)
-    run_id = await run_manager.start_edit(new_event, reports_matching_plan(reports, plan_dict), prepared.overrides, session_id)
+    run_id = await run_manager.start_edit(new_event, reports_matching_plan(reports, plan_dict), prepared.overrides, session_id, base_plan=plan_dict)
     run_manager.on_outcome(run_id, **_edit_hooks(session_id, run_id, plan_dict, event, new_event))
 
     agents = ", ".join(AGENT_NAMES[step] for step in prepared.steps)

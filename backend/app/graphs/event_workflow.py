@@ -33,6 +33,7 @@ instead of repeated. Attempts return errors as values: a task that raised
 would be re-run on resume.
 """
 
+import re
 from datetime import datetime, timezone
 from typing import Any
 
@@ -43,9 +44,10 @@ from langgraph.types import interrupt
 
 from app.agents import llm
 from app.agents.checks import CHECK_TEXT, verify
+from app.agents.feedback import rule_owners, with_dependents
 from app.agents.fmt import inr
 from app.agents.judge import judge_plan
-from app.agents.recovery import RecoveryProposal, explain_failure
+from app.agents.recovery import RecoveryProposal, explain_failure, fresh_options
 from app.agents.specialists import ROLES, normalise_budget_lines, run_specialist
 from app.core.guard import DATA_RULE, wrap_user
 from app.core.config import settings
@@ -53,6 +55,7 @@ from app.graphs.emit import emit
 from app.graphs.state import EventPlanningState
 from app.models.event import EventBrief, EventPlan
 from app.models.run import RecoveryOption
+from app.services import ui_state
 from app.services.azure_planner import abuild_plan_with_model
 from app.services.planning import compose_rule_plan
 
@@ -175,25 +178,77 @@ def _normalise_result(result: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _attach_sections(plan: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+    """Carry Marketing's guest communication and the Requirements list into the plan, so the review judges what exists."""
+    marketing = (context.get("marketing") or {}) if not (context.get("marketing") or {}).get("skipped") else {}
+    decisions = marketing.get("decisions") or {}
+    if decisions.get("channels"):
+        draft = decisions.get("invite_draft") or {}
+        plan["communications"] = {
+            "channels": list(decisions["channels"]),
+            "checkpoints": list(decisions.get("checkpoints") or []),
+            "invite_draft": draft.get("text", "") if isinstance(draft, dict) else "",
+            "approval": "Every send waits for the owner's approval",
+        }
+    requirements = ((context.get("requirements") or {}).get("decisions") or {}).get("requirements")
+    if isinstance(requirements, list) and requirements:
+        plan["requirements"] = [str(item) for item in requirements][:12]
+    return plan
+
+
+def merge_edit(base: dict[str, Any], context: dict[str, Any], changed: set[str]) -> dict[str, Any]:
+    """An edit of an existing plan: replace only the sections owned by the specialists that re-ran (`changed`, state keys).
+
+    Everything else stays exactly as the owner saw it: no planner rebuilds the risks or the agenda behind their back."""
+    plan = {key: value for key, value in base.items() if key not in ("run_id", "generated_at", "recommendations", "approved_budget", "caveats", "open_issues")}
+    logistics = (context.get("logistics") or {}).get("decisions") or {}
+    if "logistics" in changed and logistics.get("venue"):
+        plan["venue"] = logistics["venue"]
+        plan["venue_detail"] = logistics.get("venue_detail", plan.get("venue_detail", "")) + (" (unverified)" if logistics.get("unverified") else "")
+    lines = ((context.get("finance") or {}).get("decisions") or {}).get("budget_lines")
+    if "finance" in changed and lines:
+        total = sum(int(line["amount"]) for line in lines)
+        plan["budget_lines"] = [{"category": line["category"], "amount": int(line["amount"]), "share_percent": round(int(line["amount"]) / total * 100) if total else 0} for line in lines]
+        plan["budget_forecast"] = total
+    agenda = ((context.get("schedule") or {}).get("decisions") or {}).get("agenda")
+    if "schedule" in changed and agenda:
+        owners = {item["activity"]: item.get("owner") for item in base.get("agenda", [])}
+        plan["agenda"] = [{"time": item["time"], "activity": item["activity"], "owner": item.get("owner") or owners.get(item["activity"]) or "Event operations"} for item in agenda]
+    risks = ((context.get("risks") or {}).get("decisions") or {}).get("risks")
+    if "risks" in changed and risks:
+        before = {risk["title"]: risk for risk in base.get("risks", [])}
+        merged = [{"level": r["level"], "title": r["title"], "detail": r.get("action") or r.get("detail", ""), "recommended_action": before.get(r["title"], {}).get("recommended_action") or ("Set fallback" if r["level"] == "High" else "Monitor")} for r in risks[:5]]
+        if len(merged) >= 2:
+            plan["risks"] = merged
+    for key in ("logistics", "finance", "schedule", "requirements", "marketing", "risks"):
+        if key in changed and (context.get(key) or {}).get("skipped") and len(plan["risks"]) < 5:
+            agent = context[key].get("agent", key)
+            plan["risks"] = [*plan["risks"], {"level": "Medium", "title": f"{agent} step was skipped", "detail": f"The {agent} specialist was skipped while applying your change; review this area manually.", "recommended_action": "Review manually"}]
+    return _attach_sections(plan, context)
+
+
 @task
-async def manager_attempt(event: dict[str, Any], context: dict[str, Any], overrides: dict[str, Any], operation: str) -> dict[str, Any]:
+async def manager_attempt(event: dict[str, Any], context: dict[str, Any], overrides: dict[str, Any], operation: str, base: dict[str, Any] | None = None, changed: list[str] | None = None) -> dict[str, Any]:
     brief = EventBrief.model_validate(event)
     try:
-        if overrides.get("use_fallback") or not llm.llm_enabled() or operation == "plan-edit":
-            # Plan edits merge in code so the owner's change is the only thing that moves.
+        if base:
+            # A re-plan or an edit merges the re-run specialists' sections into the existing plan, so only what they changed moves.
+            plan = merge_edit(base, context, set(changed or []))
+            return {"ok": True, "plan": EventPlan.model_validate({**plan, "event_id": brief.id}).model_dump(mode="json"), "usage": {}, "mode": "edit"}
+        if overrides.get("use_fallback") or not llm.llm_enabled():
             plan = compose_rule_plan(brief, context)
-            return {"ok": True, "plan": plan.model_dump(mode="json"), "usage": {}, "mode": "rules"}
+            return {"ok": True, "plan": _attach_sections(plan.model_dump(mode="json"), context), "usage": {}, "mode": "rules"}
         async with llm.limited():
             plan, raw = await abuild_plan_with_model(llm.get_chat_model(), brief, context, None)
-        return {"ok": True, "plan": _reconcile_manager_plan(plan.model_dump(mode="json"), context, brief.budget), "usage": llm.usage_of(raw), "mode": "llm"}
+        return {"ok": True, "plan": _attach_sections(_reconcile_manager_plan(plan.model_dump(mode="json"), context, brief.budget), context), "usage": llm.usage_of(raw), "mode": "llm"}
     except Exception as error:
         return {"ok": False, "error": str(error) or error.__class__.__name__}
 
 
 @task
-async def judge_attempt(event: dict[str, Any], plan: dict[str, Any], reports: dict[str, Any]) -> dict[str, Any]:
+async def judge_attempt(event: dict[str, Any], plan: dict[str, Any], reports: dict[str, Any], earlier: dict[str, Any] | None = None) -> dict[str, Any]:
     try:
-        judgement, usage = await judge_plan(event, plan, reports)
+        judgement, usage = await judge_plan(event, plan, reports, earlier)
         return {"ok": True, "judgement": judgement.model_dump(mode="json"), "usage": usage}
     except Exception as error:  # returned, not raised, as with the other tasks
         return {"ok": False, "error": str(error) or error.__class__.__name__}
@@ -212,7 +267,9 @@ async def run_with_recovery(step_id: str, state: EventPlanningState, attempt_fn,
     overrides: dict[str, Any] = dict(initial_overrides or {})
     interactive = state.get("interactive", True)
     rev = state.get("revision_count", 0)
-    for attempt in range(1, settings.max_step_attempts + 1):
+    attempt = 0
+    while True:  # the owner can answer a failed step as many times as needed; only the approval changes are capped
+        attempt += 1
         emit({"type": "step_started", "stepId": step_id, "attempt": attempt, "at": _now()}, dedupe=f"started:{step_id}:{rev}:{attempt}")
         result = await attempt_fn(overrides, attempt)
         if result.get("ok"):
@@ -228,13 +285,15 @@ async def run_with_recovery(step_id: str, state: EventPlanningState, attempt_fn,
             break
         context = ((result.get("tool_results") or [{}])[-1] or {}).get("near_misses") if result.get("ok") else None
         proposal = RecoveryProposal.model_validate(await explain_attempt(step_id, error, state["event"], overrides, attempt, context))
+        # A specialist's check runs on a tool result: the same inputs give the same result, so a plain retry isn't offered.
+        proposal.options = fresh_options(proposal.options, overrides, deterministic=step_id in ROLES and error.startswith("Check failed"))
         emit({"type": "step_failed", "stepId": step_id, "error": error, "attempt": attempt, "retryable": True, "recovery": proposal.model_dump()}, dedupe=f"failed:{step_id}:{rev}:{attempt}")
         choice = interrupt({"step_id": step_id, "attempt": attempt, "error": error, "proposal": proposal.model_dump(), "overrides": overrides})
         emit({"type": "run_resumed", "stepId": step_id, "action": choice.get("action"), "label": choice.get("label", "")}, dedupe=f"resumed:{step_id}:{rev}:{attempt}")
         if choice.get("action") == "skip":
             return on_skip(choice.get("label") or "Skipped by you")
         overrides = {**overrides, **(choice.get("patch") or {})}
-    return on_skip(f"Stopped after {settings.max_step_attempts} attempts" if interactive else "Skipped automatically after a failure")
+    return on_skip("Skipped automatically after a failure")  # reached only without an owner: the loop above ends at the first failure
 
 
 def specialist_node(step_id: str):
@@ -293,20 +352,38 @@ async def event_manager(state: EventPlanningState) -> dict[str, Any]:
             did.append(f"Checked {len(items)} cross-team mismatch(es) against Logistics' venue and rent")
         if result.get("mode") == "rules":
             did.append("Built with the rule-based planner")
+        if result.get("mode") == "edit":
+            did.append("Kept the rest of the plan as it was; only the re-run specialists' parts changed")
         emit({"type": "step_completed", "stepId": "event_manager", "summary": _summary(did, verification, result.get("usage", {})), "at": _now()}, dedupe=f"completed:event_manager:{state.get('revision_count', 0)}")
         return {"final_plan": plan, "steps": {"event_manager": {"status": "completed", "attempts": attempt}}, "usage": result.get("usage", {})}
 
     def on_skip(reason):  # not offered to users; only reached when attempts run out
-        plan = compose_rule_plan(_event(state), context).model_dump(mode="json")
+        plan = _attach_sections(compose_rule_plan(_event(state), context).model_dump(mode="json"), context)
         emit({"type": "notice", "message": f"The Event Manager failed ({reason}); the plan was built with the rule-based planner."})
         emit({"type": "step_completed", "stepId": "event_manager", "summary": _summary(["Built with the rule-based planner after repeated failures"], {"check": "Plan matches the schema", "passed": True, "reason": "Rule-based plan"}, {}), "at": _now()}, dedupe=f"completed:event_manager:{state.get('revision_count', 0)}")
         return {"final_plan": plan, "steps": {"event_manager": {"status": "completed", "fallback": True}}}
 
+    base, changed = _merge_base(state)
     return await run_with_recovery(
         "event_manager", state,
-        lambda overrides, attempt: manager_attempt(state["event"], context, overrides, state.get("operation", "plan-generation")),
+        lambda overrides, attempt: manager_attempt(state["event"], context, overrides, state.get("operation", "plan-generation"), base, changed),
         check, on_success=on_success, on_skip=on_skip,
     )
+
+
+def _merge_base(state: EventPlanningState) -> tuple[dict[str, Any] | None, list[str]]:
+    """The plan to build on, and which specialists' sections changed since it was made.
+
+    After a re-plan (the review's or the owner's), the latest plan stays and only the re-run specialists' parts are
+    replaced. An edit run starts from the plan the owner was looking at, with the steps that ran again. A first plan
+    has no base: the Event Manager composes it from all six reports."""
+    if state.get("final_plan"):
+        rev = state.get("revision_count", 0)
+        return state["final_plan"], [ROLES[s].state_key for s in SPECIALISTS if (state.get(ROLES[s].state_key) or {}).get("replanned") == rev]
+    if state.get("operation") == "plan-edit" and state.get("base_plan"):
+        reuse = state.get("reuse") or {}
+        return state["base_plan"], [ROLES[s].state_key for s in SPECIALISTS if s not in reuse]
+    return None, []
 
 
 def _review(event: dict[str, Any], plan: dict[str, Any], state: EventPlanningState | None = None) -> list[str]:
@@ -340,11 +417,11 @@ async def review_plan(state: EventPlanningState) -> dict[str, Any]:
     manager_round = state.get("manager_round", 0)
     did = ["Checked budget arithmetic, agenda times and risk count"] + (["Found issues; the affected specialists will re-plan"] if issues and manager_round < settings.max_replans else [])
     emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:review_plan:{pass_number}")
-    if approved and pass_number == 1:
-        emit({"type": "step_skipped", "stepId": "replan", "reason": "Not needed — the review passed"}, dedupe="skipped:replan")
+    open_issues: list[str] = []
     if not approved and manager_round >= settings.max_replans:
         emit({"type": "notice", "message": f"Still open after {settings.max_replans} re-plans: " + " ".join(issues)})
-    return {"review": {"approved": approved, "issues": issues}, "steps": {"review_plan": {"status": "completed", "passes": pass_number}}}
+        open_issues = [f"Plan check: {issue}" for issue in issues]  # the owner decides with these in front of them
+    return {"review": {"approved": approved, "issues": issues}, "open_issues": open_issues, "steps": {"review_plan": {"status": "completed", "passes": pass_number}}}
 
 
 # ------------------------------------------------------------------ coordination and replanning
@@ -408,7 +485,11 @@ async def coordination(state: EventPlanningState) -> dict[str, Any]:
     items = _coordinate_items(state)
     reports = [key for key in ("logistics", "finance", "schedule", "requirements", "marketing", "risks") if state.get(key)]
     did = [f"Compared {len(reports)} specialist reports", "No mismatches between the specialists" if not items else f"Found {len(items)} mismatch(es) for the Event Manager to reconcile"]
-    verification = {"check": CHECK_TEXT["coordination"], "passed": not items, "reason": "Venue, rent and budget agree" if not items else " ".join(item["message"] for item in items)}
+    unverified = bool(((state.get("logistics") or {}).get("decisions") or {}).get("unverified"))
+    agree = "The venue is unverified, so there is no quoted rent to compare: the venue line is an estimate" if unverified else "Venue, rent and budget agree"
+    if unverified:
+        did.append("The venue is outside the catalog: get a quote before relying on the venue budget line")
+    verification = {"check": CHECK_TEXT["coordination"], "passed": not items, "reason": agree if not items else " ".join(item["message"] for item in items)}
     emit({"type": "step_completed", "stepId": "coordination", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:coordination:{rev}")
     return {"conflicts": {"items": items}, "steps": {"coordination": {"status": "completed"}}}
 
@@ -444,24 +525,36 @@ def route_intake(state: EventPlanningState) -> str:
     return "replan" if _sent_back(state) else "logistics_agent"
 
 
-async def _resplit(state: EventPlanningState) -> dict[str, Any]:
-    """The owner sent the plan back: the Event Manager reads the feedback and assigns it to the owning specialists."""
-    human_rounds = state.get("human_rounds", 0)
+def _human_assignments(state: EventPlanningState) -> tuple[list[str], dict[str, list[str]]]:
+    """The owner's send-back as specialist -> notes.
+
+    The API reads the owner's message (the LLM in LLM mode) and stores its assignments in `feedback_notes`. A send-back
+    without words re-runs the specialists the review still has open notes or issues for."""
     feedback = [text for text in (state.get("feedback") or []) if text]
-    if feedback:
-        owners = owners_for(feedback, default=tuple(SPECIALISTS))
-    else:  # no specific change: only the specialists the last review flagged are re-run
-        issues = list((state.get("review") or {}).get("issues") or [])
-        owners = owners_for(issues) if issues else []
-    names = [ROLES[step_id].agent for step_id in owners if step_id in ROLES]
+    notes = {step: list(items) for step, items in (state.get("feedback_notes") or {}).items() if step in ROLES}
+    if feedback and not notes:  # a run paused before assignments existed: keyword owners, never all six
+        notes = {step: list(feedback) for step in with_dependents(rule_owners(" ".join(feedback)))}
+    if not feedback and not notes:
+        review = state.get("review") or {}
+        notes = {step: list(items) for step, items in (review.get("notes") or {}).items() if step in ROLES}
+        for issue in review.get("issues") or []:
+            for step in owners_for([issue], default=()):
+                notes.setdefault(step, []).append(issue)
+    return feedback, notes
+
+
+async def _resplit(state: EventPlanningState) -> dict[str, Any]:
+    """The owner sent the plan back: the Event Manager assigns the feedback to the specialists who own each part."""
+    human_rounds = state.get("human_rounds", 0)
+    feedback, notes = _human_assignments(state)
+    names = [ROLES[step_id].agent for step_id in notes]
     emit({"type": "step_started", "stepId": "manager_intake", "attempt": human_rounds + 1, "at": _now()}, dedupe=f"started:manager_intake:round{human_rounds}")
-    if feedback:
-        did = [f"Your feedback: {' '.join(feedback)}", f"Re-split to: {', '.join(names)}" if names else "No specialist matches the feedback; the Event Manager rebuilds the combined plan"]
-    else:
-        did = [f"Re-split to: {', '.join(names)}" if names else "No specialist needs to change; the Event Manager rebuilds the combined plan"]
-    verification = {"check": "Feedback assigned to the specialists", "passed": True, "reason": f"{len(names)} specialist(s) assigned" if names else "Rebuilt by the Event Manager"}
+    did = [f"Your feedback: {' '.join(feedback)}"] if feedback else ["Address the review's open notes"]
+    did += [f"Re-split to: {', '.join(names)}" if names else "No specialist needs to change"]
+    did += [f"{ROLES[step_id].agent}: {'; '.join(items)}" for step_id, items in notes.items() if feedback and items != feedback][:4]
+    verification = {"check": "Feedback assigned to the specialists", "passed": bool(names), "reason": f"{len(names)} specialist(s) assigned" if names else "Nothing to assign"}
     emit({"type": "step_completed", "stepId": "manager_intake", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:manager_intake:round{human_rounds}")
-    return {"manager_round": 0, "steps": {"manager_intake": {"status": "completed", "round": human_rounds}}}
+    return {"manager_round": 0, "feedback_notes": notes, "steps": {"manager_intake": {"status": "completed", "round": human_rounds}}}
 
 
 async def manager_intake(state: EventPlanningState) -> dict[str, Any]:
@@ -485,105 +578,167 @@ async def replan(state: EventPlanningState) -> dict[str, Any]:
     """Re-run only the specialists the review points to, giving each the review's feedback."""
     rev = state.get("revision_count", 0) + 1
     human = [text for text in (state.get("feedback") or []) if text]  # what the owner asked to change
-    issues = human or list(state["review"]["issues"])
-    notes: dict[str, list[str]] = state["review"].get("notes") or {}  # the LLM judge's notes, per specialist
+    if human or state.get("feedback_notes"):  # the owner's round: only the specialists the Event Manager assigned
+        notes = {step: list(items) for step, items in (state.get("feedback_notes") or {}).items() if step in ROLES}
+        issues = human
+        source = "your feedback"
+    else:  # the review's round: rule issues and the judge's notes, each to its owner
+        issues = list(state["review"]["issues"])
+        notes = {step: list(items) for step, items in (state["review"].get("notes") or {}).items() if step in ROLES}
+        for step_id in owners_for(issues) if issues else []:
+            notes.setdefault(step_id, [])
+        source = "the review's feedback"
     emit({"type": "step_started", "stepId": "replan", "attempt": rev, "at": _now()}, dedupe=f"started:replan:{rev}")
     event = _event(state)
     current: dict[str, Any] = {}
     rerun: list[str] = []
     kept: list[str] = []
     usage: dict[str, int] = {}
-    if human:  # a named area re-runs its owner; an unnamed change re-runs every specialist
-        owners = owners_for(issues, default=tuple(SPECIALISTS))
-    else:
-        owners = owners_for(issues) if issues else []
-    owners += [step_id for step_id in notes if step_id not in owners]
-    for step_id in owners:
+    for step_id in [step for step in SPECIALISTS if step in notes]:  # Logistics first: the others build on its handoff
         role = ROLES[step_id]
         view = {**state, **current}  # later owners build on the reports already re-run
         base = dict((state.get("step_overrides") or {}).get(step_id) or {})
-        overrides = {**base, "feedback": issues + list(notes.get(step_id, []))}
+        overrides = {**base, "feedback": issues + [note for note in notes[step_id] if note not in issues]}
         if step_id != "logistics_agent":
             overrides["handoff"] = _handoff(view)
         emit({"type": "step_started", "stepId": step_id, "attempt": rev, "at": _now()}, dedupe=f"started:{step_id}:{rev}:replan")
+        emit({"type": "step_verifying", "stepId": step_id, "check": CHECK_TEXT.get(step_id, "Checking the result…")}, dedupe=f"verifying:{step_id}:{rev}:replan")
         try:
             result = _normalise_result(await run_specialist(step_id, event, overrides, rev))
-        except Exception as error:  # the previous report stands if the re-run fails
-            kept.append(f"{role.agent} ({error.__class__.__name__})")
-            emit({"type": "step_skipped", "stepId": step_id, "reason": f"Kept the previous report: {error}"}, dedupe=f"skipped:{step_id}:{rev}:replan")
+            verification = verify(step_id, result, event, overrides).model_dump()  # the same check as the first pass
+        except Exception as error:
+            result, verification = None, {"passed": False, "reason": str(error) or error.__class__.__name__}
+        if not verification["passed"]:  # the previous report stands, and the owner is told at approval
+            kept.append(role.agent)
+            emit({"type": "step_skipped", "stepId": step_id, "reason": f"Kept the previous version: the re-run didn't pass its check ({verification['reason']})"}, dedupe=f"skipped:{step_id}:{rev}:replan")
             continue
-        verification = {"check": CHECK_TEXT.get(step_id, "Checking the re-run…"), "passed": True, "reason": "Re-run with the review's feedback"}
         emit({"type": "step_completed", "stepId": step_id, "summary": _summary(result["report"]["recommendations"], verification, result.get("usage", {}), result["tool_results"]), "at": _now()}, dedupe=f"completed:{step_id}:{rev}:replan")
         current[role.state_key] = {**result["report"], "agent": role.agent, "user_adjustments": base, "tool_results": [{k: v for k, v in r.items() if k != "_args"} for r in result["tool_results"]], "mode": result.get("mode"), "replanned": rev}
         rerun.append(role.agent)
         for key, value in (result.get("usage") or {}).items():
             usage[key] = usage.get(key, 0) + int(value or 0)
-    did = [f"Re-ran {', '.join(rerun)} with the review's feedback" if rerun else "Nothing could be re-run, so the current reports stand"]
+    did = [f"Re-ran {', '.join(rerun)} with {source}" if rerun else "Nothing could be re-run, so the current reports stand"]
     if kept:
-        did.append(f"Kept the previous report for {', '.join(kept)}")
-    reasons = issues + [note for step_notes in notes.values() for note in step_notes]
-    verification = {"check": CHECK_TEXT["replan"], "passed": bool(rerun), "reason": " ".join(reasons)}
+        did.append(f"Kept the previous version for {', '.join(kept)}: the re-run didn't pass its check")
+    # This step only says what was re-run; whether the notes are fixed is the next review's call, not this tick's.
+    verification = {"check": "Re-ran the flagged specialists", "passed": bool(rerun), "reason": f"Re-ran {len(rerun)} of {len(notes)} assigned; the next review checks the result" if notes else "Nothing was assigned"}
+    did += [f"Sent to {ROLES[step_id].agent}: {'; '.join(items)}" for step_id, items in notes.items() if items][:4]
     emit({"type": "step_completed", "stepId": "replan", "summary": _summary(did, verification, usage), "at": _now()}, dedupe=f"completed:replan:{rev}")
-    return {**current, "revision_count": rev, "manager_round": state.get("manager_round", 0) + 1, "usage": usage, "feedback": [], "steps": {"replan": {"status": "completed", "passes": rev}}}
+    return {**current, "revision_count": rev, "manager_round": state.get("manager_round", 0) + 1, "usage": usage, "feedback": [], "feedback_notes": {}, "stale_parts": kept, "steps": {"replan": {"status": "completed", "passes": rev}}}
+
+
+_OUTSIDE_CHECK = re.compile(r"availab|confirm|quot|book|hold|contract|catalog", re.IGNORECASE)
+
+
+def _needs_outside_check(note: str) -> bool:
+    """True for feedback that is about something the planner can't verify (availability, prices, bookings)."""
+    return bool(_OUTSIDE_CHECK.search(note))
 
 
 async def plan_judge(state: EventPlanningState) -> dict[str, Any]:
     """An LLM reads the whole plan. If it isn't good enough, its notes go to the specialists who own each problem."""
     rev = state.get("revision_count", 0)
     emit({"type": "step_verifying", "stepId": "review_plan", "check": "Judging the whole plan as the Event Manager"}, dedupe=f"judging:{rev}")
-    result = await judge_attempt(state["event"], state["final_plan"], _context(state))
+    earlier = state.get("judged_notes") or {}  # what the judge asked for last time: it re-checks those instead of moving the goalposts
+    result = await judge_attempt(state["event"], state["final_plan"], _context(state), earlier)
+    if not result.get("ok") and llm.llm_enabled():  # one retry: a judge that returns nothing once often answers the second time
+        result = await judge_attempt(state["event"], state["final_plan"], _context(state), earlier)
     if not result.get("ok"):  # rule checks still stand; the judge is an extra check, not a gate that can break the run
         emit({"type": "notice", "message": f"The plan judge was unavailable ({result.get('error')}), so only the rule checks were applied."}, dedupe=f"notice:judge:{rev}")
-        return {}
+        note = "An LLM review did not run, so this plan was checked with the rule-based checks only. Review it carefully before approving." if llm.llm_enabled() else "This plan was built with rule-based checks only. Review it carefully before approving."
+        _replan_not_needed(rev)
+        return {"caveats": [note], "open_issues": []}
     usage = result.get("usage", {})
     judgement = result["judgement"]
-    feedback = [] if judgement["satisfied"] else judgement["feedback"]
+    flagged = [] if judgement["satisfied"] else judgement["feedback"]
+    # Availability, quotes and bookings can't be checked from inside the planner: they become caveats, not blocking feedback.
+    caveats = [item["note"] for item in flagged if _needs_outside_check(item["note"])]
+    feedback = [item for item in flagged if not _needs_outside_check(item["note"])]
+    out_of_scope: list[str] = []
+    if state.get("operation") == "plan-edit" and state.get("base_plan"):
+        # An edit changes only what the owner asked for. Notes about parts it didn't touch are shown to the owner, not acted on.
+        edited = {ROLES[step].state_key for step in SPECIALISTS if step not in (state.get("reuse") or {})}
+        out_of_scope = [f"Review note ({ROLES[item['owner']].agent}, not changed by your edit): {item['note']}" for item in feedback if ROLES[item["owner"]].state_key not in edited]
+        feedback = [item for item in feedback if ROLES[item["owner"]].state_key in edited]
     if not feedback:
-        verification = {"check": "Judged as a whole", "passed": True, "reason": "Good enough for the owner to review"}
+        verification = {"check": "Judged as a whole", "passed": True, "reason": "Good enough for the owner to review" + (f"; {len(out_of_scope)} note(s) for you to consider" if out_of_scope else "")}
         emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary(["The Event Manager judged the whole plan: good enough for you to review"], verification, usage), "at": _now()}, dedupe=f"judged:{rev}")
-        return {"usage": usage}
+        _replan_not_needed(rev)
+        return {"usage": usage, "caveats": caveats, "open_issues": out_of_scope, "judged_notes": {}}
     notes: dict[str, list[str]] = {}
     for item in feedback:
         notes.setdefault(item["owner"], []).append(item["note"])
     reasons = " ".join(item["note"] for item in feedback)
     verification = {"check": "Judged as a whole", "passed": False, "reason": reasons}
-    emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary([f"The Event Manager sent {len(feedback)} change(s) back to the specialists"], verification, usage), "at": _now()}, dedupe=f"judged:{rev}")
-    if state.get("manager_round", 0) >= settings.max_replans:
-        emit({"type": "notice", "message": f"Still open after {settings.max_replans} re-plans: {reasons}"}, dedupe=f"notice:judge:{rev}")
-    return {"review": {"approved": False, "issues": [], "notes": notes}, "usage": usage}
+    open_issues = list(out_of_scope)
+    if state.get("manager_round", 0) >= settings.max_judge_replans:  # out of automatic re-plans: the owner sees what is still open
+        emit({"type": "notice", "message": f"Still open after the automatic re-plan: {reasons}"}, dedupe=f"notice:judge:{rev}")
+        open_issues += [f"Review note ({ROLES[item['owner']].agent}): {item['note']}" for item in feedback]
+        did = [f"The Event Manager still has {len(feedback)} note(s); they're listed on the approval card for you to decide"]
+    else:
+        did = [f"The Event Manager sent {len(feedback)} change(s) back to the specialists"]
+    emit({"type": "step_completed", "stepId": "review_plan", "summary": _summary(did, verification, usage), "at": _now()}, dedupe=f"judged:{rev}")
+    return {"review": {"approved": False, "issues": [], "notes": notes}, "usage": usage, "caveats": caveats, "open_issues": open_issues, "judged_notes": notes}
+
+
+def _replan_not_needed(rev: int) -> None:
+    if rev == 0:  # said only once the judge is satisfied too, so the timeline never flips from "not needed" to running
+        emit({"type": "step_skipped", "stepId": "replan", "reason": "Not needed — the review passed"}, dedupe="skipped:replan")
+
+
+def changes_left(event_id: str | None) -> int:
+    return max(settings.max_approval_attempts - (ui_state.attempts(event_id) if event_id else 0), 0)
+
+
+def _approval_summary(event_id: str | None, open_issues: list[str]) -> str:
+    """Says how many change requests are left, so the owner knows what happens if they use them all."""
+    limit = settings.max_approval_attempts
+    left = changes_left(event_id)
+    note = f"Change requests left at approval: {left} of {limit}."
+    if left == 0:
+        note += " All of them are used: you can still approve this plan, or restart the plan with your inputs."
+    ready = f"The plan is ready, with {len(open_issues)} review note(s) still open (listed below)." if open_issues else "The plan is ready."
+    return f"{ready} Review it below, then approve it or send it back with what to change. {note}"
 
 
 async def approval(state: EventPlanningState) -> dict[str, Any]:
     """The owner's last check: nothing is final until they approve, or send the plan back to the Event Manager."""
     rev = state.get("revision_count", 0)
-    if not state.get("interactive", True) or state.get("operation") == "plan-edit":  # no owner to ask, or the owner made this change in the chat
-        emit({"type": "step_completed", "stepId": "approval", "summary": _summary(["Approved automatically: no owner was asked"], {"check": "Owner approval", "passed": True, "reason": "Not asked for this run"}, {}), "at": _now()}, dedupe=f"completed:approval:{rev}")
-        return {"approval": {"decision": "approve"}, "steps": {"approval": {"status": "completed"}}}
+    # No owner to ask, or the owner made this change to an already approved plan in the chat. An edit of a plan the owner
+    # never approved (sent back from the approval card or a failed step) pauses here like any new plan.
+    if not state.get("interactive", True) or (state.get("operation") == "plan-edit" and not state.get("owner_review")):
+        emit({"type": "step_completed", "stepId": "approval", "summary": _summary(["Applied your change from the plan chat"] if state.get("interactive", True) else ["Approved automatically: no owner was asked"], {"check": "Owner approval", "passed": True, "reason": "You asked for this change in the chat" if state.get("interactive", True) else "Not asked for this run"}, {}), "at": _now()}, dedupe=f"completed:approval:{rev}")
+        return {"approval": {"decision": "approve"}, "review": {**state["review"], "approved": True}, "steps": {"approval": {"status": "completed"}}}
     emit({"type": "step_started", "stepId": "approval", "attempt": 1, "at": _now()}, dedupe=f"started:approval:{rev}")
     error = "Waiting for your approval"
+    event_id = str(state["event"].get("id") or "") or None
+    open_issues = list(state.get("open_issues") or []) + [f"{agent} couldn't apply the latest feedback, so its previous version is in the plan." for agent in state.get("stale_parts") or []]
+    left = changes_left(event_id)
     proposal = RecoveryProposal(
-        summary="The plan is ready. Review it below, then approve it or send it back with what to change.",
-        cause=error,
-        preview={**state["final_plan"], "approved_budget": state["event"]["budget"]},
+        summary=_approval_summary(event_id, open_issues),
+        cause="",  # an approval to review, not an error
+        preview={**state["final_plan"], "approved_budget": state["event"]["budget"], "caveats": state.get("caveats", []), "open_issues": open_issues},
         options=[
             RecoveryOption(id="approve", label="Approve the plan", description="Mark the plan final and write the recommendations.", action="retry_with", patch={"decision": "approve"}),
-            RecoveryOption(id="revise", label="Send back with changes", description="The Event Manager re-splits your feedback to the right specialists, then checks and asks you again.", action="retry_with", patch={"decision": "revise"}),
+            *([RecoveryOption(id="revise", label="Fix the open notes" if open_issues else "Send back with changes", description="The Event Manager sends the open notes to the specialists who own them, then checks and asks you again." if open_issues else "Say what to change below; the Event Manager assigns it to the right specialists, then checks and asks you again.", action="retry_with", patch={"decision": "revise"})] if left else []),
         ],
-        customPrompt="What should change? For example: move the venue, lower catering",
+        customPrompt="What should change? For example: move lunch to 1:30 PM, lower the decor spend" if left else "",
         source="rules",
+        changesLeft=left,
     )
     emit({"type": "step_failed", "stepId": "approval", "error": error, "attempt": 1, "retryable": True, "recovery": proposal.model_dump()}, dedupe=f"failed:approval:{rev}")
     choice = interrupt({"step_id": "approval", "attempt": 1, "error": error, "proposal": proposal.model_dump(), "overrides": {}})
     emit({"type": "run_resumed", "stepId": "approval", "action": choice.get("action"), "label": choice.get("label", "")}, dedupe=f"resumed:approval:{rev}")
     if (choice.get("patch") or {}).get("decision") == "revise":
         request = (choice.get("feedback") or "").strip()
-        did = [f"Changes asked by you: {request}"] if request else ["Asked to rebuild the plan without specific changes"]
+        did = [f"Changes asked by you: {request}"] if request else ["Asked to fix the review's open notes"]
         verification = {"check": "Owner approval", "passed": False, "reason": "Sent back for changes"}
         emit({"type": "step_completed", "stepId": "approval", "summary": _summary(did, verification, {}), "at": _now()}, dedupe=f"completed:approval:{rev}")
-        return {"approval": {"decision": "revise", "feedback": request}, "feedback": [request] if request else [], "human_rounds": state.get("human_rounds", 0) + 1, "steps": {"approval": {"status": "completed", "sent_back": True}}}
+        notes = {step: list(items) for step, items in (choice.get("assignments") or {}).items() if step in ROLES}
+        return {"approval": {"decision": "revise", "feedback": request}, "feedback": [request] if request else [], "feedback_notes": notes, "human_rounds": state.get("human_rounds", 0) + 1, "steps": {"approval": {"status": "completed", "sent_back": True}}}
     verification = {"check": "Owner approval", "passed": True, "reason": "Approved by you"}
     emit({"type": "step_completed", "stepId": "approval", "summary": _summary(["Approved by you"], verification, {}), "at": _now()}, dedupe=f"completed:approval:{rev}")
-    return {"approval": {"decision": "approve"}, "steps": {"approval": {"status": "completed"}}}
+    return {"approval": {"decision": "approve"}, "review": {**state["review"], "approved": True}, "steps": {"approval": {"status": "completed"}}}
 
 
 def route_after_review(state: EventPlanningState) -> str:
@@ -598,7 +753,8 @@ def route_after_judge(state: EventPlanningState) -> str:
 
 
 def _route_revision(state: EventPlanningState) -> str:
-    if not state["review"]["approved"] and state.get("manager_round", 0) < settings.max_replans:
+    limit = settings.max_judge_replans if (state["review"].get("notes") and not state["review"].get("issues")) else settings.max_replans
+    if not state["review"]["approved"] and state.get("manager_round", 0) < limit:
         return "replan"
     return "approval"  # out of automatic replans: the owner decides with the issues in front of them
 

@@ -130,6 +130,105 @@
    "dispur",
    "beltola",
    "khanapara"
+  ],
+  "Bhubaneswar": [
+   "bhubaneshwar",
+   "bhubaneswar",
+   "odisha",
+   "puri"
+  ],
+  "Patna": [
+   "bihar",
+   "patna"
+  ],
+  "Ranchi": [
+   "jharkhand",
+   "ranchi"
+  ],
+  "Raipur": [
+   "chhattisgarh",
+   "raipur"
+  ],
+  "Dehradun": [
+   "dehradun",
+   "haridwar",
+   "mussoorie",
+   "rishikesh",
+   "uttarakhand"
+  ],
+  "Shimla": [
+   "himachal pradesh",
+   "kullu",
+   "manali",
+   "shimla"
+  ],
+  "Srinagar": [
+   "gulmarg",
+   "jammu",
+   "jammu and kashmir",
+   "kashmir",
+   "pahalgam",
+   "srinagar"
+  ],
+  "Leh": [
+   "ladakh",
+   "leh"
+  ],
+  "Agartala": [
+   "agartala",
+   "tripura",
+   "udaipur tripura"
+  ],
+  "Shillong": [
+   "cherrapunji",
+   "meghalaya",
+   "shillong"
+  ],
+  "Imphal": [
+   "imphal",
+   "manipur"
+  ],
+  "Aizawl": [
+   "aizawl",
+   "mizoram"
+  ],
+  "Kohima": [
+   "dimapur",
+   "kohima",
+   "nagaland"
+  ],
+  "Gangtok": [
+   "gangtok",
+   "sikkim"
+  ],
+  "Itanagar": [
+   "arunachal",
+   "arunachal pradesh",
+   "itanagar",
+   "naharlagun"
+  ],
+  "Puducherry": [
+   "auroville",
+   "pondicherry",
+   "puducherry"
+  ],
+  "Port Blair": [
+   "andaman",
+   "andaman and nicobar islands",
+   "havelock",
+   "port blair"
+  ],
+  "Silvassa": [
+   "dadra and nagar haveli and daman and diu",
+   "daman",
+   "diu",
+   "silvassa",
+   "vapi"
+  ],
+  "Kavaratti": [
+   "agatti",
+   "kavaratti",
+   "lakshadweep"
   ]
  },
  "event_types": [

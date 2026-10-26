@@ -22,7 +22,7 @@ export default {
         info: v("info"),
       },
       fontFamily: {
-        sans: ['Inter', "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        sans: ['"Plus Jakarta Sans"', 'Inter', "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
         serif: ['"Source Serif 4"', "Georgia", "serif"],
         mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },

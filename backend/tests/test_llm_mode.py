@@ -23,6 +23,8 @@ TOOL_ARGS = {
 
 CALLS: list[str] = []
 JUDGE_VERDICTS: list[PlanJudgement] = []  # queued verdicts for the plan judge; empty means "satisfied"
+OWNER_ROUTES: list[Any] = []  # queued readings of the owner's message at approval
+PROMPTS: dict[str, list[str]] = {}  # the last messages each structured schema was called with
 
 
 class _Structured:
@@ -32,6 +34,7 @@ class _Structured:
     async def ainvoke(self, messages, config=None):
         name = self.schema.__name__
         CALLS.append(name)
+        PROMPTS.setdefault(name, []).append(" ".join(str(getattr(m, "content", m)) for m in (messages if isinstance(messages, list) else [messages])))
         if self.schema is SpecialistReport:
             value = SpecialistReport(recommendations=["Checked the options with my tool", "Picked the best fit"], decisions={"note": "llm"}, confidence=81)
         elif self.schema is AiPlanDraft:
@@ -45,6 +48,8 @@ class _Structured:
             )
         elif self.schema is PlanJudgement:
             value = JUDGE_VERDICTS.pop(0) if JUDGE_VERDICTS else PlanJudgement(satisfied=True, feedback=[])
+        elif name == "OwnerFeedback":
+            value = OWNER_ROUTES.pop(0)
         elif name == "_LlmProposal":
             value = self.schema(summary="No venue in the catalog fits 200 guests in Mumbai within ₹3,00,000.", options=[
                 RecoveryOption(id="nearby", label="Search Navi Mumbai", description="Try a nearby area", patch={"location": "Navi Mumbai"}),
@@ -86,6 +91,9 @@ class FakeModel:
 @pytest.fixture()
 def fake_llm(monkeypatch):
     CALLS.clear()
+    PROMPTS.clear()
+    JUDGE_VERDICTS.clear()
+    OWNER_ROUTES.clear()
     monkeypatch.setattr(llm, "MODEL_FACTORY", FakeModel)
     yield CALLS
 
@@ -125,26 +133,28 @@ def test_plan_judge_sends_its_note_only_to_the_specialist_it_names(client, fake_
     assert fake_llm.count("PlanJudgement") == 2  # judged once unsatisfied, then again after the re-run
     assert len(of_type(snap, "step_started", "schedule_agent")) == 2  # the named specialist re-ran
     assert len(of_type(snap, "step_started", "finance_agent")) == 1  # nobody else did
-    assert "Lunch sits too late" in of_type(snap, "step_completed", "replan")[0]["summary"]["verification"]["reason"]
+    replan = of_type(snap, "step_completed", "replan")[0]["summary"]
+    assert any("Lunch sits too late" in line for line in replan["did"]), "the note is shown as what was sent"
+    assert "Lunch sits too late" not in replan["verification"]["reason"], "the tick doesn't claim the note is fixed"
 
 
 def test_llm_recovery_options_are_validated_and_custom_text_is_interpreted(client, fake_llm):
-    event = create_event(client, location="Shillong", attendees=200, budget=1000000)
+    event = create_event(client, location="Coimbatore", attendees=200, budget=1000000)
     TOOL_ARGS_BACKUP = dict(TOOL_ARGS)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
     snap = wait_for(client, run_id, {"paused", "completed", "error"})
     assert snap["run"]["status"] == "paused"
     recovery = of_type(snap, "step_failed", "logistics_agent")[0]["recovery"]
     assert recovery["source"] == "llm" and recovery["customPrompt"] == "Try another area or guest count"
-    assert [o["id"] for o in recovery["options"]] == ["nearby", "unverified", "retry", "skip"]  # 'bad' patch dropped, retry + skip added
+    assert [o["id"] for o in recovery["options"]] == ["nearby", "unverified", "skip"]  # 'bad' patch dropped, skip added; no plain retry for a failed check
 
     question = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "somewhere nice"}).json()
     assert question["status"] == "needs_clarification" and question["question"] == "Which area or guest count?" and question["option"] is None
 
     resumed = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "Try a beach venue in Goa, keep 200 guests"}).json()
-    assert resumed["status"] == "resumed" and resumed["option"]["patch"] == {"location": "Goa", "allow_unverified": True}
-    snap = approve_plan(client, run_id)
-    assert snap["run"]["status"] == "completed"
+    assert resumed["status"] == "edit_started" and resumed["changes"] == ["location to Goa"], resumed
+    snap = approve_plan(client, resumed["run_id"], timeout=120)
+    assert snap["run"]["status"] == "completed", snap["run"].get("error")
     second_call = [t for t in of_type(snap, "tool_call", "logistics_agent") if t["tool"]["name"] == "venue_search"][-1]["tool"]["input"]
     assert second_call["location"] == "Goa"
     assert TOOL_ARGS == TOOL_ARGS_BACKUP
@@ -169,3 +179,97 @@ def test_manager_repairs_missing_agenda_owners_from_raw_tool_output():
 
     draft = _draft_from_output(output)
     assert draft.agenda[0].owner == "Guest Experience Lead"
+
+
+def _paused(client, **brief):
+    event = create_event(client, **brief)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    assert wait_for(client, run_id, {"paused", "completed", "error"})["run"]["status"] == "paused"
+    return event, run_id
+
+
+def _pauses(client, run_id, count):
+    import time
+
+    end = time.time() + 60
+    while time.time() < end:
+        snap = client.get(f"/api/v1/runs/{run_id}").json()
+        if snap["run"]["status"] != "running" and len(of_type(snap, "run_paused")) >= count or snap["run"]["status"] in ("completed", "error"):
+            return snap
+        time.sleep(0.1)
+    raise AssertionError("the run didn't pause again")
+
+
+def test_tone_feedback_is_routed_by_meaning_and_never_rewrites_the_brief(client, fake_llm):
+    from app.agents.feedback import OwnerFeedback
+
+    event, run_id = _paused(client)
+    OWNER_ROUTES.append(OwnerFeedback(kind="feedback", assignments=[{"owner": "marketing_agent", "note": "Make the invitation and reminders warmer and more celebratory."}], reason="Feedback on tone"))
+    sent = client.post(f"/api/v1/runs/{run_id}/steps/approval/resolve", json={"custom_text": "The tone feels too formal; make it feel more celebratory"}).json()
+    assert sent["status"] == "resumed", sent
+    snap = _pauses(client, run_id, 2)
+    assert client.get(f"/api/v1/events/{event['id']}").json()["objective"] == event["objective"], "feedback isn't a brief change"
+    assert len(of_type(snap, "step_started", "marketing_agent")) == 2, "the assigned specialist re-ran"
+    for step in ("logistics_agent", "finance_agent", "schedule_agent", "requirements_agent", "risk_operations_agent"):
+        assert len(of_type(snap, "step_started", step)) == 1, f"{step} wasn't assigned, so it didn't re-run"
+    intake = of_type(snap, "step_completed", "manager_intake")[-1]["summary"]["did"]
+    assert "Re-split to: Marketing" in intake and any("warmer" in line for line in intake)
+
+
+def test_a_question_at_approval_is_answered_and_changes_nothing(client, fake_llm):
+    from app.agents.feedback import OwnerFeedback
+
+    _, run_id = _paused(client)
+    OWNER_ROUTES.append(OwnerFeedback(kind="question", answer="I picked it because it fits 80 guests within the venue budget."))
+    answer = client.post(f"/api/v1/runs/{run_id}/steps/approval/resolve", json={"custom_text": "Why did you pick this venue?"}).json()
+    assert answer == {**answer, "status": "answered", "question": "I picked it because it fits 80 guests within the venue budget."}
+    snap = client.get(f"/api/v1/runs/{run_id}").json()
+    assert snap["run"]["status"] == "paused" and of_type(snap, "step_failed", "approval")[-1]["recovery"]["changesLeft"] == 3
+
+
+def test_notes_still_open_after_the_automatic_replan_are_shown_at_approval(client, fake_llm):
+    note = JudgedFeedback(owner="risk_operations_agent", note="The crowd-flow fallback names no owner.")
+    JUDGE_VERDICTS.extend([PlanJudgement(satisfied=False, feedback=[note]), PlanJudgement(satisfied=False, feedback=[note])])
+    _, run_id = _paused(client)
+    snap = client.get(f"/api/v1/runs/{run_id}").json()
+    card = of_type(snap, "step_failed", "approval")[-1]["recovery"]
+    assert card["preview"]["open_issues"] == ["Review note (Risk & Operations): The crowd-flow fallback names no owner."]
+    assert "1 review note(s) still open" in card["summary"]
+    assert [o["label"] for o in card["options"]] == ["Approve the plan", "Fix the open notes"]
+    assert not of_type(snap, "step_skipped", "replan"), "replan is never marked 'not needed' and then run"
+    assert "earlier notes" in PROMPTS["PlanJudgement"][-1], "the re-check is told what it asked for before"
+
+    fixed = client.post(f"/api/v1/runs/{run_id}/steps/approval/resolve", json={"option_id": "revise"}).json()
+    assert fixed["status"] == "resumed", fixed
+    snap = _pauses(client, run_id, 2)
+    assert len(of_type(snap, "step_started", "risk_operations_agent")) == 3, "only the owner of the open note re-ran"
+    assert len(of_type(snap, "step_started", "finance_agent")) == 1
+
+
+def test_the_judge_sees_the_guest_communication_in_the_plan(client, fake_llm):
+    _, run_id = _paused(client)
+    plan = of_type(client.get(f"/api/v1/runs/{run_id}").json(), "step_failed", "approval")[-1]["recovery"]["preview"]
+    assert plan["communications"]["channels"] and any("RSVP deadline" in step for step in plan["communications"]["checkpoints"])
+    assert plan["requirements"]
+    assert '"communications"' in PROMPTS["PlanJudgement"][0]
+
+
+def test_logistics_summary_names_the_venue_it_chose():
+    from app.agents.specialists import _align_with_verified
+
+    tool = {"recommendations": [{"name": "Vashi Grand Ballroom"}, {"name": "Powai Lakeview"}]}
+    model = SpecialistReport(recommendations=["I shortlisted Powai Lakeview at ₹3,80,000", "Parking is good"], decisions={"venue": "Powai Lakeview"})
+    verified = SpecialistReport(recommendations=["Shortlisted 2 venue(s)", "Recommend Vashi Grand Ballroom: capacity 200, rent ₹3,00,000"], decisions={"venue": "Vashi Grand Ballroom", "rental_inr": 300000})
+    report = _align_with_verified("logistics_agent", model, verified, tool)
+    assert report.decisions["venue"] == "Vashi Grand Ballroom" and report.decisions["rental_inr"] == 300000
+    assert not any("Powai" in line for line in report.recommendations)
+    assert any("Vashi Grand Ballroom" in line for line in report.recommendations)
+
+
+def test_an_unverified_venue_is_never_a_side_effect_of_another_option():
+    from app.agents.recovery import _finalise
+
+    options = _finalise("logistics_agent", [RecoveryOption(id="convention", label="Use a convention venue", patch={"venue_type": "convention centre", "allow_unverified": True})])
+    convention = next(o for o in options if o.id == "convention")
+    assert convention.patch == {"venue_type": "convention centre"}
+    assert any(o.patch == {"allow_unverified": True} for o in options), "accepting an unverified venue stays its own choice"

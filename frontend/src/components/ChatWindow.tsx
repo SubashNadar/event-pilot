@@ -111,7 +111,7 @@ export default function ChatWindow({ selected, onOpenStep }: Props) {
         {empty ? (
           <div className="mx-auto flex h-full max-w-[768px] flex-col items-center justify-end px-4 pb-6 sm:justify-center sm:pb-0">
             <EventPilotMark size={64} className="mb-5 drop-shadow-[0_8px_24px_rgba(25,117,109,0.28)]" />
-            <h1 className="text-center font-serif text-[28px] leading-tight tracking-[-0.01em] sm:text-[32px]">
+            <h1 className="planner-hero-title text-center text-[30px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[38px]">
               {greeting()}. What are we planning?
             </h1>
             <p className="mt-2 max-w-md text-center text-[14px] text-muted">

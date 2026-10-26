@@ -142,7 +142,7 @@ def test_vendor_search_prices_catering_per_plate():
     tight = search_vendors("Mumbai", "catering", 50_000, guests=350)
     assert tight["reason"] == "over_budget" and tight["cheapest"]["estimated_inr"] > 50_000
     assert search_vendors("Mumbai", "fireworks", 1_00_000)["reason"] == "unknown_category"
-    assert search_vendors("Shillong", "decor", 1_00_000)["reason"] == "city_not_in_catalog"
+    assert search_vendors("Coimbatore", "decor", 1_00_000)["reason"] == "city_not_in_catalog"
 
 
 def test_guest_message_draft_is_checked_and_never_sent():

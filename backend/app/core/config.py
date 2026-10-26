@@ -36,8 +36,9 @@ class Settings(BaseSettings):
     mcp_url: str = "http://127.0.0.1:8000/mcp"
     data_dir: str = "data"
     max_parallel_llm_calls: int = 3
-    max_step_attempts: int = 3
+    max_approval_attempts: int = 3  # change requests the owner can make at approval; a failed step is never capped
     max_replans: int = 2  # review-driven re-plans of the affected specialists
+    max_judge_replans: int = 1  # the LLM judge's notes get one re-plan; more rarely changes the plan and costs minutes
     # Comma-separated MCP tool names whose first call in every run fails, e.g.
     # "venue_search". Used to demonstrate the recovery flow.
     eventpilot_fail_once: str = ""

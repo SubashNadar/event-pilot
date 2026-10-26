@@ -1035,6 +1035,855 @@
      "note": "Cool dry season: the best time for outdoor events."
     }
    ]
+  },
+  "Bhubaneswar": {
+   "state": "Odisha",
+   "lat": 20.2961,
+   "lon": 85.8245,
+   "hubs": [
+    {
+     "name": "Biju Patnaik International Airport",
+     "kind": "airport",
+     "lat": 20.2444,
+     "lon": 85.8178
+    }
+   ],
+   "areas": {
+    "Patia": [
+     20.352,
+     85.823
+    ],
+    "Old Town": [
+     20.27,
+     85.84
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Patna": {
+   "state": "Bihar",
+   "lat": 25.5941,
+   "lon": 85.1376,
+   "hubs": [
+    {
+     "name": "Jay Prakash Narayan International Airport",
+     "kind": "airport",
+     "lat": 25.5913,
+     "lon": 85.0879
+    },
+    {
+     "name": "Patna Junction",
+     "kind": "railway station",
+     "lat": 25.6093,
+     "lon": 85.1376
+    }
+   ],
+   "areas": {
+    "Boring Road": [
+     25.611,
+     85.099
+    ],
+    "Kankarbagh": [
+     25.598,
+     85.166
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Ranchi": {
+   "state": "Jharkhand",
+   "lat": 23.3441,
+   "lon": 85.3096,
+   "hubs": [
+    {
+     "name": "Birsa Munda Airport",
+     "kind": "airport",
+     "lat": 23.3143,
+     "lon": 85.3217
+    }
+   ],
+   "areas": {
+    "Lalpur": [
+     23.36,
+     85.315
+    ],
+    "Bariatu": [
+     23.37,
+     85.33
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Raipur": {
+   "state": "Chhattisgarh",
+   "lat": 21.2514,
+   "lon": 81.6296,
+   "hubs": [
+    {
+     "name": "Swami Vivekananda Airport",
+     "kind": "airport",
+     "lat": 21.1804,
+     "lon": 81.7388
+    },
+    {
+     "name": "Raipur Junction",
+     "kind": "railway station",
+     "lat": 21.2412,
+     "lon": 81.6322
+    }
+   ],
+   "areas": {
+    "Shankar Nagar": [
+     21.244,
+     81.62
+    ],
+    "Pandri": [
+     21.248,
+     81.647
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Dehradun": {
+   "state": "Uttarakhand",
+   "lat": 30.3165,
+   "lon": 78.0322,
+   "hubs": [
+    {
+     "name": "Jolly Grant Airport",
+     "kind": "airport",
+     "lat": 30.1897,
+     "lon": 78.1803
+    }
+   ],
+   "areas": {
+    "Rajpur Road": [
+     30.345,
+     78.045
+    ],
+    "Sahastradhara Road": [
+     30.347,
+     78.083
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Shimla": {
+   "state": "Himachal Pradesh",
+   "lat": 31.1048,
+   "lon": 77.1734,
+   "hubs": [
+    {
+     "name": "Shimla Airport (Jubbarhatti)",
+     "kind": "airport",
+     "lat": 31.0818,
+     "lon": 77.0681
+    }
+   ],
+   "areas": {
+    "The Mall": [
+     31.104,
+     77.169
+    ],
+    "Chhota Shimla": [
+     31.092,
+     77.169
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Srinagar": {
+   "state": "Jammu and Kashmir",
+   "lat": 34.0837,
+   "lon": 74.7973,
+   "hubs": [
+    {
+     "name": "Sheikh ul-Alam International Airport",
+     "kind": "airport",
+     "lat": 33.9871,
+     "lon": 74.7742
+    }
+   ],
+   "areas": {
+    "Lal Chowk": [
+     34.07,
+     74.811
+    ],
+    "Boulevard Road": [
+     34.085,
+     74.838
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Leh": {
+   "state": "Ladakh",
+   "lat": 34.1526,
+   "lon": 77.5771,
+   "hubs": [
+    {
+     "name": "Kushok Bakula Rimpochee Airport",
+     "kind": "airport",
+     "lat": 34.1359,
+     "lon": 77.5465
+    }
+   ],
+   "areas": {
+    "Changspa": [
+     34.16,
+     77.56
+    ],
+    "Karzoo": [
+     34.156,
+     77.578
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Agartala": {
+   "state": "Tripura",
+   "lat": 23.8315,
+   "lon": 91.2868,
+   "hubs": [
+    {
+     "name": "Maharaja Bir Bikram Airport",
+     "kind": "airport",
+     "lat": 23.8872,
+     "lon": 91.2404
+    }
+   ],
+   "areas": {
+    "Kunjaban": [
+     23.84,
+     91.27
+    ],
+    "Banamalipur": [
+     23.838,
+     91.282
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Shillong": {
+   "state": "Meghalaya",
+   "lat": 25.5788,
+   "lon": 91.8933,
+   "hubs": [
+    {
+     "name": "Shillong Airport (Umroi)",
+     "kind": "airport",
+     "lat": 25.7033,
+     "lon": 91.9878
+    }
+   ],
+   "areas": {
+    "Laitumkhrah": [
+     25.578,
+     91.888
+    ],
+    "Police Bazar": [
+     25.574,
+     91.882
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Imphal": {
+   "state": "Manipur",
+   "lat": 24.817,
+   "lon": 93.9368,
+   "hubs": [
+    {
+     "name": "Bir Tikendrajit International Airport",
+     "kind": "airport",
+     "lat": 24.76,
+     "lon": 93.8967
+    }
+   ],
+   "areas": {
+    "Paona Bazaar": [
+     24.817,
+     93.945
+    ],
+    "Canchipur": [
+     24.835,
+     93.925
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Aizawl": {
+   "state": "Mizoram",
+   "lat": 23.7271,
+   "lon": 92.7176,
+   "hubs": [
+    {
+     "name": "Lengpui Airport",
+     "kind": "airport",
+     "lat": 23.8406,
+     "lon": 92.6197
+    }
+   ],
+   "areas": {
+    "Zarkawt": [
+     23.733,
+     92.715
+    ],
+    "Chaltlang": [
+     23.745,
+     92.73
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Kohima": {
+   "state": "Nagaland",
+   "lat": 25.6751,
+   "lon": 94.1086,
+   "hubs": [
+    {
+     "name": "Dimapur Airport (nearest)",
+     "kind": "airport",
+     "lat": 25.8839,
+     "lon": 93.7714
+    }
+   ],
+   "areas": {
+    "Midland": [
+     25.682,
+     94.11
+    ],
+    "Jotsoma": [
+     25.66,
+     94.115
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Gangtok": {
+   "state": "Sikkim",
+   "lat": 27.3389,
+   "lon": 88.6065,
+   "hubs": [
+    {
+     "name": "Bagdogra Airport (nearest)",
+     "kind": "airport",
+     "lat": 26.6812,
+     "lon": 88.3286
+    }
+   ],
+   "areas": {
+    "MG Marg": [
+     27.332,
+     88.612
+    ],
+    "Tadong": [
+     27.329,
+     88.624
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Itanagar": {
+   "state": "Arunachal Pradesh",
+   "lat": 27.0844,
+   "lon": 93.6053,
+   "hubs": [
+    {
+     "name": "Donyi Polo Airport",
+     "kind": "airport",
+     "lat": 27.1618,
+     "lon": 93.1497
+    }
+   ],
+   "areas": {
+    "Naharlagun": [
+     27.105,
+     93.695
+    ],
+    "Chimpu": [
+     27.1,
+     93.65
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8
+     ],
+     "risk": "High",
+     "note": "Monsoon: frequent landslide and road risk; book covered venues."
+    },
+    {
+     "months": [
+      12,
+      1,
+      2
+     ],
+     "risk": "Medium",
+     "note": "Cold: evenings are very cold; plan heating and warm clothing for guests."
+    }
+   ]
+  },
+  "Puducherry": {
+   "state": "Puducherry",
+   "lat": 11.9416,
+   "lon": 79.8083,
+   "hubs": [
+    {
+     "name": "Chennai International Airport (nearest)",
+     "kind": "airport",
+     "lat": 12.99,
+     "lon": 80.1693
+    },
+    {
+     "name": "Puducherry Railway Station",
+     "kind": "railway station",
+     "lat": 11.9341,
+     "lon": 79.8222
+    }
+   ],
+   "areas": {
+    "White Town": [
+     11.934,
+     79.835
+    ],
+    "Lawspet": [
+     11.972,
+     79.845
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Port Blair": {
+   "state": "Andaman and Nicobar Islands",
+   "lat": 11.6234,
+   "lon": 92.7265,
+   "hubs": [
+    {
+     "name": "Veer Savarkar International Airport",
+     "kind": "airport",
+     "lat": 11.6412,
+     "lon": 92.7297
+    }
+   ],
+   "areas": {
+    "Aberdeen Bazaar": [
+     11.67,
+     92.745
+    ],
+    "Haddo": [
+     11.669,
+     92.738
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Silvassa": {
+   "state": "Dadra and Nagar Haveli and Daman and Diu",
+   "lat": 20.2738,
+   "lon": 73.0169,
+   "hubs": [
+    {
+     "name": "Vapi Railway Station",
+     "kind": "railway station",
+     "lat": 20.3722,
+     "lon": 72.9061
+    }
+   ],
+   "areas": {
+    "Amli": [
+     20.264,
+     73.002
+    ],
+    "Dadra": [
+     20.196,
+     73.0
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
+  },
+  "Kavaratti": {
+   "state": "Lakshadweep",
+   "lat": 10.5626,
+   "lon": 72.6369,
+   "hubs": [
+    {
+     "name": "Agatti Airport",
+     "kind": "airport",
+     "lat": 10.8238,
+     "lon": 72.176
+    }
+   ],
+   "areas": {
+    "Kavaratti Town": [
+     10.56,
+     72.635
+    ]
+   },
+   "climate": [
+    {
+     "months": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "risk": "High",
+     "note": "Monsoon: heavy rain; keep a covered space and a rain plan."
+    },
+    {
+     "months": [
+      11,
+      12,
+      1,
+      2
+     ],
+     "risk": "Low",
+     "note": "Dry, pleasant season: peak wedding dates and higher prices."
+    }
+   ]
   }
  }
 }

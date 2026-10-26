@@ -1,3 +1,6 @@
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from starlette.requests import Request
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -39,6 +42,16 @@ app.include_router(chat_router, prefix=settings.api_prefix)
 app.include_router(event_chat_router, prefix=settings.api_prefix)
 app.include_router(rag_router, prefix=settings.api_prefix)
 app.include_router(runs_router, prefix=settings.api_prefix)
+
+
+@app.exception_handler(RequestValidationError)
+async def friendly_validation_error(_: Request, error: RequestValidationError) -> JSONResponse:
+    """Show the reason in plain words: drop pydantic's 'Value error, ' prefix from our own validators."""
+    detail = []
+    for item in error.errors():
+        message = str(item.get("msg", "")).removeprefix("Value error, ")
+        detail.append({**{k: v for k, v in item.items() if k not in ("ctx", "input", "url")}, "msg": message})
+    return JSONResponse(status_code=422, content={"detail": detail})
 
 
 @app.get("/health", tags=["health"])

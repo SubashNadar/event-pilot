@@ -104,6 +104,21 @@ def get_event_requirements(event_type: str, attendees: int) -> dict[str, Any]:
     return {"event_type": event_type, "attendees": attendees, "requirements": requirements}
 
 
+def _send_schedule(event_date: str, attendees: int) -> list[str]:
+    """Dated sends counted back from the event: invite, RSVP deadline, reminder, final logistics. Larger events invite earlier."""
+    from datetime import date, timedelta
+
+    try:
+        day = date.fromisoformat(str(event_date)[:10])
+    except ValueError:
+        return ["Publish initial invitation", "Review RSVP count", "Send final logistics reminder"]
+    lead = 45 if attendees >= 500 else 30 if attendees >= 100 else 21
+    room = max((day - date.today()).days - 1, 3)  # an event that is close compresses the schedule, never into the past
+    steps = [(min(lead, room), "Send the invitation with an RSVP link"), (max(min(10, room * 2 // 3), 2), "RSVP deadline: confirm the head count for catering and seating"),
+             (max(min(5, room // 2), 1), "Reminder to confirmed guests; one follow-up to anyone who hasn't replied"), (1, "Final logistics message: venue directions, timings, contact person")]
+    return [f"{(day - timedelta(days=days)):%d %b %Y} ({days} day{'' if days == 1 else 's'} before): {what}" for days, what in steps]
+
+
 def assess_marketing(event_type: str, attendees: int, event_date: str) -> dict[str, Any]:
     """Return a practical, read-only promotion readiness plan."""
     channels = ["event landing page", "WhatsApp invitation", "email reminder"]
@@ -115,7 +130,7 @@ def assess_marketing(event_type: str, attendees: int, event_date: str) -> dict[s
         "event_type": event_type,
         "event_date": event_date,
         "recommended_channels": channels,
-        "checkpoints": ["Publish initial invitation", "Review RSVP count", "Send final logistics reminder"],
+        "checkpoints": _send_schedule(event_date, attendees),
         "status": "draft - requires event owner approval before sending",
     }
 

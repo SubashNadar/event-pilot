@@ -31,6 +31,8 @@ from app.graphs.emit import current_run_id, emit
 from app.mcp import tools as local_tools
 
 MCP_URL = settings.mcp_url
+MCP_RETRY_S = 300  # after a failed connection, use the in-process tools for this long
+_mcp_down_until = 0.0
 
 _LOCAL = {
     "venue_search": lambda a: local_tools.search_venues(a["location"], a["attendees"], a["total_budget_inr"], a.get("venue_type", ""), a.get("preferences", "")),
@@ -144,6 +146,7 @@ def _observation(name: str, arguments: dict[str, Any]):
 
 
 async def call_planning_tool(name: str, arguments: dict[str, Any], *, step_id: str | None = None, call_id: str | None = None) -> dict[str, Any]:
+    global _mcp_down_until
     call_id = call_id or f"{name}-{int(time.time() * 1000)}"
     if step_id:
         emit({"type": "tool_call", "stepId": step_id, "tool": {"id": call_id, "name": name, "input": arguments, "resultSummary": "Running…", "latencyMs": 0, "status": "running"}}, dedupe=f"tool:{call_id}:running")
@@ -168,7 +171,10 @@ async def call_planning_tool(name: str, arguments: dict[str, Any], *, step_id: s
         if cached and cached[0] > time.time():
             payload, via = cached[1], " (cached)"
         else:
+            mcp_skipped = time.time() < _mcp_down_until
             try:
+                if mcp_skipped:
+                    raise ConnectionError("MCP server was unreachable a moment ago")
                 payload = await asyncio.wait_for(_call_mcp(name, arguments), timeout=settings.tool_timeout_s)
                 via = ""
             except ToolCallError:
@@ -176,7 +182,9 @@ async def call_planning_tool(name: str, arguments: dict[str, Any], *, step_id: s
             except asyncio.TimeoutError as error:
                 raise ToolCallError(f"{name} timed out after {settings.tool_timeout_s:g} s") from error
             except Exception:
-                # MCP server not running: same read-only logic, in-process.
+                # MCP server not running: same read-only logic, in-process. Don't wait on it again for a while.
+                if not mcp_skipped:
+                    _mcp_down_until = time.time() + MCP_RETRY_S
                 payload = _LOCAL[name](arguments)
                 if inspect.isawaitable(payload):
                     payload = await asyncio.wait_for(payload, timeout=settings.tool_timeout_s)

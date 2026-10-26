@@ -88,7 +88,10 @@ function RecoveryCard({
     try {
       const result = await onResolve(msgId, step.id, choice);
       if (result.status === "needs_clarification") setQuestion(result.question ?? "Could you say that another way?");
-      else setText("");
+      else if (result.status === "answered" || result.status === "attempts_exhausted") {
+        setQuestion(result.question ?? null);
+        setText("");
+      } else setText("");
     } catch (error) {
       setProblem(error instanceof Error ? error.message : "That didn't go through. Please try again.");
     } finally {
@@ -193,7 +196,7 @@ export default function AgentMessage({ message, selectedStepId, onOpenStep }: Pr
   // Polite live-region text for screen readers.
   const liveText = (() => {
     if (run.status === "thinking" && !run.steps.length) return "Event Pilot is thinking.";
-    if (failed && run.status === "awaiting_retry") return `Step failed: ${failed.title}. Retry or skip.`;
+    if (failed && run.status === "awaiting_retry") return failed.id === "approval" ? "The plan is ready for your approval." : `Step failed: ${failed.title}. Retry or skip.`;
     if (current) return `${current.title}: ${STATUS_LABEL[current.status]}.`;
     if (run.status === "answering") return "Writing the answer.";
     if (run.status === "completed") return "Plan complete.";
@@ -254,7 +257,14 @@ export default function AgentMessage({ message, selectedStepId, onOpenStep }: Pr
         {message.warnings && message.warnings.length > 0 && !isStreaming && <WarningCards warnings={message.warnings} onApply={answerPatch} onKeep={keepWarning} />}
         {message.question && !isStreaming && <QuestionChips question={message.question} onPick={answerOption} />}
 
-        {run.status === "stopped" && (
+        {run.status === "stopped" && run.stopReason && (
+          <div className="flex items-center gap-2 rounded-xl border border-border bg-surface-2/60 px-3.5 py-2.5 text-[13px] text-muted">
+            <RefreshCw size={12} aria-hidden />
+            <span className="flex-1">{run.stopReason} It continues below.</span>
+          </div>
+        )}
+
+        {run.status === "stopped" && !run.stopReason && (
           <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface-2/60 px-3.5 py-2.5 text-[13px] text-muted">
             <Square size={12} className="fill-current" aria-hidden />
             <span className="flex-1">

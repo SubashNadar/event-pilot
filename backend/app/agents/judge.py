@@ -28,18 +28,32 @@ class PlanJudgement(BaseModel):
     feedback: list[JudgedFeedback] = Field(default_factory=list, max_length=6, description="Empty when satisfied.")
 
 
-async def judge_plan(event: dict[str, Any], plan: dict[str, Any], reports: dict[str, Any]) -> tuple[PlanJudgement, dict[str, int]]:
+def _compact(reports: dict[str, Any]) -> dict[str, Any]:
+    """What each specialist decided, without raw tool payloads: the judge reads decisions, not search results."""
+    return {key: {k: v for k, v in (report or {}).items() if k in ("agent", "recommendations", "decisions", "assumptions", "skipped", "reason")} for key, report in reports.items()}
+
+
+async def judge_plan(event: dict[str, Any], plan: dict[str, Any], reports: dict[str, Any], earlier: dict[str, Any] | None = None) -> tuple[PlanJudgement, dict[str, int]]:
     model = llm.get_chat_model().with_structured_output(PlanJudgement, method="function_calling", include_raw=True)
+    recheck = (
+        "This is a re-check after the specialists worked on your earlier notes: "
+        f"{json.dumps(earlier, default=str)}. Judge whether those are now addressed. Raise a new note only for a serious problem, "
+        "not for wording or polish you didn't mention before. "
+    ) if earlier else ""
     prompt = (
         "You are the Event Manager. Judge this combined event plan before the owner sees it. "
         "Check what arithmetic can't: is the venue realistic for the guest count, does the agenda make sense for the event, "
         "are the risks specific with a usable fallback, is the guest communication suitable. "
+        "The guest communication plan is in the plan's `communications` (channels, send checkpoints including RSVPs, invite draft) and the "
+        "operational needs are in `requirements`; judge them there, and don't ask for a section the plan already has. "
+        "Only raise what a specialist can change in the plan. Things only the owner can supply (a named person, a signed contract, a booking, "
+        "a confirmed price) are not specialist problems: mention them only if they matter, as something to confirm. "
         "Be strict about real problems and lenient about style. If the plan is good enough, return satisfied=true with no feedback. "
         "Otherwise name the specialist who should fix each problem and say what to change. "
-        f"{DATA_RULE}\n"
+        f"{recheck}{DATA_RULE}\n"
         f"{wrap_user(json.dumps(event, default=str), 'brief')}\n"
         f"{wrap_user(json.dumps(plan, default=str), 'brief')}\n"
-        f"{wrap_user(json.dumps(reports, default=str), 'brief')}"
+        f"{wrap_user(json.dumps(_compact(reports), default=str), 'brief')}"
     )
     async with llm.limited():
         output = await model.ainvoke([SystemMessage("You review event plans for quality. Respond only with the requested structure."), HumanMessage(prompt)])

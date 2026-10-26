@@ -6049,6 +6049,2285 @@
    ],
    "description": "Two projectors, a confidence monitor, wireless mics and a technician for a conference hall.",
    "package_inr": 100000
+  },
+  {
+   "id": "vd305",
+   "name": "Chandigarh Sector Thali Co.",
+   "city": "Chandigarh",
+   "state": "Chandigarh",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Punjabi thali",
+    "sarson da saag",
+    "kulfi"
+   ],
+   "description": "Planned-city Punjabi thali with sarson da saag and kulfi.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd306",
+   "name": "Rose Garden Mandap Decor",
+   "city": "Chandigarh",
+   "state": "Chandigarh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "rose garden arch",
+    "marigold garlands",
+    "lantern lighting"
+   ],
+   "description": "Rose-garden inspired arch with marigold garlands and lanterns.",
+   "package_inr": 150000
+  },
+  {
+   "id": "vd307",
+   "name": "Chandigarh Dhol and Bhangra Crew",
+   "city": "Chandigarh",
+   "state": "Chandigarh",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday"
+   ],
+   "features": [
+    "dhol",
+    "bhangra dancers"
+   ],
+   "description": "Dhol and bhangra crew for Punjabi celebrations in the city.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd308",
+   "name": "Udupi Dosa House Caterers",
+   "city": "Bengaluru",
+   "state": "Karnataka",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "South Indian thali",
+    "live dosa counter",
+    "filter coffee station"
+   ],
+   "description": "South Indian vegetarian feast in the Udupi style, with a live dosa counter.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd309",
+   "name": "Mysuru Mandap Decor",
+   "city": "Bengaluru",
+   "state": "Karnataka",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "traditional mandap",
+    "jasmine garlands",
+    "brass lamps"
+   ],
+   "description": "Mysuru-style mandap with jasmine garlands and brass lamps for ceremonies.",
+   "package_inr": 180000
+  },
+  {
+   "id": "vd310",
+   "name": "Carnatic Sabha Ensemble",
+   "city": "Bengaluru",
+   "state": "Karnataka",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "violin and mridangam",
+    "2-hour set"
+   ],
+   "description": "A two-hour Carnatic ensemble with violin and mridangam for classical ceremonies.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd311",
+   "name": "Maratha Thali House",
+   "city": "Mumbai",
+   "state": "Maharashtra",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Maharashtrian thali",
+    "puran poli",
+    "live sol kadhi"
+   ],
+   "description": "Maharashtrian thali with puran poli and sol kadhi, served family style.",
+   "per_plate_inr": 900,
+   "min_guests": 50
+  },
+  {
+   "id": "vd312",
+   "name": "Peshwai Mandap Studio",
+   "city": "Mumbai",
+   "state": "Maharashtra",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "Peshwai-style mandap",
+    "marigold and brass",
+    "stage backdrop"
+   ],
+   "description": "Peshwai-style mandap in marigold and brass for Maharashtrian weddings.",
+   "package_inr": 160000
+  },
+  {
+   "id": "vd313",
+   "name": "Dhol Tasha Pathak",
+   "city": "Mumbai",
+   "state": "Maharashtra",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "dhol and tasha troupe",
+    "90-minute procession"
+   ],
+   "description": "A dhol and tasha troupe for baraat processions and celebrations.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd314",
+   "name": "Dilli Dhaba Caterers",
+   "city": "Delhi NCR",
+   "state": "Delhi",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Punjabi and Mughlai menu",
+    "tandoor counter",
+    "chaat station"
+   ],
+   "description": "Delhi-style Punjabi and Mughlai menu with a tandoor counter and chaat station.",
+   "per_plate_inr": 1100,
+   "min_guests": 50
+  },
+  {
+   "id": "vd315",
+   "name": "Haveli Blooms Decor",
+   "city": "Delhi NCR",
+   "state": "Delhi",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "haveli-style arch",
+    "fresh flower canopy",
+    "lighting design"
+   ],
+   "description": "Haveli-inspired arches and fresh flower canopies for large receptions.",
+   "package_inr": 320000
+  },
+  {
+   "id": "vd316",
+   "name": "Sangeet Dhol Crew",
+   "city": "Delhi NCR",
+   "state": "Delhi",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "dhol performers",
+    "DJ mix",
+    "sangeet choreography"
+   ],
+   "description": "Dhol crew and sangeet choreography for pre-wedding celebrations.",
+   "package_inr": 60000
+  },
+  {
+   "id": "vd317",
+   "name": "Haryanvi Ghee and Churma Kitchen",
+   "city": "Delhi NCR",
+   "state": "Haryana",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Haryanvi thali",
+    "churma and ghee",
+    "bajra roti"
+   ],
+   "description": "Haryanvi village-style thali with churma, ghee and bajra roti.",
+   "per_plate_inr": 700,
+   "min_guests": 50
+  },
+  {
+   "id": "vd318",
+   "name": "Haryana Phulkari Decor",
+   "city": "Delhi NCR",
+   "state": "Haryana",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "phulkari backdrop",
+    "charpai seating",
+    "lantern lighting"
+   ],
+   "description": "Phulkari backdrop and charpai seating for a village-style setting.",
+   "package_inr": 135000
+  },
+  {
+   "id": "vd319",
+   "name": "Haryanvi Ragni Troupe",
+   "city": "Delhi NCR",
+   "state": "Haryana",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday"
+   ],
+   "features": [
+    "ragni singers",
+    "folk dance"
+   ],
+   "description": "Ragni singers and folk dance for Haryanvi celebrations.",
+   "package_inr": 38000
+  },
+  {
+   "id": "vd320",
+   "name": "Nizami Dum Biryani Kitchen",
+   "city": "Hyderabad",
+   "state": "Telangana",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Hyderabadi dum biryani",
+    "Irani chai",
+    "double ka meetha"
+   ],
+   "description": "Hyderabadi dum biryani with Irani chai and double ka meetha.",
+   "per_plate_inr": 950,
+   "min_guests": 50
+  },
+  {
+   "id": "vd321",
+   "name": "Deccan Jharokha Decor",
+   "city": "Hyderabad",
+   "state": "Telangana",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "jharokha windows",
+    "brass lamps",
+    "silk drapes"
+   ],
+   "description": "Deccan-style jharokha windows and brass lamps with silk drapes.",
+   "package_inr": 200000
+  },
+  {
+   "id": "vd322",
+   "name": "Qawwali Nights Hyderabad",
+   "city": "Hyderabad",
+   "state": "Telangana",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "qawwali group",
+    "harmonium and tabla",
+    "1.5-hour set"
+   ],
+   "description": "A qawwali group with harmonium and tabla for evening receptions.",
+   "package_inr": 70000
+  },
+  {
+   "id": "vd323",
+   "name": "Chettinad Banana Leaf Caterers",
+   "city": "Chennai",
+   "state": "Tamil Nadu",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Chettinad thali",
+    "banana leaf service",
+    "filter coffee"
+   ],
+   "description": "Chettinad banana-leaf meal with filter coffee, served in the traditional way.",
+   "per_plate_inr": 700,
+   "min_guests": 50
+  },
+  {
+   "id": "vd324",
+   "name": "Kanchi Kolam and Silk Decor",
+   "city": "Chennai",
+   "state": "Tamil Nadu",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "kolam entrance",
+    "Kanchipuram silk drapes",
+    "jasmine arch"
+   ],
+   "description": "Kolam entrance and Kanchipuram silk drapes for South Indian ceremonies.",
+   "package_inr": 190000
+  },
+  {
+   "id": "vd325",
+   "name": "Nadaswaram and Thavil Troupe",
+   "city": "Chennai",
+   "state": "Tamil Nadu",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "engagement",
+    "housewarming"
+   ],
+   "features": [
+    "nadaswaram",
+    "thavil",
+    "1-hour set"
+   ],
+   "description": "Nadaswaram and thavil ensemble for traditional Tamil ceremonies.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd326",
+   "name": "Goan Coastal Seafood Catering",
+   "city": "Goa",
+   "state": "Goa",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Goan fish curry",
+    "prawn balchão",
+    "bebinca dessert"
+   ],
+   "description": "Goan seafood menu with fish curry, prawn balchão and bebinca.",
+   "per_plate_inr": 1400,
+   "min_guests": 50
+  },
+  {
+   "id": "vd327",
+   "name": "Beach Mandap Goa",
+   "city": "Goa",
+   "state": "Goa",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "sand-friendly mandap",
+    "driftwood accents",
+    "sunset lighting"
+   ],
+   "description": "Beach mandap with driftwood accents and sunset lighting.",
+   "package_inr": 150000
+  },
+  {
+   "id": "vd328",
+   "name": "Mando Band Goa",
+   "city": "Goa",
+   "state": "Goa",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday"
+   ],
+   "features": [
+    "mando singers",
+    "guitar and accordion"
+   ],
+   "description": "A Goan mando band with guitar and accordion for beach celebrations.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd329",
+   "name": "Rajasthani Thali Royals",
+   "city": "Jaipur",
+   "state": "Rajasthan",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "dal baati churma",
+    "gatte ki sabzi",
+    "laal maas"
+   ],
+   "description": "Rajasthani royal thali with dal baati churma and laal maas.",
+   "per_plate_inr": 1000,
+   "min_guests": 50
+  },
+  {
+   "id": "vd330",
+   "name": "Rajwada Tent and Decor",
+   "city": "Jaipur",
+   "state": "Rajasthan",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "royal tent",
+    "turban welcome",
+    "brass and mirror work"
+   ],
+   "description": "Royal tent with mirror work, brass and a turban welcome.",
+   "package_inr": 350000
+  },
+  {
+   "id": "vd331",
+   "name": "Ghoomar and Kalbeliya Troupe",
+   "city": "Jaipur",
+   "state": "Rajasthan",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "ghoomar dancers",
+    "kalbeliya dance",
+    "dhol"
+   ],
+   "description": "Ghoomar and kalbeliya dancers with dhol for Rajasthani celebrations.",
+   "package_inr": 55000
+  },
+  {
+   "id": "vd332",
+   "name": "Bhojbari Bengali Caterers",
+   "city": "Kolkata",
+   "state": "West Bengal",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Bengali bhoj",
+    "shorshe ilish",
+    "mishti doi"
+   ],
+   "description": "Traditional Bengali bhoj with shorshe ilish and mishti doi.",
+   "per_plate_inr": 950,
+   "min_guests": 50
+  },
+  {
+   "id": "vd333",
+   "name": "Alpana and Shola Decor",
+   "city": "Kolkata",
+   "state": "West Bengal",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "alpana floor art",
+    "shola bird decor",
+    "marigold garlands"
+   ],
+   "description": "Alpana floor art and shola bird decor for Bengali ceremonies.",
+   "package_inr": 170000
+  },
+  {
+   "id": "vd334",
+   "name": "Dhak and Rabindra Sangeet Group",
+   "city": "Kolkata",
+   "state": "West Bengal",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "puja",
+    "reception"
+   ],
+   "features": [
+    "dhak drummers",
+    "Rabindra Sangeet singers"
+   ],
+   "description": "Dhak drummers and Rabindra Sangeet singers for Bengali celebrations.",
+   "package_inr": 38000
+  },
+  {
+   "id": "vd335",
+   "name": "Gujarati Jain Thali Co.",
+   "city": "Ahmedabad",
+   "state": "Gujarat",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Gujarati thali",
+    "Jain-friendly menu",
+    "undhiyu"
+   ],
+   "description": "Gujarati thali and Jain-friendly menu, with undhiyu in season.",
+   "per_plate_inr": 800,
+   "min_guests": 50
+  },
+  {
+   "id": "vd336",
+   "name": "Garba Night Decor",
+   "city": "Ahmedabad",
+   "state": "Gujarat",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "garba stage",
+    "mirror work",
+    "bandhani drapes"
+   ],
+   "description": "Garba stage with mirror work and bandhani drapes.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd337",
+   "name": "Dhol and Garba Crew",
+   "city": "Ahmedabad",
+   "state": "Gujarat",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "navratri",
+    "birthday"
+   ],
+   "features": [
+    "dhol players",
+    "garba choreography"
+   ],
+   "description": "Dhol players and garba choreography for Gujarati nights.",
+   "package_inr": 42000
+  },
+  {
+   "id": "vd338",
+   "name": "Lucknawi Dastarkhwan",
+   "city": "Lucknow",
+   "state": "Uttar Pradesh",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Awadhi kebabs",
+    "biryani dum",
+    "sheermal"
+   ],
+   "description": "Awadhi dastarkhwan with kebabs, dum biryani and sheermal.",
+   "per_plate_inr": 1200,
+   "min_guests": 50
+  },
+  {
+   "id": "vd339",
+   "name": "Nawabi Mehfil Decor",
+   "city": "Lucknow",
+   "state": "Uttar Pradesh",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "nawabi arches",
+    "crystal chandeliers",
+    "carpet seating"
+   ],
+   "description": "Nawabi arches, chandeliers and carpet seating for a mehfil setting.",
+   "package_inr": 280000
+  },
+  {
+   "id": "vd340",
+   "name": "Ghazal and Shehnai Ensemble",
+   "city": "Lucknow",
+   "state": "Uttar Pradesh",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "ghazal singer",
+    "shehnai player",
+    "tabla"
+   ],
+   "description": "Ghazal singer with shehnai and tabla for traditional celebrations.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd341",
+   "name": "Punjabi Langar Kitchen",
+   "city": "Chandigarh",
+   "state": "Punjab",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Punjabi langar",
+    "makki di roti",
+    "sarson da saag"
+   ],
+   "description": "Punjabi langar-style meal with makki di roti and sarson da saag.",
+   "per_plate_inr": 750,
+   "min_guests": 50
+  },
+  {
+   "id": "vd342",
+   "name": "Phulkari Mandap Decor",
+   "city": "Chandigarh",
+   "state": "Punjab",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "phulkari mandap",
+    "marigold entrance",
+    "lantern lighting"
+   ],
+   "description": "Phulkari-draped mandap with a marigold entrance and lanterns.",
+   "package_inr": 160000
+  },
+  {
+   "id": "vd343",
+   "name": "Bhangra Dhol Party",
+   "city": "Chandigarh",
+   "state": "Punjab",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet"
+   ],
+   "features": [
+    "dhol",
+    "bhangra troupe"
+   ],
+   "description": "Dhol and bhangra troupe for Punjabi celebrations.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd344",
+   "name": "Kerala Sadya Caterers",
+   "city": "Kochi",
+   "state": "Kerala",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "banana leaf sadya",
+    "payasam",
+    "Kerala fish curry"
+   ],
+   "description": "Traditional sadya on banana leaf with payasam and fish curry.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd345",
+   "name": "Kasavu and Nilavilakku Decor",
+   "city": "Kochi",
+   "state": "Kerala",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "nilavilakku lamps",
+    "kasavu drapes",
+    "banana leaf arch"
+   ],
+   "description": "Nilavilakku lamps and kasavu drapes for Kerala ceremonies.",
+   "package_inr": 150000
+  },
+  {
+   "id": "vd346",
+   "name": "Chenda Melam Troupe",
+   "city": "Kochi",
+   "state": "Kerala",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "temple event",
+    "inauguration"
+   ],
+   "features": [
+    "chenda and elathalam",
+    "panchavadyam"
+   ],
+   "description": "Chenda melam troupe for processions and traditional events.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd347",
+   "name": "Andhra Meals and Pickles",
+   "city": "Visakhapatnam",
+   "state": "Andhra Pradesh",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Andhra meals",
+    "gongura pachadi",
+    "pesarattu"
+   ],
+   "description": "Andhra meals with gongura pachadi and pesarattu.",
+   "per_plate_inr": 750,
+   "min_guests": 50
+  },
+  {
+   "id": "vd348",
+   "name": "Kalamkari Backdrop Studio",
+   "city": "Visakhapatnam",
+   "state": "Andhra Pradesh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "kalamkari backdrop",
+    "temple-style entrance",
+    "brass lamps"
+   ],
+   "description": "Kalamkari backdrops and temple-style entrance with brass lamps.",
+   "package_inr": 135000
+  },
+  {
+   "id": "vd349",
+   "name": "Kuchipudi Dance Troupe",
+   "city": "Visakhapatnam",
+   "state": "Andhra Pradesh",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "inauguration"
+   ],
+   "features": [
+    "kuchipudi dancers",
+    "classical music"
+   ],
+   "description": "Kuchipudi dancers with classical music for cultural events.",
+   "package_inr": 38000
+  },
+  {
+   "id": "vd350",
+   "name": "Malwi Thali Caterers",
+   "city": "Indore",
+   "state": "Madhya Pradesh",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Malwi thali",
+    "dal bafla",
+    "poha jalebi"
+   ],
+   "description": "Malwi thali with dal bafla and poha jalebi for large groups.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd351",
+   "name": "Maheshwari Silk Decor",
+   "city": "Indore",
+   "state": "Madhya Pradesh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "Maheshwari silk drapes",
+    "jharokha arch",
+    "marigold garlands"
+   ],
+   "description": "Maheshwari silk drapes and jharokha arches for Malwa-style events.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd352",
+   "name": "Lok Geet Mandali",
+   "city": "Indore",
+   "state": "Madhya Pradesh",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "reception"
+   ],
+   "features": [
+    "lok geet singers",
+    "dholak"
+   ],
+   "description": "Folk singers and dholak for Malwa-style celebrations.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd353",
+   "name": "Assamese Thali Kitchen",
+   "city": "Guwahati",
+   "state": "Assam",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Assamese thali",
+    "duck meat curry",
+    "pitha"
+   ],
+   "description": "Assamese thali with duck curry and traditional pitha.",
+   "per_plate_inr": 700,
+   "min_guests": 50
+  },
+  {
+   "id": "vd354",
+   "name": "Japi and Gamosa Decor",
+   "city": "Guwahati",
+   "state": "Assam",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "japi and gamosa motifs",
+    "bamboo arch",
+    "cane furniture"
+   ],
+   "description": "Japi and gamosa motifs with a bamboo arch and cane seating.",
+   "package_inr": 125000
+  },
+  {
+   "id": "vd355",
+   "name": "Bihu Dance Troupe",
+   "city": "Guwahati",
+   "state": "Assam",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "inauguration"
+   ],
+   "features": [
+    "bihu dancers",
+    "dhol and pepa"
+   ],
+   "description": "Bihu dancers with dhol and pepa for Assamese celebrations.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd356",
+   "name": "Odia Bhoj and Pakhala Caterers",
+   "city": "Bhubaneswar",
+   "state": "Odisha",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Odia thali",
+    "pakhala",
+    "chhena poda"
+   ],
+   "description": "Odia thali with pakhala and chhena poda.",
+   "per_plate_inr": 680,
+   "min_guests": 50
+  },
+  {
+   "id": "vd357",
+   "name": "Pattachitra Mandap Studio",
+   "city": "Bhubaneswar",
+   "state": "Odisha",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "pattachitra panels",
+    "temple-style arch",
+    "brass lamps"
+   ],
+   "description": "Pattachitra panels and a temple-style arch for Odia ceremonies.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd358",
+   "name": "Odissi Dance Ensemble",
+   "city": "Bhubaneswar",
+   "state": "Odisha",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "inauguration"
+   ],
+   "features": [
+    "odissi dancers",
+    "live music"
+   ],
+   "description": "Odissi dancers with live music for cultural events.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd359",
+   "name": "Litti Chokha Festival Kitchen",
+   "city": "Patna",
+   "state": "Bihar",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "litti chokha",
+    "sattu drinks",
+    "kheer"
+   ],
+   "description": "Litti chokha with sattu drinks and kheer for a rustic feast.",
+   "per_plate_inr": 600,
+   "min_guests": 50
+  },
+  {
+   "id": "vd360",
+   "name": "Madhubani Art Decor",
+   "city": "Patna",
+   "state": "Bihar",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "madhubani panels",
+    "marigold entrance",
+    "brass lamps"
+   ],
+   "description": "Madhubani wall art and a marigold entrance for Bihari celebrations.",
+   "package_inr": 120000
+  },
+  {
+   "id": "vd361",
+   "name": "Bhojpuri Folk Band",
+   "city": "Patna",
+   "state": "Bihar",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "birthday",
+    "reception"
+   ],
+   "features": [
+    "folk singers",
+    "dholak and harmonium"
+   ],
+   "description": "Bhojpuri folk singers with dholak and harmonium.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd362",
+   "name": "Jharkhandi Tribal Feast",
+   "city": "Ranchi",
+   "state": "Jharkhand",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "tribal thali",
+    "dhuska",
+    "rugra"
+   ],
+   "description": "Jharkhandi tribal thali with dhuska and rugra.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd363",
+   "name": "Sohrai Wall Art Decor",
+   "city": "Ranchi",
+   "state": "Jharkhand",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "sohrai wall art",
+    "sal leaf arch",
+    "earthen lamps"
+   ],
+   "description": "Sohrai wall art and sal-leaf arches for tribal-style weddings.",
+   "package_inr": 115000
+  },
+  {
+   "id": "vd364",
+   "name": "Chhau Dance Group",
+   "city": "Ranchi",
+   "state": "Jharkhand",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "inauguration"
+   ],
+   "features": [
+    "chhau masks and dancers",
+    "folk drums"
+   ],
+   "description": "Chhau dancers with masks and folk drums.",
+   "package_inr": 42000
+  },
+  {
+   "id": "vd365",
+   "name": "Chhattisgarhi Thali House",
+   "city": "Raipur",
+   "state": "Chhattisgarh",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Chhattisgarhi thali",
+    "chila",
+    "bafauri"
+   ],
+   "description": "Chhattisgarhi thali with chila and bafauri.",
+   "per_plate_inr": 600,
+   "min_guests": 50
+  },
+  {
+   "id": "vd366",
+   "name": "Dhokra Craft Decor",
+   "city": "Raipur",
+   "state": "Chhattisgarh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "dhokra metal lamps",
+    "bamboo arch",
+    "tribal motifs"
+   ],
+   "description": "Dhokra metal lamps and tribal motifs for ceremonies.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd367",
+   "name": "Panthi Folk Troupe",
+   "city": "Raipur",
+   "state": "Chhattisgarh",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "birthday"
+   ],
+   "features": [
+    "panthi dancers",
+    "folk drums"
+   ],
+   "description": "Panthi folk dancers with drums for village-style celebrations.",
+   "package_inr": 32000
+  },
+  {
+   "id": "vd368",
+   "name": "Garhwali Kumaoni Kitchen",
+   "city": "Dehradun",
+   "state": "Uttarakhand",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Garhwali thali",
+    "bhatt ki churkani",
+    "mandua roti"
+   ],
+   "description": "Garhwali and Kumaoni thali with bhatt ki churkani and mandua roti.",
+   "per_plate_inr": 700,
+   "min_guests": 50
+  },
+  {
+   "id": "vd369",
+   "name": "Pahadi Wood and Flower Decor",
+   "city": "Dehradun",
+   "state": "Uttarakhand",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "wooden pahadi arch",
+    "seasonal flowers",
+    "lantern lighting"
+   ],
+   "description": "Wooden hill-style arch and seasonal flowers.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd370",
+   "name": "Garhwali Folk Band",
+   "city": "Dehradun",
+   "state": "Uttarakhand",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "birthday"
+   ],
+   "features": [
+    "dhol and damau",
+    "folk singers"
+   ],
+   "description": "Garhwali folk band with dhol and damau.",
+   "package_inr": 36000
+  },
+  {
+   "id": "vd371",
+   "name": "Himachali Dham Caterers",
+   "city": "Shimla",
+   "state": "Himachal Pradesh",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Himachali dham",
+    "madra",
+    "babru"
+   ],
+   "description": "Traditional Himachali dham with madra and babru.",
+   "per_plate_inr": 850,
+   "min_guests": 50
+  },
+  {
+   "id": "vd372",
+   "name": "Deodar Wood Mandap",
+   "city": "Shimla",
+   "state": "Himachal Pradesh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "deodar wood mandap",
+    "pahari caps",
+    "warm lighting"
+   ],
+   "description": "Deodar-wood mandap with a pahari theme and warm lighting.",
+   "package_inr": 145000
+  },
+  {
+   "id": "vd373",
+   "name": "Pahari Nati Dance Group",
+   "city": "Shimla",
+   "state": "Himachal Pradesh",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "birthday"
+   ],
+   "features": [
+    "nati dancers",
+    "folk songs"
+   ],
+   "description": "Pahari nati dancers and folk songs.",
+   "package_inr": 33000
+  },
+  {
+   "id": "vd374",
+   "name": "Kashmiri Wazwan Masters",
+   "city": "Srinagar",
+   "state": "Jammu and Kashmir",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "wazwan",
+    "rogan josh",
+    "kahwa"
+   ],
+   "description": "Multi-course wazwan with rogan josh and kahwa.",
+   "per_plate_inr": 1500,
+   "min_guests": 50
+  },
+  {
+   "id": "vd375",
+   "name": "Chinar and Papier-mache Decor",
+   "city": "Srinagar",
+   "state": "Jammu and Kashmir",
+   "category": "decor",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "papier-mache panels",
+    "chinar leaf motifs",
+    "carpet seating"
+   ],
+   "description": "Papier-mache panels and chinar-leaf motifs for Kashmiri weddings.",
+   "package_inr": 260000
+  },
+  {
+   "id": "vd376",
+   "name": "Sufiana Music Ensemble",
+   "city": "Srinagar",
+   "state": "Jammu and Kashmir",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "sufiana singers",
+    "santoor",
+    "rabab"
+   ],
+   "description": "Sufiana singers with santoor and rabab.",
+   "package_inr": 48000
+  },
+  {
+   "id": "vd377",
+   "name": "Ladakhi Thukpa and Momo Kitchen",
+   "city": "Leh",
+   "state": "Ladakh",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "thukpa",
+    "momos",
+    "butter tea"
+   ],
+   "description": "Ladakhi thukpa and momos with butter tea.",
+   "per_plate_inr": 800,
+   "min_guests": 50
+  },
+  {
+   "id": "vd378",
+   "name": "Prayer Flag Mountain Decor",
+   "city": "Leh",
+   "state": "Ladakh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "prayer flags",
+    "monastery-style arch",
+    "butter lamps"
+   ],
+   "description": "Prayer flags and butter lamps for a mountain-style setting.",
+   "package_inr": 180000
+  },
+  {
+   "id": "vd379",
+   "name": "Ladakhi Folk Dancers",
+   "city": "Leh",
+   "state": "Ladakh",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "festival"
+   ],
+   "features": [
+    "folk dancers",
+    "traditional drums"
+   ],
+   "description": "Ladakhi folk dancers with traditional drums.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd380",
+   "name": "Tripuri Bengali Bhoj",
+   "city": "Agartala",
+   "state": "Tripura",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Tripuri thali",
+    "mui bisi",
+    "chakhwi"
+   ],
+   "description": "Tripuri thali with mui bisi and chakhwi.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd381",
+   "name": "Tripuri Bamboo Decor",
+   "city": "Agartala",
+   "state": "Tripura",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "bamboo arch",
+    "tribal motifs",
+    "earthen lamps"
+   ],
+   "description": "Bamboo arches and tribal motifs for ceremonies.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd382",
+   "name": "Folk Music Group Agartala",
+   "city": "Agartala",
+   "state": "Tripura",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "birthday"
+   ],
+   "features": [
+    "folk singers",
+    "drums"
+   ],
+   "description": "Folk music group with drums and singers.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd383",
+   "name": "Khasi Kitchen Caterers",
+   "city": "Shillong",
+   "state": "Meghalaya",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Khasi thali",
+    "jadoh",
+    "pork with bamboo shoot"
+   ],
+   "description": "Khasi meal with jadoh and pork with bamboo shoot.",
+   "per_plate_inr": 700,
+   "min_guests": 50
+  },
+  {
+   "id": "vd384",
+   "name": "Khasi Bamboo and Wood Decor",
+   "city": "Shillong",
+   "state": "Meghalaya",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "wooden arch",
+    "bamboo lanterns",
+    "orchid garlands"
+   ],
+   "description": "Wooden arches and bamboo lanterns with orchid garlands.",
+   "package_inr": 120000
+  },
+  {
+   "id": "vd385",
+   "name": "Shillong Rock and Folk Band",
+   "city": "Shillong",
+   "state": "Meghalaya",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday"
+   ],
+   "features": [
+    "rock and folk band",
+    "acoustic set"
+   ],
+   "description": "Rock and folk band with an acoustic set.",
+   "package_inr": 45000
+  },
+  {
+   "id": "vd386",
+   "name": "Manipuri Thali Kitchen",
+   "city": "Imphal",
+   "state": "Manipur",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Manipuri thali",
+    "eromba",
+    "black rice kheer"
+   ],
+   "description": "Manipuri thali with eromba and black rice kheer.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd387",
+   "name": "Lai Haraoba Mandap Decor",
+   "city": "Imphal",
+   "state": "Manipur",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "Lai Haraoba motifs",
+    "bamboo arch",
+    "brass lamps"
+   ],
+   "description": "Mandap with Lai Haraoba motifs and brass lamps.",
+   "package_inr": 115000
+  },
+  {
+   "id": "vd388",
+   "name": "Ras Leela Dance Troupe",
+   "city": "Imphal",
+   "state": "Manipur",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "inauguration"
+   ],
+   "features": [
+    "ras leela dancers",
+    "pung drums"
+   ],
+   "description": "Ras leela dancers with pung drums.",
+   "package_inr": 40000
+  },
+  {
+   "id": "vd389",
+   "name": "Mizo Bamboo Feast",
+   "city": "Aizawl",
+   "state": "Mizoram",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Mizo feast",
+    "bamboo shoot curry",
+    "sawhchiar"
+   ],
+   "description": "Mizo feast with bamboo shoot curry and sawhchiar.",
+   "per_plate_inr": 620,
+   "min_guests": 50
+  },
+  {
+   "id": "vd390",
+   "name": "Cheraw Bamboo Decor",
+   "city": "Aizawl",
+   "state": "Mizoram",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "bamboo arch",
+    "cheraw-style panels",
+    "hill flowers"
+   ],
+   "description": "Bamboo arches and cheraw-style panels with hill flowers.",
+   "package_inr": 105000
+  },
+  {
+   "id": "vd391",
+   "name": "Cheraw Dance Troupe",
+   "city": "Aizawl",
+   "state": "Mizoram",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "birthday"
+   ],
+   "features": [
+    "cheraw dancers",
+    "bamboo instruments"
+   ],
+   "description": "Cheraw dancers with bamboo instruments.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd392",
+   "name": "Naga Smoked Meat Kitchen",
+   "city": "Kohima",
+   "state": "Nagaland",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "smoked pork",
+    "bamboo shoot",
+    "Naga chutney"
+   ],
+   "description": "Naga smoked-meat feast with bamboo shoot and chutney.",
+   "per_plate_inr": 700,
+   "min_guests": 50
+  },
+  {
+   "id": "vd393",
+   "name": "Naga Shawl Decor Studio",
+   "city": "Kohima",
+   "state": "Nagaland",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "Naga shawl drapes",
+    "bamboo arch",
+    "warrior motifs"
+   ],
+   "description": "Naga shawl drapes and bamboo arches for ceremonies.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd394",
+   "name": "Naga Folk Ensemble",
+   "city": "Kohima",
+   "state": "Nagaland",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "festival"
+   ],
+   "features": [
+    "folk ensemble",
+    "traditional drums"
+   ],
+   "description": "Naga folk ensemble with traditional drums.",
+   "package_inr": 32000
+  },
+  {
+   "id": "vd395",
+   "name": "Sikkimese Momo and Thukpa",
+   "city": "Gangtok",
+   "state": "Sikkim",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "momos",
+    "thukpa",
+    "gundruk"
+   ],
+   "description": "Sikkimese momos and thukpa with gundruk.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd396",
+   "name": "Buddhist Prayer Flag Decor",
+   "city": "Gangtok",
+   "state": "Sikkim",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "prayer flags",
+    "monastery-style arch",
+    "butter lamps"
+   ],
+   "description": "Prayer flags and butter lamps for a Buddhist-style ceremony.",
+   "package_inr": 135000
+  },
+  {
+   "id": "vd397",
+   "name": "Sikkimese Cultural Troupe",
+   "city": "Gangtok",
+   "state": "Sikkim",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "festival"
+   ],
+   "features": [
+    "cultural dancers",
+    "traditional music"
+   ],
+   "description": "Sikkimese cultural troupe with traditional music.",
+   "package_inr": 33000
+  },
+  {
+   "id": "vd398",
+   "name": "Arunachali Bamboo Kitchen",
+   "city": "Itanagar",
+   "state": "Arunachal Pradesh",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "bamboo-cooked rice",
+    "smoked fish",
+    "local greens"
+   ],
+   "description": "Arunachali meal with bamboo-cooked rice and smoked fish.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd399",
+   "name": "Monpa Art Decor",
+   "city": "Itanagar",
+   "state": "Arunachal Pradesh",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "Monpa motifs",
+    "bamboo arch",
+    "warm lighting"
+   ],
+   "description": "Monpa art motifs and a bamboo arch.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd400",
+   "name": "Monpa Dance Group",
+   "city": "Itanagar",
+   "state": "Arunachal Pradesh",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "cultural event",
+    "festival"
+   ],
+   "features": [
+    "Monpa dancers",
+    "folk music"
+   ],
+   "description": "Monpa dancers with folk music.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd401",
+   "name": "Franco-Tamil Fusion Caterers",
+   "city": "Puducherry",
+   "state": "Puducherry",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "French-Tamil fusion",
+    "crepes and biryani",
+    "wine pairing"
+   ],
+   "description": "French-Tamil fusion menu with crepes and biryani.",
+   "per_plate_inr": 1100,
+   "min_guests": 50
+  },
+  {
+   "id": "vd402",
+   "name": "Colonial Veranda Decor",
+   "city": "Puducherry",
+   "state": "Puducherry",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "colonial-style veranda",
+    "wrought iron",
+    "lantern lighting"
+   ],
+   "description": "Colonial-style veranda decor with wrought iron and lanterns.",
+   "package_inr": 160000
+  },
+  {
+   "id": "vd403",
+   "name": "Carnatic and Jazz Ensemble",
+   "city": "Puducherry",
+   "state": "Puducherry",
+   "category": "entertainment",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "corporate"
+   ],
+   "features": [
+    "violin and saxophone",
+    "carnatic and jazz sets"
+   ],
+   "description": "Carnatic and jazz ensemble with violin and saxophone.",
+   "package_inr": 50000
+  },
+  {
+   "id": "vd404",
+   "name": "Andaman Seafood Caterers",
+   "city": "Port Blair",
+   "state": "Andaman and Nicobar Islands",
+   "category": "catering",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "fish curry",
+    "prawn fry",
+    "coconut dessert"
+   ],
+   "description": "Andaman seafood menu with fish curry and prawn fry.",
+   "per_plate_inr": 1100,
+   "min_guests": 50
+  },
+  {
+   "id": "vd405",
+   "name": "Beach Bonfire Decor",
+   "city": "Port Blair",
+   "state": "Andaman and Nicobar Islands",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "beach lights",
+    "driftwood arch",
+    "bonfire setup"
+   ],
+   "description": "Beach lights and a driftwood arch for sea-facing events.",
+   "package_inr": 130000
+  },
+  {
+   "id": "vd406",
+   "name": "Island Folk Band",
+   "city": "Port Blair",
+   "state": "Andaman and Nicobar Islands",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday"
+   ],
+   "features": [
+    "folk band",
+    "acoustic set"
+   ],
+   "description": "Island folk band with an acoustic set.",
+   "package_inr": 35000
+  },
+  {
+   "id": "vd407",
+   "name": "Gujarati Konkani Thali",
+   "city": "Silvassa",
+   "state": "Dadra and Nagar Haveli and Daman and Diu",
+   "category": "catering",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "Gujarati thali",
+    "Konkani fish curry",
+    "khichdi kadhi"
+   ],
+   "description": "Gujarati and Konkani thali with fish curry and khichdi kadhi.",
+   "per_plate_inr": 650,
+   "min_guests": 50
+  },
+  {
+   "id": "vd408",
+   "name": "Warli Art Decor",
+   "city": "Silvassa",
+   "state": "Dadra and Nagar Haveli and Daman and Diu",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "Warli art panels",
+    "bamboo entrance",
+    "earthen lamps"
+   ],
+   "description": "Warli art panels and bamboo entrance for tribal-style ceremonies.",
+   "package_inr": 110000
+  },
+  {
+   "id": "vd409",
+   "name": "Dhol Party Silvassa",
+   "city": "Silvassa",
+   "state": "Dadra and Nagar Haveli and Daman and Diu",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday"
+   ],
+   "features": [
+    "dhol players",
+    "folk dance"
+   ],
+   "description": "Dhol players and folk dance for local celebrations.",
+   "package_inr": 30000
+  },
+  {
+   "id": "vd410",
+   "name": "Lakshadweep Tuna Kitchen",
+   "city": "Kavaratti",
+   "state": "Lakshadweep",
+   "category": "catering",
+   "tier": "premium",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday",
+    "corporate",
+    "workshop"
+   ],
+   "features": [
+    "tuna curry",
+    "coconut rice",
+    "tender coconut"
+   ],
+   "description": "Lakshadweep seafood menu with tuna curry and coconut rice.",
+   "per_plate_inr": 1200,
+   "min_guests": 50
+  },
+  {
+   "id": "vd411",
+   "name": "Lagoon Beach Decor",
+   "city": "Kavaratti",
+   "state": "Lakshadweep",
+   "category": "decor",
+   "tier": "standard",
+   "suits": [
+    "wedding",
+    "reception",
+    "sangeet",
+    "engagement"
+   ],
+   "features": [
+    "lagoon-side arch",
+    "coconut leaf decor",
+    "lantern lighting"
+   ],
+   "description": "Coconut-leaf decor and lantern lighting along the lagoon.",
+   "package_inr": 140000
+  },
+  {
+   "id": "vd412",
+   "name": "Mappila Folk Ensemble",
+   "city": "Kavaratti",
+   "state": "Lakshadweep",
+   "category": "entertainment",
+   "tier": "value",
+   "suits": [
+    "wedding",
+    "reception",
+    "birthday"
+   ],
+   "features": [
+    "folk ensemble",
+    "daff drums"
+   ],
+   "description": "Mappila folk ensemble with daff drums.",
+   "package_inr": 30000
   }
  ]
 }

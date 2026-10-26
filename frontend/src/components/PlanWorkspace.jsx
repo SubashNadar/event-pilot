@@ -1,8 +1,19 @@
-export function PlanWorkspace({ tab, setTab, event, plan, forecast, reduced, onReduce, onRestore, riskState, onRecordRisk, money }) {
+import { Sparkles } from 'lucide-react';
+import { CHANGE_TOPICS } from './PlanChat';
+
+// Each tab's "Change" button opens the plan chat with a sentence starter for that part of the plan.
+const TAB_TOPIC = { logistics: 'venue', budget: 'budget', schedule: 'schedule', risks: 'risks' };
+const TAB_PROMPT = { marketing: 'For marketing, ' };
+
+const TABS = ['logistics', 'budget', 'schedule', 'marketing', 'risks'];
+
+export function PlanWorkspace({ tab: requestedTab, setTab, event, plan, forecast, reduced, onReduce, onRestore, riskState, onRecordRisk, money, onChange }) {
+  const tab = TABS.includes(requestedTab) ? requestedTab : 'logistics'; // "overview" lives on its own page
   const shares = reduced ? plan.reducedShares : plan.budgetShares;
+  const changePrompt = TAB_PROMPT[tab] ?? CHANGE_TOPICS.find(topic => topic.key === TAB_TOPIC[tab])?.prompt ?? '';
   return <section className="view active">
     <div className="view-heading"><p className="eyebrow">VERSION {reduced ? '04' : '03'}</p><h1>Plan workspace</h1><p>Recommendations are generated from the current event brief and tracked against its constraints.</p></div>
-    <div className="plan-tabs" role="tablist">{['logistics', 'budget', 'schedule', 'marketing', 'risks'].map(item => <button key={item} className={`tab ${tab === item ? 'active' : ''}`} onClick={() => setTab(item)}>{item}</button>)}</div>
+    <div className="plan-tabs-row"><div className="plan-tabs" role="tablist">{TABS.map(item => <button key={item} role="tab" aria-selected={tab === item} className={`tab ${tab === item ? 'active' : ''}`} onClick={() => setTab(item)}>{item}</button>)}</div>{onChange && <button type="button" className="button change-action" onClick={() => onChange(changePrompt)}><Sparkles size={15} aria-hidden="true" /> Change {tab}</button>}</div>
     {tab === 'logistics' && <div className="plan-columns"><section className="panel"><h2>Venue recommendation</h2><div className="recommendation"><span className="venue-icon">⌂</span><div><strong>{plan.venue.name}</strong><p>{plan.venue.area}</p></div><b>{plan.venue.status}</b></div><ul className="detail-list">{plan.logistics.map(item => <li key={item}>{item}</li>)}</ul></section><section className="panel"><h2>Operational checkpoints</h2>{plan.checkpoints.map((item, index) => <div className={`check-item ${index === plan.checkpoints.length - 1 ? 'pending' : ''}`} key={item}><span>{index === plan.checkpoints.length - 1 ? '!' : '✓'}</span> {item}</div>)}</section></div>}
     {tab === 'budget' && <><div className="budget-header"><div><h2>Budget forecast</h2><p>Current plan uses {(forecast / event.budget * 100).toFixed(1)}% of available budget.</p></div><button className="button secondary" onClick={reduced ? onRestore : onReduce}>{reduced ? 'Restore original budget' : 'Reduce budget by 20%'}</button></div><div className="budget-layout"><section className="panel"><table><thead><tr><th>Category</th><th>Forecast</th><th>Share</th></tr></thead><tbody>{plan.budgetLabels.map((label, index) => <tr key={label}><td>{label}</td><td>{money(Math.round(forecast * shares[index] / 100))}</td><td>{shares[index]}%</td></tr>)}</tbody><tfoot><tr><th>Total forecast</th><th>{money(forecast)}</th><th>{(forecast / event.budget * 100).toFixed(1)}%</th></tr></tfoot></table></section><aside className="budget-insight"><p className="eyebrow">FINANCE AGENT</p><h3>{reduced ? 'The revised plan stays within the reduced budget.' : 'The plan keeps a healthy contingency reserve.'}</h3><p>{reduced ? 'The finance agent reduced nonessential spend while preserving an emergency reserve.' : 'The largest commitments are visible here so you can approve the trade-offs before booking vendors.'}</p></aside></div></>}
     {tab === 'schedule' && <section className="panel schedule-panel"><h2>Schedule coordination</h2><p>The schedule is tailored to the event objective and includes realistic transition time.</p><div className="schedule-table">{plan.agenda.map(row => <div key={row[0]}><b>{row[0]}</b><span>{row[1]}</span><em>{row[2]}</em></div>)}</div></section>}

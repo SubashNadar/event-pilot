@@ -44,8 +44,15 @@ class EventPlanningState(TypedDict, total=False):
     manager_round: int             # automatic manager re-plans in the current owner round; reset when the owner sends it back
     human_rounds: int              # how many times the owner has sent the plan back
     feedback: list[str]            # the owner's requested changes, used by the manager's re-split and the next replan
+    feedback_notes: dict[str, list[str]]  # the owner's feedback as the Event Manager assigned it: specialist -> notes
+    caveats: list[str]             # things to confirm before booking, or checks that could not run (shown on the approval card)
+    open_issues: list[str]         # review notes still open when the automatic re-plans ran out (shown on the approval card)
+    judged_notes: dict[str, list[str]]  # the LLM judge's last notes, so its next pass re-checks them
+    stale_parts: list[str]        # specialists whose last re-run failed its check, so their previous version stands
     conflicts: dict[str, Any]      # {'items': [...]} mismatches found by the coordination step
     recommendations: str
     # Plan edits: reports kept from the previous plan, and inputs for the steps that run again.
     reuse: dict[str, Any]
     step_overrides: dict[str, Any]
+    base_plan: dict[str, Any]      # the plan the owner was looking at: an edit changes only the parts the re-run steps own
+    owner_review: bool             # an edit of a plan the owner never approved: it pauses at approval like any new plan

@@ -155,3 +155,16 @@ def test_unresolved_review_waits_for_the_owner_and_does_not_replace_plan(client,
     assert not of_type(snapshot, "plan_ready")
     assert any("Budget forecast exceeds" in e["message"] for e in of_type(snapshot, "notice"))
     assert client.get(f"/api/v1/events/{event['id']}/plan").json() == original
+
+
+def test_owner_approval_of_a_flagged_plan_completes_and_saves_it(client, monkeypatch):
+    from app.graphs import event_workflow
+    from conftest import approve_plan
+
+    event = create_event(client, location="Pune", attendees=120, budget=1500000)
+    monkeypatch.setattr(event_workflow, "_review", lambda *args: ["Budget forecast exceeds the approved budget."])
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    # The checks still flag the plan after the replans; the owner accepts it, so the run must finish and save it.
+    snapshot = approve_plan(client, run_id)
+    assert snapshot["run"]["status"] == "completed", snapshot["run"].get("error")
+    assert client.get(f"/api/v1/events/{event['id']}/plan").status_code == 200

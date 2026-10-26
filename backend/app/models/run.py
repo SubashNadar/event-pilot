@@ -53,6 +53,7 @@ class RecoveryProposal(BaseModel):
     customPrompt: str = Field(default="Tell me what to change", description="Placeholder text for the custom input field.")
     source: Literal["llm", "rules"] = "rules"
     preview: dict[str, Any] | None = Field(default=None, description="The generated plan, shown so the owner can review it before deciding.")
+    changesLeft: int | None = Field(default=None, description="Approval only: change requests the owner has left for this plan.")
 
     def option(self, option_id: str) -> RecoveryOption | None:
         return next((option for option in self.options if option.id == option_id), None)
@@ -75,8 +76,8 @@ class ResolveStepRequest(BaseModel):
 
 
 class ResolveStepResponse(BaseModel):
-    status: Literal["resumed", "queued", "needs_clarification", "edit_started"]
-    question: str | None = None
+    status: Literal["resumed", "queued", "needs_clarification", "answered", "edit_started", "attempts_exhausted"]
+    question: str | None = None  # a clarifying question, or the answer when status is 'answered'
     option: RecoveryOption | None = None
     run_id: str | None = None  # set when the owner's change started a plan-edit run
     changes: list[str] = Field(default_factory=list)

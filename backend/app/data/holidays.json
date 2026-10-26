@@ -31,20 +31,38 @@
    "big_in": []
   },
   {
+   "date": "2026-01-13",
+   "name": "Lohri",
+   "type": "festival",
+   "big_in": [
+    "Delhi NCR",
+    "Chandigarh"
+   ]
+  },
+  {
    "date": "2026-01-14",
    "name": "Makar Sankranti / Pongal",
    "type": "restricted",
    "big_in": [
+    "Ahmedabad",
+    "Bengaluru",
+    "Bhubaneswar",
     "Chennai",
     "Hyderabad",
-    "Bengaluru"
+    "Kolkata",
+    "Patna"
    ]
   },
   {
    "date": "2026-01-23",
    "name": "Vasant Panchami",
    "type": "restricted",
-   "big_in": []
+   "big_in": [
+    "Bhubaneswar",
+    "Kolkata",
+    "Patna",
+    "Ranchi"
+   ]
   },
   {
    "date": "2026-01-26",
@@ -56,7 +74,9 @@
    "date": "2026-02-15",
    "name": "Maha Shivaratri",
    "type": "restricted",
-   "big_in": []
+   "big_in": [
+    "Varanasi"
+   ]
   },
   {
    "date": "2026-02-19",
@@ -82,7 +102,12 @@
    "type": "gazetted",
    "big_in": [
     "Delhi NCR",
-    "Jaipur"
+    "Indore",
+    "Jaipur",
+    "Lucknow",
+    "Mathura",
+    "Patna",
+    "Ranchi"
    ]
   },
   {
@@ -100,14 +125,25 @@
    "date": "2026-03-21",
    "name": "Id-ul-Fitr",
    "type": "gazetted",
-   "big_in": [],
+   "big_in": [
+    "Hyderabad",
+    "Kolkata",
+    "Lucknow",
+    "Mumbai",
+    "Srinagar"
+   ],
    "note": "Lunar date, may shift by a day after moon sighting"
   },
   {
    "date": "2026-03-26",
    "name": "Ram Navami",
    "type": "gazetted",
-   "big_in": []
+   "big_in": [
+    "Ayodhya",
+    "Bhubaneswar",
+    "Indore",
+    "Patna"
+   ]
   },
   {
    "date": "2026-03-31",
@@ -130,30 +166,72 @@
    "big_in": []
   },
   {
+   "date": "2026-04-14",
+   "name": "Baisakhi, Bohag Bihu and Vishu",
+   "type": "festival",
+   "big_in": [
+    "Chandigarh",
+    "Guwahati",
+    "Kochi",
+    "Shimla",
+    "Dehradun"
+   ]
+  },
+  {
+   "date": "2026-04-19",
+   "name": "Akshaya Tritiya",
+   "type": "festival",
+   "big_in": [
+    "Jaipur",
+    "Mumbai",
+    "Ahmedabad"
+   ],
+   "date_approx": true
+  },
+  {
    "date": "2026-05-01",
    "name": "Buddha Purnima",
    "type": "gazetted",
-   "big_in": []
+   "big_in": [
+    "Bhubaneswar",
+    "Gangtok",
+    "Leh",
+    "Patna"
+   ]
   },
   {
    "date": "2026-05-27",
    "name": "Id-ul-Zuha (Bakrid)",
    "type": "gazetted",
-   "big_in": [],
+   "big_in": [
+    "Hyderabad",
+    "Kolkata",
+    "Lucknow",
+    "Srinagar"
+   ],
    "note": "Lunar date, may shift by a day after moon sighting"
   },
   {
    "date": "2026-06-26",
    "name": "Muharram",
    "type": "gazetted",
-   "big_in": [],
+   "big_in": [
+    "Hyderabad",
+    "Lucknow",
+    "Srinagar"
+   ],
    "note": "Lunar date, may shift by a day after moon sighting"
   },
   {
    "date": "2026-07-16",
    "name": "Rath Yatra",
    "type": "restricted",
-   "big_in": []
+   "big_in": [
+    "Ahmedabad",
+    "Bhubaneswar",
+    "Kolkata",
+    "Puri"
+   ]
   },
   {
    "date": "2026-08-15",
@@ -172,30 +250,45 @@
    "date": "2026-08-26",
    "name": "Onam",
    "type": "restricted",
-   "big_in": []
+   "big_in": [
+    "Kochi",
+    "Port Blair"
+   ]
   },
   {
    "date": "2026-08-28",
    "name": "Raksha Bandhan",
    "type": "restricted",
-   "big_in": []
+   "big_in": [
+    "Chandigarh",
+    "Delhi NCR",
+    "Indore",
+    "Jaipur",
+    "Lucknow"
+   ]
   },
   {
    "date": "2026-09-04",
    "name": "Janmashtami",
    "type": "gazetted",
-   "big_in": []
+   "big_in": [
+    "Ahmedabad",
+    "Bhubaneswar",
+    "Jaipur",
+    "Mathura",
+    "Mumbai"
+   ]
   },
   {
    "date": "2026-09-14",
    "name": "Ganesh Chaturthi",
    "type": "restricted",
    "big_in": [
-    "Mumbai",
-    "Pune",
+    "Bengaluru",
     "Goa",
     "Hyderabad",
-    "Bengaluru"
+    "Mumbai",
+    "Pune"
    ]
   },
   {
@@ -208,13 +301,23 @@
    "date": "2026-10-11",
    "name": "Sharad Navratri begins",
    "type": "restricted",
-   "big_in": []
+   "big_in": [
+    "Ahmedabad",
+    "Kolkata",
+    "Silvassa"
+   ]
   },
   {
    "date": "2026-10-18",
    "name": "Maha Saptami",
    "type": "restricted",
-   "big_in": []
+   "big_in": [
+    "Agartala",
+    "Bhubaneswar",
+    "Guwahati",
+    "Kolkata",
+    "Ranchi"
+   ]
   },
   {
    "date": "2026-10-19",
@@ -226,22 +329,52 @@
    "date": "2026-10-20",
    "name": "Dussehra (Vijaya Dashami)",
    "type": "gazetted",
-   "big_in": []
+   "big_in": [
+    "Delhi NCR",
+    "Indore",
+    "Jaipur",
+    "Lucknow",
+    "Raipur"
+   ]
   },
   {
    "date": "2026-10-29",
    "name": "Karva Chauth",
    "type": "restricted",
    "big_in": [
+    "Chandigarh",
     "Delhi NCR",
-    "Jaipur"
+    "Jaipur",
+    "Lucknow"
    ]
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Dhanteras",
+   "type": "restricted",
+   "big_in": [
+    "Jaipur",
+    "Mumbai",
+    "Indore",
+    "Ahmedabad"
+   ],
+   "date_approx": true
   },
   {
    "date": "2026-11-08",
    "name": "Diwali (Deepavali)",
    "type": "gazetted",
-   "big_in": []
+   "big_in": [
+    "Ahmedabad",
+    "Chandigarh",
+    "Dehradun",
+    "Delhi NCR",
+    "Indore",
+    "Jaipur",
+    "Lucknow",
+    "Mumbai",
+    "Raipur"
+   ]
   },
   {
    "date": "2026-11-09",
@@ -260,14 +393,30 @@
    "name": "Chhath Puja",
    "type": "restricted",
    "big_in": [
-    "Delhi NCR"
+    "Delhi NCR",
+    "Patna",
+    "Raipur",
+    "Ranchi"
    ]
   },
   {
    "date": "2026-11-24",
    "name": "Guru Nanak's Birthday",
    "type": "gazetted",
-   "big_in": []
+   "big_in": [
+    "Chandigarh",
+    "Delhi NCR",
+    "Srinagar"
+   ]
+  },
+  {
+   "date": "2026-12-01",
+   "name": "Hornbill Festival begins",
+   "type": "festival",
+   "big_in": [
+    "Kohima",
+    "Dimapur"
+   ]
   },
   {
    "date": "2026-12-24",
@@ -296,8 +445,13 @@
    "name": "Makar Sankranti",
    "type": "restricted",
    "big_in": [
+    "Ahmedabad",
+    "Bengaluru",
+    "Bhubaneswar",
+    "Chennai",
     "Hyderabad",
-    "Bengaluru"
+    "Kolkata",
+    "Patna"
    ]
   },
   {
@@ -352,6 +506,31 @@
    "big_in": [
     "Goa"
    ]
+  },
+  {
+   "date": "2027-04-09",
+   "name": "Ugadi and Gudi Padwa",
+   "type": "festival",
+   "big_in": [
+    "Bengaluru",
+    "Hyderabad",
+    "Pune",
+    "Mumbai"
+   ],
+   "date_approx": true
+  },
+  {
+   "date": "2027-04-14",
+   "name": "Baisakhi, Bohag Bihu and Vishu",
+   "type": "festival",
+   "big_in": [
+    "Chandigarh",
+    "Guwahati",
+    "Kochi",
+    "Shimla",
+    "Dehradun"
+   ],
+   "date_approx": true
   },
   {
    "date": "2027-04-15",
@@ -485,7 +664,17 @@
    "date": "2027-10-29",
    "name": "Diwali (Deepavali)",
    "type": "gazetted",
-   "big_in": []
+   "big_in": [
+    "Ahmedabad",
+    "Chandigarh",
+    "Dehradun",
+    "Delhi NCR",
+    "Indore",
+    "Jaipur",
+    "Lucknow",
+    "Mumbai",
+    "Raipur"
+   ]
   },
   {
    "date": "2027-10-30",

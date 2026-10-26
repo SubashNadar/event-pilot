@@ -6,5 +6,6 @@ import './index.css';
 import './run/run.css';
 import './styles.css';
 import './modal.css';
+import './theme.css';
 
 createRoot(document.getElementById('root')).render(<StrictMode><AgentProvider><App /></AgentProvider></StrictMode>);

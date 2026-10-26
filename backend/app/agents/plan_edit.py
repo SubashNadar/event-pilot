@@ -65,6 +65,7 @@ class PlanEdit(BaseModel):
     budget_inr: int | None = Field(default=None, ge=1_000, description="New TOTAL budget in rupees")
     event_date: str | None = Field(default=None, description="New date, YYYY-MM-DD")
     location: str | None = Field(default=None, description="New city or 'Area, City'")
+    objective: str | None = Field(default=None, min_length=10, max_length=1000, description="New objective or purpose of the event")
     venue: str | None = Field(default=None, description="A specific venue the owner wants")
     venue_type: str | None = Field(default=None, description="e.g. banquet hall, lawn, hotel ballroom, rooftop")
     agenda_add: list[AgendaAdd] = Field(default_factory=list)
@@ -76,7 +77,7 @@ class PlanEdit(BaseModel):
     question: str | None = Field(default=None, description="If the request is unclear, one short clarifying question")
 
     def is_change(self) -> bool:
-        return any([self.name, self.attendees, self.budget_inr, self.event_date, self.location, self.venue, self.venue_type,
+        return any([self.name, self.attendees, self.budget_inr, self.event_date, self.location, self.objective, self.venue, self.venue_type,
                     self.agenda_add, self.agenda_move, self.agenda_remove, self.budget_set, self.requirements_add])
 
 
@@ -211,13 +212,15 @@ def rule_parse(message: str, today: date | None = None) -> PlanEdit:
         if req and not re.search(r"\b(guests?|people|budget|lakh|venue)\b", req):
             edit.requirements_add.append(req[0].upper() + req[1:])
     lowered = text.lower()
-    if guests := re.search(r"\b(\d{1,6})\s*(?:guests|people|pax|attendees|persons)\b", lowered):
+    if obj := re.search(r"\b(?:objective|purpose|theme|goal)\s*(?:to|=|:|is)\s+(.{10,}?)\s*[.!?]?\s*$", text.strip(), re.IGNORECASE):
+        edit.objective = obj.group(1).strip()[:1000]
+    if guests := re.search(r"\b(?:guest count|guests?|attendees?|headcount|head count|number of guests)\s*(?:to|=|:|is|of|should be)\s*(\d{1,6})\b", lowered) or re.search(r"\b(\d{1,6})\s*(?:guests|people|pax|attendees|persons)\b", lowered):
         edit.attendees = int(guests.group(1))
     if re.search(r"\bbudget\b", lowered) and (amount := _amount(re.sub(r".*?\bbudget\b", "", lowered, count=1))):
         edit.budget_inr = amount
-    if re.search(r"\b(?:move|shift|postpone|prepone|change|reschedule)\b.*\b(?:date|day|to|on)\b", lowered) and (parsed := _parse_date(text, today)):
+    if re.search(r"\b(?:move|shift|postpone|prepone|change|reschedule|want|set|make|host|hold|have)\b.*\b(?:date|day|to|on)\b", lowered) and (parsed := _parse_date(text, today)):
         edit.event_date = parsed
-    if not edit.venue and re.search(r"\b(?:move|shift|relocate|change)\b.*\b(?:city|location|area|to|in)\b", message.lower()):
+    if not edit.venue and re.search(r"\b(?:move|shift|relocate|change|want|set|make|host|hold|use|switch|have)\b.*\b(?:city|location|area|to|in|at)\b", message.lower()):
         place = _parse_location(message) or (_named_city(message) if re.search(r"\b(?:location|city|area)\b|\b(?:move|shift|relocate)\s+(?:the\s+)?(?:event|it|wedding|party|function|plan)\b", lowered) else None)
         if place:
             edit.location = place
@@ -240,6 +243,11 @@ def plan_context(event: EventBrief, plan: dict[str, Any], reports: dict[str, Any
         f"Forecast: {inr(plan.get('budget_forecast', 0))}",
         "Risks: " + "; ".join(f"{risk['level']} {risk['title']}" for risk in plan.get("risks", [])),
     ]
+    # Each specialist's own reasons, so "why did you pick this venue?" can be answered from what they actually said.
+    for key, name in (("logistics", "Logistics"), ("finance", "Finance"), ("schedule", "Schedule"), ("marketing", "Marketing"), ("risks", "Risk")):
+        reasons = [str(line) for line in (reports.get(key) or {}).get("recommendations") or [] if line != "Kept from the current plan"][:3]
+        if reasons:
+            lines.append(f"{name}'s reasons: " + " | ".join(reasons))
     return "\n".join(lines)
 
 
@@ -257,6 +265,7 @@ async def interpret(message: str, event: EventBrief, plan: dict[str, Any], repor
                 SystemMessage(
                     "You turn an event owner's chat message into changes to their event plan. "
                     "Only fill the fields the message asks to change; leave the rest empty. Times are 12-hour like '9:00 PM'. "
+                    "Set `objective` only when the owner explicitly asks to change the event's objective or purpose, never for feedback about tone or feel. "
                     "Amounts are whole rupees (2 lakh = 200000). If it is only a question, put a short answer from the plan in `answer`. "
                     "If it is unclear, ask one short question in `question`. Today is " + date.today().isoformat() + ". " + DATA_RULE
                 ),
@@ -335,6 +344,12 @@ def prepare(edit: PlanEdit, event: EventBrief, plan: dict[str, Any], reports: di
         prepared.brief["location"] = location
         prepared.changes.append(f"location to {location}")
         for step in ("logistics_agent", "finance_agent", "schedule_agent", "risk_operations_agent"):
+            _add(prepared, step)
+
+    if edit.objective and edit.objective.strip() != (event.objective or "").strip():
+        prepared.brief["objective"] = edit.objective.strip()
+        prepared.changes.append(f"objective to “{edit.objective.strip()}” (was “{event.objective}”)")
+        for step in ("schedule_agent", "requirements_agent", "marketing_agent"):
             _add(prepared, step)
 
     # Venue

@@ -19,12 +19,15 @@ from langgraph.types import Command
 from app.agents import llm
 from app.core.config import settings
 from app.graphs.event_workflow import STEPS, build_graph
+from app.services import ui_state
 from app.models.event import EventBrief, EventPlan
 from app.runs import store
 from app.services.storage import load_event, save_plan
 
 logger = logging.getLogger(__name__)
 TERMINAL = {"completed", "cancelled", "error"}
+STOPPED = "You stopped the plan."
+REPLACED = "Replaced by the updated plan with your changes."
 
 
 class RunNotFound(LookupError):
@@ -43,6 +46,7 @@ class RunManager:
         self._wakeups: dict[str, asyncio.Event] = {}
         # Callbacks for a run's outcome (plan edits post the result into the chat).
         self._hooks: dict[str, dict[str, Any]] = {}
+        self._cancel_reasons: dict[str, str] = {}
 
     # ------------------------------------------------------------ lifecycle
 
@@ -106,10 +110,21 @@ class RunManager:
         values = snapshot.values or {}
         return {key: values.get(key) or {} for key in ("logistics", "finance", "schedule", "requirements", "marketing", "risks")}
 
+    def record_change_request(self, event_id: str) -> int:
+        """Count one change request the owner made at approval (applied or sent back); returns the total so far."""
+        return ui_state.bump_attempts(event_id)
+
+    def change_requests(self, event_id: str) -> int:
+        return ui_state.attempts(event_id)
+
+    async def paused_state(self, run_id: str) -> dict[str, Any]:
+        """The run's state while it is paused: the plan built so far, the review's open notes and the owner's rounds."""
+        snapshot = await self.graph.aget_state({"configurable": {"thread_id": run_id}})
+        return dict(snapshot.values or {})
+
     async def paused_plan(self, run_id: str) -> dict[str, Any] | None:
         """The plan a run has built so far, for the owner to review while it is paused."""
-        snapshot = await self.graph.aget_state({"configurable": {"thread_id": run_id}})
-        return (snapshot.values or {}).get("final_plan")
+        return (await self.paused_state(run_id)).get("final_plan")
 
     def on_outcome(self, run_id: str, **hooks: Any) -> None:
         self._hooks[run_id] = hooks
@@ -123,12 +138,19 @@ class RunManager:
         except Exception:
             logger.exception("Run %s %s hook failed", run_id, name)
 
-    async def start_edit(self, event: EventBrief, reports: dict[str, Any], step_overrides: dict[str, Any], session_id: str | None = None) -> str:
-        """A plan-edit run: listed steps run again with their inputs, the rest keep their reports."""
+    async def start_edit(self, event: EventBrief, reports: dict[str, Any], step_overrides: dict[str, Any], session_id: str | None = None, *, base_plan: dict[str, Any] | None = None, owner_review: bool = False) -> str:
+        """A plan-edit run: listed steps run again with their inputs, the rest keep their reports.
+
+        `base_plan` is the plan the owner is looking at: the edit changes only the parts the re-run steps own.
+        `owner_review` pauses the edited plan at approval: set when the plan was never approved (a change sent back
+        from the approval card, or from a failed step), so nothing becomes final without the owner seeing it."""
         from app.agents.plan_edit import STATE_KEYS
 
         reuse = {step: reports[key] for step, key in STATE_KEYS.items() if step not in step_overrides and reports.get(key) and not reports[key].get("skipped")}
-        return await self.start(event, "plan-edit", session_id, extra={"reuse": reuse, "step_overrides": step_overrides})
+        extra: dict[str, Any] = {"reuse": reuse, "step_overrides": step_overrides, "owner_review": owner_review}
+        if base_plan:
+            extra["base_plan"] = base_plan
+        return await self.start(event, "plan-edit", session_id, extra=extra)
 
     async def start(self, event: EventBrief, operation: str = "plan-generation", session_id: str | None = None, interactive: bool = True, extra: dict[str, Any] | None = None) -> str:
         if self.graph is None:
@@ -188,7 +210,7 @@ class RunManager:
             self._hooks.pop(run_id, None)
         except asyncio.CancelledError:
             store.update_run(run_id, status="cancelled")
-            self.publish(run_id, {"type": "run_cancelled", "message": "You stopped the plan."}, "run_cancelled")
+            self.publish(run_id, {"type": "run_cancelled", "message": self._cancel_reasons.pop(run_id, STOPPED)}, "run_cancelled")
             self._hook(run_id, "ended", "cancelled", "You stopped the update.")
             self._hooks.pop(run_id, None)
             raise
@@ -258,20 +280,24 @@ class RunManager:
             raise RunConflict("This run has already finished")
         config = self._run_config(run)
         snapshot = await self.graph.aget_state(config)
-        if not snapshot.next:
+        if not snapshot.values:
+            raise RunConflict("The run stopped before it saved any progress, so there is nothing to continue. Start the plan again.")
+        if not (snapshot.next or snapshot.tasks):  # a run stopped mid-step has its step pending, not in next
             raise RunConflict("There is nothing left to continue in this run")
         self._spawn(run_id, None, config)  # None input: LangGraph resumes from the last checkpoint
         return "resumed"
 
-    async def cancel(self, run_id: str) -> None:
+    async def cancel(self, run_id: str, reason: str = STOPPED) -> None:
+        """Stop a run. `reason` is what the owner reads: they stopped it, or their change replaced it with a new run."""
         run = self._require(run_id)
         task = self._tasks.get(run_id)
         if task is not None:
+            self._cancel_reasons[run_id] = reason
             task.cancel()
             await asyncio.gather(task, return_exceptions=True)
         elif run.status not in TERMINAL:
             store.update_run(run_id, status="cancelled")
-            self.publish(run_id, {"type": "run_cancelled", "message": "You stopped the plan."}, "run_cancelled")
+            self.publish(run_id, {"type": "run_cancelled", "message": reason}, "run_cancelled")
 
     async def run_to_completion(self, event: EventBrief, operation: str) -> EventPlan:
         """Legacy blocking API: failed steps are skipped instead of paused."""

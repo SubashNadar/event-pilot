@@ -45,13 +45,18 @@ def test_owner_can_send_the_plan_back_before_approving(client):
     options = of_type(snap, "step_failed", "approval")[0]["recovery"]["options"]
     assert [o["id"] for o in options] == ["approve", "revise"]
 
+    # With nothing open in the review, a send-back without words has nothing to re-run: the owner is asked what to change.
     response = client.post(f"/api/v1/runs/{run_id}/steps/approval/resolve", json={"option_id": "revise"})
+    assert response.status_code == 200 and response.json()["status"] == "needs_clarification", response.text
+    assert client.get(f"/api/v1/runs/{run_id}").json()["run"]["status"] == "paused"
+
+    response = client.post(f"/api/v1/runs/{run_id}/steps/approval/resolve", json={"custom_text": "Lower the decor spend"})
     assert response.status_code == 200 and response.json()["status"] == "resumed", response.text
-    snap = approve_plan(client, run_id)  # the rebuilt plan comes back for approval
+    snap = approve_plan(client, run_id)  # the revised plan comes back for approval
     assert snap["run"]["status"] == "completed", [e["type"] for e in snap["events"]]
 
     assert len(of_type(snap, "step_started", "approval")) == 2  # asked twice
-    assert len(of_type(snap, "step_started", "event_manager")) == 2  # the manager rebuilt the plan
+    assert len(of_type(snap, "step_started", "event_manager")) == 2  # the manager merged the change
     assert len(of_type(snap, "plan_ready")) == 1  # the plan is only published once it is approved
 
 
@@ -66,18 +71,18 @@ def test_workflow_graph_png_endpoint_returns_the_compiled_graph(client):
 
 
 def test_failed_step_offers_options_and_resumes_without_rerunning_others(client):
-    event = create_event(client, location="Shillong", attendees=200, budget=1000000, name="Meera and Karthik Wedding Reception", objective="Elegant wedding reception with smooth guest hospitality.")
+    event = create_event(client, location="Coimbatore", attendees=200, budget=1000000, name="Meera and Karthik Wedding Reception", objective="Elegant wedding reception with smooth guest hospitality.")
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
     snap = wait_for(client, run_id, {"paused", "completed", "error"})
     assert snap["run"]["status"] == "paused"
     assert of_type(snap, "run_paused")[-1]["pendingStepIds"] == ["logistics_agent"]
 
     failed = of_type(snap, "step_failed", "logistics_agent")[0]
-    assert "No catalog venue fits 200 guests in Shillong" in failed["error"] and "isn't in the venue catalogue" in failed["error"]
+    assert "No catalog venue fits 200 guests in Coimbatore" in failed["error"] and "isn't in the venue catalogue" in failed["error"]
     options = failed["recovery"]["options"]
     ids = [o["id"] for o in options]
     assert ids[-1] == "skip" and "accept-unverified" in ids and "city-bengaluru" in ids
-    assert failed["recovery"]["summary"] == "The venue catalogue doesn't cover Shillong yet."
+    assert failed["recovery"]["summary"] == "The venue catalogue doesn't cover Coimbatore yet."
 
     # the other specialists wait for the venue, so none of them has started yet
     assert {e["stepId"] for e in of_type(snap, "step_started")} == {"receptionist", "manager_intake", "logistics_agent"}
@@ -92,11 +97,11 @@ def test_failed_step_offers_options_and_resumes_without_rerunning_others(client)
     assert len(of_type(snap, "step_failed", "logistics_agent")) == 1  # replay did not duplicate it
     assert len(of_type(snap, "step_started", "finance_agent")) == 1  # started once, not re-run by the replay
     plan = of_type(snap, "plan_ready")[0]["plan"]
-    assert "Shillong" in plan["venue"] and "unverified" in plan["venue_detail"]
+    assert "Coimbatore" in plan["venue"] and "unverified" in plan["venue_detail"]
 
 
 def test_custom_text_needs_clarification_then_changes_the_rerun(client):
-    event = create_event(client, location="Shillong", attendees=90)
+    event = create_event(client, location="Coimbatore", attendees=90)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
     wait_for(client, run_id, {"paused"})
 
@@ -105,15 +110,16 @@ def test_custom_text_needs_clarification_then_changes_the_rerun(client):
     assert client.get(f"/api/v1/runs/{run_id}").json()["run"]["status"] == "paused"
 
     clear = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "Try in Koramangala instead"}).json()
-    assert clear["status"] == "resumed" and clear["option"]["patch"] == {"location": "Koramangala"}
-    snap = approve_plan(client, run_id)
-    assert snap["run"]["status"] == "completed"
+    assert clear["status"] == "edit_started" and clear["changes"] == ["location to Koramangala"], clear
+    assert client.get(f"/api/v1/events/{event['id']}").json()["location"] == "Koramangala", "the brief follows the choice"
+    snap = approve_plan(client, clear["run_id"], timeout=120)  # the re-planned plan still waits for the owner's approval
+    assert snap["run"]["status"] == "completed", snap["run"].get("error")
     assert of_type(snap, "plan_ready")[0]["plan"]["venue"] == "Koramangala Workshop Studio"
 
 
 def test_parallel_failures_wait_for_every_answer(client, monkeypatch):
     monkeypatch.setattr(settings, "eventpilot_fail_once", "schedule_conflict_check")
-    event = create_event(client, location="Shillong", attendees=90)
+    event = create_event(client, location="Coimbatore", attendees=90)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
     snap = wait_for(client, run_id, {"paused"})
     assert of_type(snap, "run_paused")[-1]["pendingStepIds"] == ["logistics_agent"]  # schedule waits for the venue
@@ -147,11 +153,11 @@ def test_stream_replays_from_last_event_id_and_ends_for_finished_runs(client):
 
 
 def test_cancel_and_conflicts(client):
-    event = create_event(client, location="Shillong", attendees=90)
+    event = create_event(client, location="Coimbatore", attendees=90)
     run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
     wait_for(client, run_id, {"paused"})
     assert client.post(f"/api/v1/runs/{run_id}/steps/finance_agent/retry").status_code == 409  # not waiting
-    assert client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"option_id": "nope"}).status_code == 422
+    assert client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"option_id": "nope"}).status_code == 409  # a stale card
     assert client.post(f"/api/v1/runs/{run_id}/cancel").status_code == 204
     snap = client.get(f"/api/v1/runs/{run_id}").json()
     assert snap["run"]["status"] == "cancelled" and of_type(snap, "run_cancelled")
@@ -165,7 +171,7 @@ def test_budget_revision_run_and_legacy_endpoint(client):
     assert of_type(snap, "plan_ready")[0]["plan"]["budget_forecast"] <= 400000
 
     # legacy blocking endpoint never pauses: Mumbai logistics is skipped automatically
-    mumbai = create_event(client, location="Shillong", attendees=90)
+    mumbai = create_event(client, location="Coimbatore", attendees=90)
     response = client.post(f"/api/v1/events/{mumbai['id']}/plan")
     assert response.status_code == 200, response.text
     assert any("Logistics" in risk["title"] for risk in response.json()["risks"])
@@ -202,3 +208,37 @@ def test_unexpected_run_failure_hides_internal_exception(client, monkeypatch):
     assert run_id in message
     assert "private-provider-detail" not in str(snapshot)
     assert not of_type(snapshot, "run_completed")
+
+
+def test_guest_count_chosen_on_a_failed_step_replans_the_whole_plan_for_that_count(client):
+    event = create_event(client, location="Koramangala, Bengaluru", attendees=300, budget=200000)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    snap = wait_for(client, run_id, {"paused", "completed", "error"}, timeout=120)
+    assert snap["run"]["status"] == "paused", snap["run"].get("error")
+    failed = [e for e in snap["events"] if e["type"] == "step_failed"][-1]
+    assert failed["stepId"] == "logistics_agent"
+
+    response = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/resolve", json={"custom_text": "change the guest count to 25"})
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["status"] == "edit_started", body
+    assert client.get(f"/api/v1/events/{event['id']}").json()["attendees"] == 25, "the brief is updated, so the plan follows it"
+    snap = wait_for(client, body["run_id"], {"paused", "completed", "error"}, timeout=120)
+    assert snap["run"]["status"] in {"paused", "completed"}, snap["run"].get("error")
+
+
+def test_a_failed_step_can_be_answered_more_than_three_times(client):
+    event = create_event(client, location="Koramangala, Bengaluru", attendees=300, budget=200000)
+    run_id = client.post(f"/api/v1/events/{event['id']}/runs", json={}).json()["run_id"]
+    snap = wait_for(client, run_id, {"paused", "completed", "error"}, timeout=120)
+    for _ in range(4):  # only the approval changes are capped at three; a failed step keeps asking until it is answered
+        assert snap["run"]["status"] == "paused", snap["run"].get("error")
+        step = [e for e in snap["events"] if e["type"] == "step_failed"][-1]
+        assert step["stepId"] == "logistics_agent"
+        # A failed venue check gives the same result for the same inputs, so the card doesn't offer a plain retry...
+        assert "retry" not in [o["id"] for o in step["recovery"]["options"]]
+        response = client.post(f"/api/v1/runs/{run_id}/steps/logistics_agent/retry")  # ...but retries stay unlimited
+        assert response.status_code == 200, response.text
+        snap = wait_for(client, run_id, {"paused", "completed", "error"}, timeout=120)
+    attempts = sorted({e["attempt"] for e in snap["events"] if e["type"] == "step_failed" and e.get("stepId") == "logistics_agent"})
+    assert attempts == [1, 2, 3, 4, 5], attempts

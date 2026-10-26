@@ -1472,6 +1472,652 @@
     "garden"
    ],
    "description": "Hill resort with rooms and gardens; suits offsites and small destination weddings."
+  },
+  {
+   "id": "v093",
+   "name": "Kalinga Garden Lawn",
+   "city": "Bhubaneswar",
+   "area": "Patia",
+   "location": "Patia, Bhubaneswar",
+   "type": "lawn",
+   "capacity": 400,
+   "rental_inr": 185000,
+   "features": [
+    "covered pandal",
+    "dining hall",
+    "parking"
+   ],
+   "state": "Odisha",
+   "description": "Lawn in Patia for up to 400 guests, with covered pandal, dining hall, parking."
+  },
+  {
+   "id": "v094",
+   "name": "Odisha Heritage Banquet",
+   "city": "Bhubaneswar",
+   "area": "Old Town",
+   "location": "Old Town, Bhubaneswar",
+   "type": "banquet hall",
+   "capacity": 260,
+   "rental_inr": 120000,
+   "features": [
+    "air conditioning",
+    "stage",
+    "catering kitchen"
+   ],
+   "state": "Odisha",
+   "description": "Banquet hall in Old Town for up to 260 guests, with air conditioning, stage, catering kitchen."
+  },
+  {
+   "id": "v095",
+   "name": "Ganga View Banquet",
+   "city": "Patna",
+   "area": "Boring Road",
+   "location": "Boring Road, Patna",
+   "type": "banquet hall",
+   "capacity": 350,
+   "rental_inr": 150000,
+   "features": [
+    "air conditioning",
+    "parking",
+    "bridal room"
+   ],
+   "state": "Bihar",
+   "description": "Banquet hall in Boring Road for up to 350 guests, with air conditioning, parking, bridal room."
+  },
+  {
+   "id": "v096",
+   "name": "Sonepur Farmhouse Lawns",
+   "city": "Patna",
+   "area": "Kankarbagh",
+   "location": "Kankarbagh, Patna",
+   "type": "farmhouse",
+   "capacity": 600,
+   "rental_inr": 210000,
+   "features": [
+    "open lawn",
+    "covered stage",
+    "generator backup"
+   ],
+   "state": "Bihar",
+   "description": "Farmhouse in Kankarbagh for up to 600 guests, with open lawn, covered stage, generator backup."
+  },
+  {
+   "id": "v097",
+   "name": "Hill Crest Convention",
+   "city": "Ranchi",
+   "area": "Lalpur",
+   "location": "Lalpur, Ranchi",
+   "type": "convention centre",
+   "capacity": 500,
+   "rental_inr": 260000,
+   "features": [
+    "auditorium",
+    "breakout rooms",
+    "parking"
+   ],
+   "state": "Jharkhand",
+   "description": "Convention centre in Lalpur for up to 500 guests, with auditorium, breakout rooms, parking."
+  },
+  {
+   "id": "v098",
+   "name": "Tagore Garden Banquet",
+   "city": "Ranchi",
+   "area": "Bariatu",
+   "location": "Bariatu, Ranchi",
+   "type": "banquet hall",
+   "capacity": 300,
+   "rental_inr": 130000,
+   "features": [
+    "air conditioning",
+    "dining hall",
+    "parking"
+   ],
+   "state": "Jharkhand",
+   "description": "Banquet hall in Bariatu for up to 300 guests, with air conditioning, dining hall, parking."
+  },
+  {
+   "id": "v099",
+   "name": "Riverside Heritage Lawn",
+   "city": "Raipur",
+   "area": "Shankar Nagar",
+   "location": "Shankar Nagar, Raipur",
+   "type": "lawn",
+   "capacity": 450,
+   "rental_inr": 170000,
+   "features": [
+    "covered space",
+    "parking",
+    "power backup"
+   ],
+   "state": "Chhattisgarh",
+   "description": "Lawn in Shankar Nagar for up to 450 guests, with covered space, parking, power backup."
+  },
+  {
+   "id": "v100",
+   "name": "Capital Ballroom",
+   "city": "Raipur",
+   "area": "Pandri",
+   "location": "Pandri, Raipur",
+   "type": "hotel ballroom",
+   "capacity": 320,
+   "rental_inr": 165000,
+   "features": [
+    "air conditioning",
+    "stage",
+    "valet parking"
+   ],
+   "state": "Chhattisgarh",
+   "description": "Hotel ballroom in Pandri for up to 320 guests, with air conditioning, stage, valet parking."
+  },
+  {
+   "id": "v101",
+   "name": "Doon Valley Resort",
+   "city": "Dehradun",
+   "area": "Rajpur Road",
+   "location": "Rajpur Road, Dehradun",
+   "type": "resort",
+   "capacity": 280,
+   "rental_inr": 230000,
+   "features": [
+    "resort rooms",
+    "mountain view",
+    "garden lawn"
+   ],
+   "state": "Uttarakhand",
+   "description": "Resort in Rajpur Road for up to 280 guests, with resort rooms, mountain view, garden lawn."
+  },
+  {
+   "id": "v102",
+   "name": "Sahastradhara Farmhouse",
+   "city": "Dehradun",
+   "area": "Sahastradhara Road",
+   "location": "Sahastradhara Road, Dehradun",
+   "type": "farmhouse",
+   "capacity": 500,
+   "rental_inr": 195000,
+   "features": [
+    "open lawn",
+    "tented option",
+    "parking"
+   ],
+   "state": "Uttarakhand",
+   "description": "Farmhouse in Sahastradhara Road for up to 500 guests, with open lawn, tented option, parking."
+  },
+  {
+   "id": "v103",
+   "name": "Mall Road Heritage Hall",
+   "city": "Shimla",
+   "area": "The Mall",
+   "location": "The Mall, Shimla",
+   "type": "heritage",
+   "capacity": 220,
+   "rental_inr": 140000,
+   "features": [
+    "heritage building",
+    "dining hall",
+    "warm interiors"
+   ],
+   "state": "Himachal Pradesh",
+   "description": "Heritage in The Mall for up to 220 guests, with heritage building, dining hall, warm interiors."
+  },
+  {
+   "id": "v104",
+   "name": "Pine Ridge Lawns",
+   "city": "Shimla",
+   "area": "Chhota Shimla",
+   "location": "Chhota Shimla, Shimla",
+   "type": "lawn",
+   "capacity": 350,
+   "rental_inr": 175000,
+   "features": [
+    "covered ceremony space",
+    "pine view",
+    "heating"
+   ],
+   "state": "Himachal Pradesh",
+   "description": "Lawn in Chhota Shimla for up to 350 guests, with covered ceremony space, pine view, heating."
+  },
+  {
+   "id": "v105",
+   "name": "Dal Lakeside Pavilion",
+   "city": "Srinagar",
+   "area": "Boulevard Road",
+   "location": "Boulevard Road, Srinagar",
+   "type": "resort",
+   "capacity": 300,
+   "rental_inr": 240000,
+   "features": [
+    "lake view",
+    "shikara arrival",
+    "dining hall"
+   ],
+   "state": "Jammu and Kashmir",
+   "description": "Resort in Boulevard Road for up to 300 guests, with lake view, shikara arrival, dining hall."
+  },
+  {
+   "id": "v106",
+   "name": "Chinar Garden Hall",
+   "city": "Srinagar",
+   "area": "Lal Chowk",
+   "location": "Lal Chowk, Srinagar",
+   "type": "banquet hall",
+   "capacity": 250,
+   "rental_inr": 155000,
+   "features": [
+    "garden courtyard",
+    "air conditioning",
+    "parking"
+   ],
+   "state": "Jammu and Kashmir",
+   "description": "Banquet hall in Lal Chowk for up to 250 guests, with garden courtyard, air conditioning, parking."
+  },
+  {
+   "id": "v107",
+   "name": "Changspa Mountain Lawn",
+   "city": "Leh",
+   "area": "Changspa",
+   "location": "Changspa, Leh",
+   "type": "lawn",
+   "capacity": 200,
+   "rental_inr": 160000,
+   "features": [
+    "open lawn",
+    "mountain view",
+    "heating tents"
+   ],
+   "state": "Ladakh",
+   "description": "Lawn in Changspa for up to 200 guests, with open lawn, mountain view, heating tents."
+  },
+  {
+   "id": "v108",
+   "name": "Karzoo Heritage Hall",
+   "city": "Leh",
+   "area": "Karzoo",
+   "location": "Karzoo, Leh",
+   "type": "heritage",
+   "capacity": 150,
+   "rental_inr": 110000,
+   "features": [
+    "heritage style",
+    "dining hall",
+    "warm interiors"
+   ],
+   "state": "Ladakh",
+   "description": "Heritage in Karzoo for up to 150 guests, with heritage style, dining hall, warm interiors."
+  },
+  {
+   "id": "v109",
+   "name": "Tripura Palace Lawn",
+   "city": "Agartala",
+   "area": "Kunjaban",
+   "location": "Kunjaban, Agartala",
+   "type": "lawn",
+   "capacity": 380,
+   "rental_inr": 135000,
+   "features": [
+    "covered pandal",
+    "parking",
+    "dining hall"
+   ],
+   "state": "Tripura",
+   "description": "Lawn in Kunjaban for up to 380 guests, with covered pandal, parking, dining hall."
+  },
+  {
+   "id": "v110",
+   "name": "Maharaja Banquet",
+   "city": "Agartala",
+   "area": "Banamalipur",
+   "location": "Banamalipur, Agartala",
+   "type": "banquet hall",
+   "capacity": 280,
+   "rental_inr": 110000,
+   "features": [
+    "air conditioning",
+    "stage",
+    "catering kitchen"
+   ],
+   "state": "Tripura",
+   "description": "Banquet hall in Banamalipur for up to 280 guests, with air conditioning, stage, catering kitchen."
+  },
+  {
+   "id": "v111",
+   "name": "Pine Hills Garden",
+   "city": "Shillong",
+   "area": "Laitumkhrah",
+   "location": "Laitumkhrah, Shillong",
+   "type": "lawn",
+   "capacity": 320,
+   "rental_inr": 145000,
+   "features": [
+    "covered space",
+    "pine view",
+    "parking"
+   ],
+   "state": "Meghalaya",
+   "description": "Lawn in Laitumkhrah for up to 320 guests, with covered space, pine view, parking."
+  },
+  {
+   "id": "v112",
+   "name": "Cathedral Square Hall",
+   "city": "Shillong",
+   "area": "Police Bazar",
+   "location": "Police Bazar, Shillong",
+   "type": "banquet hall",
+   "capacity": 240,
+   "rental_inr": 120000,
+   "features": [
+    "air conditioning",
+    "dining hall",
+    "parking"
+   ],
+   "state": "Meghalaya",
+   "description": "Banquet hall in Police Bazar for up to 240 guests, with air conditioning, dining hall, parking."
+  },
+  {
+   "id": "v113",
+   "name": "Loktak Lawn Pavilion",
+   "city": "Imphal",
+   "area": "Canchipur",
+   "location": "Canchipur, Imphal",
+   "type": "lawn",
+   "capacity": 300,
+   "rental_inr": 115000,
+   "features": [
+    "covered pandal",
+    "parking",
+    "generator backup"
+   ],
+   "state": "Manipur",
+   "description": "Lawn in Canchipur for up to 300 guests, with covered pandal, parking, generator backup."
+  },
+  {
+   "id": "v114",
+   "name": "Paona Heritage Banquet",
+   "city": "Imphal",
+   "area": "Paona Bazaar",
+   "location": "Paona Bazaar, Imphal",
+   "type": "banquet hall",
+   "capacity": 220,
+   "rental_inr": 95000,
+   "features": [
+    "air conditioning",
+    "stage",
+    "catering kitchen"
+   ],
+   "state": "Manipur",
+   "description": "Banquet hall in Paona Bazaar for up to 220 guests, with air conditioning, stage, catering kitchen."
+  },
+  {
+   "id": "v115",
+   "name": "Bamboo Hills Lawn",
+   "city": "Aizawl",
+   "area": "Zarkawt",
+   "location": "Zarkawt, Aizawl",
+   "type": "lawn",
+   "capacity": 250,
+   "rental_inr": 90000,
+   "features": [
+    "covered space",
+    "hill view",
+    "parking"
+   ],
+   "state": "Mizoram",
+   "description": "Lawn in Zarkawt for up to 250 guests, with covered space, hill view, parking."
+  },
+  {
+   "id": "v116",
+   "name": "Chaltlang Banquet",
+   "city": "Aizawl",
+   "area": "Chaltlang",
+   "location": "Chaltlang, Aizawl",
+   "type": "banquet hall",
+   "capacity": 200,
+   "rental_inr": 85000,
+   "features": [
+    "air conditioning",
+    "dining hall",
+    "parking"
+   ],
+   "state": "Mizoram",
+   "description": "Banquet hall in Chaltlang for up to 200 guests, with air conditioning, dining hall, parking."
+  },
+  {
+   "id": "v117",
+   "name": "Naga Heritage Lawn",
+   "city": "Kohima",
+   "area": "Midland",
+   "location": "Midland, Kohima",
+   "type": "lawn",
+   "capacity": 280,
+   "rental_inr": 95000,
+   "features": [
+    "covered pandal",
+    "cultural stage",
+    "parking"
+   ],
+   "state": "Nagaland",
+   "description": "Lawn in Midland for up to 280 guests, with covered pandal, cultural stage, parking."
+  },
+  {
+   "id": "v118",
+   "name": "Jotsoma Community Hall",
+   "city": "Kohima",
+   "area": "Jotsoma",
+   "location": "Jotsoma, Kohima",
+   "type": "banquet hall",
+   "capacity": 200,
+   "rental_inr": 80000,
+   "features": [
+    "dining hall",
+    "stage",
+    "parking"
+   ],
+   "state": "Nagaland",
+   "description": "Banquet hall in Jotsoma for up to 200 guests, with dining hall, stage, parking."
+  },
+  {
+   "id": "v119",
+   "name": "Himalayan View Resort",
+   "city": "Gangtok",
+   "area": "MG Marg",
+   "location": "MG Marg, Gangtok",
+   "type": "resort",
+   "capacity": 260,
+   "rental_inr": 220000,
+   "features": [
+    "mountain view",
+    "garden lawn",
+    "dining hall"
+   ],
+   "state": "Sikkim",
+   "description": "Resort in MG Marg for up to 260 guests, with mountain view, garden lawn, dining hall."
+  },
+  {
+   "id": "v120",
+   "name": "Tadong Garden Venue",
+   "city": "Gangtok",
+   "area": "Tadong",
+   "location": "Tadong, Gangtok",
+   "type": "farmhouse",
+   "capacity": 380,
+   "rental_inr": 150000,
+   "features": [
+    "open lawn",
+    "covered stage",
+    "parking"
+   ],
+   "state": "Sikkim",
+   "description": "Farmhouse in Tadong for up to 380 guests, with open lawn, covered stage, parking."
+  },
+  {
+   "id": "v121",
+   "name": "Ering Heritage Hall",
+   "city": "Itanagar",
+   "area": "Naharlagun",
+   "location": "Naharlagun, Itanagar",
+   "type": "banquet hall",
+   "capacity": 240,
+   "rental_inr": 105000,
+   "features": [
+    "air conditioning",
+    "stage",
+    "parking"
+   ],
+   "state": "Arunachal Pradesh",
+   "description": "Banquet hall in Naharlagun for up to 240 guests, with air conditioning, stage, parking."
+  },
+  {
+   "id": "v122",
+   "name": "Chimpu Hill Lawn",
+   "city": "Itanagar",
+   "area": "Chimpu",
+   "location": "Chimpu, Itanagar",
+   "type": "lawn",
+   "capacity": 300,
+   "rental_inr": 120000,
+   "features": [
+    "covered space",
+    "hill view",
+    "parking"
+   ],
+   "state": "Arunachal Pradesh",
+   "description": "Lawn in Chimpu for up to 300 guests, with covered space, hill view, parking."
+  },
+  {
+   "id": "v123",
+   "name": "Promenade Terrace Venue",
+   "city": "Puducherry",
+   "area": "White Town",
+   "location": "White Town, Puducherry",
+   "type": "heritage",
+   "capacity": 260,
+   "rental_inr": 185000,
+   "features": [
+    "sea-facing terrace",
+    "heritage building",
+    "dining hall"
+   ],
+   "state": "Puducherry",
+   "description": "Heritage in White Town for up to 260 guests, with sea-facing terrace, heritage building, dining hall."
+  },
+  {
+   "id": "v124",
+   "name": "Auroville Garden Pavilion",
+   "city": "Puducherry",
+   "area": "Lawspet",
+   "location": "Lawspet, Puducherry",
+   "type": "lawn",
+   "capacity": 350,
+   "rental_inr": 165000,
+   "features": [
+    "covered pavilion",
+    "garden lawn",
+    "parking"
+   ],
+   "state": "Puducherry",
+   "description": "Lawn in Lawspet for up to 350 guests, with covered pavilion, garden lawn, parking."
+  },
+  {
+   "id": "v125",
+   "name": "Aberdeen Sea View Hall",
+   "city": "Port Blair",
+   "area": "Aberdeen Bazaar",
+   "location": "Aberdeen Bazaar, Port Blair",
+   "type": "banquet hall",
+   "capacity": 280,
+   "rental_inr": 135000,
+   "features": [
+    "air conditioning",
+    "sea view",
+    "parking"
+   ],
+   "state": "Andaman and Nicobar Islands",
+   "description": "Banquet hall in Aberdeen Bazaar for up to 280 guests, with air conditioning, sea view, parking."
+  },
+  {
+   "id": "v126",
+   "name": "Haddo Beach Lawn",
+   "city": "Port Blair",
+   "area": "Haddo",
+   "location": "Haddo, Port Blair",
+   "type": "beach resort",
+   "capacity": 300,
+   "rental_inr": 170000,
+   "features": [
+    "beach access",
+    "covered pandal",
+    "generator backup"
+   ],
+   "state": "Andaman and Nicobar Islands",
+   "description": "Beach resort in Haddo for up to 300 guests, with beach access, covered pandal, generator backup."
+  },
+  {
+   "id": "v127",
+   "name": "Vapi Garden Banquet",
+   "city": "Silvassa",
+   "area": "Amli",
+   "location": "Amli, Silvassa",
+   "type": "banquet hall",
+   "capacity": 320,
+   "rental_inr": 110000,
+   "features": [
+    "air conditioning",
+    "stage",
+    "parking"
+   ],
+   "state": "Dadra and Nagar Haveli and Daman and Diu",
+   "description": "Banquet hall in Amli for up to 320 guests, with air conditioning, stage, parking."
+  },
+  {
+   "id": "v128",
+   "name": "Dadra Farmhouse Lawn",
+   "city": "Silvassa",
+   "area": "Dadra",
+   "location": "Dadra, Silvassa",
+   "type": "farmhouse",
+   "capacity": 420,
+   "rental_inr": 125000,
+   "features": [
+    "open lawn",
+    "covered space",
+    "parking"
+   ],
+   "state": "Dadra and Nagar Haveli and Daman and Diu",
+   "description": "Farmhouse in Dadra for up to 420 guests, with open lawn, covered space, parking."
+  },
+  {
+   "id": "v129",
+   "name": "Lagoon Beach Venue",
+   "city": "Kavaratti",
+   "area": "Kavaratti Town",
+   "location": "Kavaratti Town, Kavaratti",
+   "type": "beach resort",
+   "capacity": 180,
+   "rental_inr": 140000,
+   "features": [
+    "lagoon view",
+    "covered pavilion",
+    "generator backup"
+   ],
+   "state": "Lakshadweep",
+   "description": "Beach resort in Kavaratti Town for up to 180 guests, with lagoon view, covered pavilion, generator backup."
+  },
+  {
+   "id": "v130",
+   "name": "Island Community Hall",
+   "city": "Kavaratti",
+   "area": "Kavaratti Town",
+   "location": "Kavaratti Town, Kavaratti",
+   "type": "banquet hall",
+   "capacity": 150,
+   "rental_inr": 80000,
+   "features": [
+    "dining hall",
+    "stage",
+    "parking"
+   ],
+   "state": "Lakshadweep",
+   "description": "Banquet hall in Kavaratti Town for up to 150 guests, with dining hall, stage, parking."
   }
  ]
 }

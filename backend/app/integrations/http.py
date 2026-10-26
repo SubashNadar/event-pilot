@@ -30,6 +30,9 @@ MAX_CACHE_ENTRIES = 1000
 
 _locks: dict[tuple[int, str], asyncio.Lock] = {}
 _last_call: dict[str, float] = {}
+# A host that just failed is skipped for a while, so each request doesn't wait out the timeout again.
+DOWN_FOR_S = 600
+_down_until: dict[str, float] = {}
 _memory: dict[str, tuple[float, Any]] | None = None
 
 
@@ -73,6 +76,7 @@ def clear_cache() -> None:
     global _memory
     _memory = {}
     _last_call.clear()
+    _down_until.clear()
 
 
 def _lock(host: str) -> asyncio.Lock:
@@ -96,6 +100,8 @@ async def get_json(url: str, params: dict[str, Any], *, ttl_s: int = 86_400) -> 
         return cached[1]
 
     host = httpx.URL(url).host
+    if _down_until.get(host, 0) > time.monotonic():
+        raise ServiceUnavailable(f"{host} is unreachable right now; the built-in data is used instead")
     async with _lock(host):
         wait = MIN_INTERVAL_S.get(host, 0) - (time.monotonic() - _last_call.get(host, 0))
         if wait > 0:
@@ -104,11 +110,13 @@ async def get_json(url: str, params: dict[str, Any], *, ttl_s: int = 86_400) -> 
             async with httpx.AsyncClient(timeout=settings.http_timeout_s, transport=TRANSPORT, headers={"User-Agent": user_agent()}) as client:
                 response = await client.get(url, params=params)
         except httpx.HTTPError as error:
+            _down_until[host] = time.monotonic() + DOWN_FOR_S
             raise ServiceUnavailable(f"{host} could not be reached ({error.__class__.__name__})") from error
         finally:
             _last_call[host] = time.monotonic()
 
     if response.status_code != 200:
+        _down_until[host] = time.monotonic() + DOWN_FOR_S
         raise ServiceUnavailable(f"{host} returned HTTP {response.status_code}")
     try:
         payload = response.json()

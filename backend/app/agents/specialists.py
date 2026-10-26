@@ -265,8 +265,11 @@ def _schedule_args(args: dict, event: EventBrief, overrides: dict) -> dict:
 
 
 def _schedule_report(event: EventBrief, overrides: dict, result: dict) -> SpecialistReport:
+    from app.agents.plan_edit import time_key
+
     agenda = result.get("_agenda", [])
-    first, last = (agenda[0], agenda[-1]) if agenda else ({"time": "?"}, {"time": "?"})
+    timed = sorted(agenda, key=lambda item: time_key(str(item.get("time", ""))))  # the span, whatever order the items came in
+    first, last = (timed[0], timed[-1]) if timed else ({"time": "?"}, {"time": "?"})
     return SpecialistReport(
         recommendations=[f"Built a {len(agenda)}-item agenda from {first['time']} to {last['time']}", "Checked every slot for overlaps and 12-hour format"],
         decisions={"agenda": agenda}, confidence=80,
@@ -468,6 +471,33 @@ def _keep_tool_shaped_decisions(report: SpecialistReport, fallback: SpecialistRe
     return report
 
 
+# Decisions the tool and the step's check settled. The model's prose may differ, but these values always come from the
+# checked result, so the summary, the plan and the verification name the same venue, lines and agenda.
+VERIFIED_DECISIONS = {
+    "logistics_agent": ("venue", "venue_detail", "rental_inr", "alternatives", "unverified"),
+    "finance_agent": ("budget_lines",),
+    "schedule_agent": ("agenda",),
+    "marketing_agent": ("checkpoints",),  # dated sends counted back from the event date
+}
+
+
+def _align_with_verified(step_id: str, report: SpecialistReport, verified: SpecialistReport, tool_result: dict[str, Any]) -> SpecialistReport:
+    for key in VERIFIED_DECISIONS.get(step_id, ()):
+        if key in verified.decisions:
+            report.decisions[key] = verified.decisions[key]
+        else:
+            report.decisions.pop(key, None)
+    if step_id == "logistics_agent":
+        chosen = str(verified.decisions.get("venue") or "")
+        others = [r["name"] for r in tool_result.get("recommendations") or [] if isinstance(r, dict) and r.get("name") and r["name"] != chosen]
+        # A line that recommends another shortlisted venue, without naming the chosen one, contradicts the decision.
+        lines = [line for line in report.recommendations if chosen in line or not any(name in line for name in others)]
+        if chosen and not any(chosen in line for line in lines):
+            lines = [line for line in verified.recommendations if chosen in line][:1] + lines
+        report.recommendations = (lines or verified.recommendations)[:5]
+    return report
+
+
 async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, Any], attempt: int, config: dict | None = None) -> dict[str, Any]:
     """One attempt of one specialist. Raises on tool or model failure."""
     role = ROLES[step_id]
@@ -526,13 +556,11 @@ async def run_specialist(step_id: str, event: EventBrief, overrides: dict[str, A
     for key, value in usage_of(output).items():
         usage[key] += value
     report = output.get("parsed") if isinstance(output, dict) else output
+    verified = role.rule_report(event, overrides, tool_results[-1])
     if report is None:
-        report = role.rule_report(event, overrides, tool_results[-1])
+        report = verified
     else:
-        report = _keep_tool_shaped_decisions(
-            report,
-            role.rule_report(event, overrides, tool_results[-1]),
-        )
+        report = _align_with_verified(step_id, _keep_tool_shaped_decisions(report, verified), verified, tool_results[-1])
     report = await with_context(report)
     return {"report": report.model_dump(), "tool_results": tool_results, "usage": usage, "mode": "llm"}
 

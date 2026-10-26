@@ -36,7 +36,7 @@ def test_keyword_preferences_rank_matching_venues_first():
 def test_near_misses_explain_empty_results():
     assert venues.search("Mumbai", 200, 300000)["near_misses"]["venue_share_needed_pct"] == 70
     assert venues.search("Mumbai", 2000, 5000000)["near_misses"]["reason"] == "too_small"
-    assert venues.search("Shillong", 100, 500000)["near_misses"]["reason"] == "city_not_in_catalog"
+    assert venues.search("Coimbatore", 100, 500000)["near_misses"]["reason"] == "city_not_in_catalog"
 
 
 CONCEPTS = [("sea", "beach", "coast", "seaside", "ocean", "shore"), ("garden", "lawn", "green", "outdoor"), ("palace", "heritage", "royal", "fort"), ("projector", "training", "workshop")]

@@ -49,6 +49,36 @@ export default function PlanPreview({ preview, compact = false }: { preview: Pla
         </ul>
       </section>
 
+      {preview.communications && preview.communications.channels.length > 0 && (
+        <section>
+          <p className="mb-1 font-semibold">Guest communication</p>
+          <p className="text-muted">{preview.communications.channels.join(", ")}</p>
+          {preview.communications.checkpoints.length > 0 && <p className="text-muted">Sends: {preview.communications.checkpoints.join(" → ")} · each waits for your approval</p>}
+        </section>
+      )}
+
+      {preview.open_issues && preview.open_issues.length > 0 && (
+        <section className="rounded-md border border-danger/25 bg-danger/[0.04] px-2.5 py-2">
+          <p className="mb-1 font-semibold">Still open from the review</p>
+          <ul className="list-disc space-y-0.5 pl-4 text-muted">
+            {preview.open_issues.map((issue) => (
+              <li key={issue}>{issue}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {preview.caveats && preview.caveats.length > 0 && (
+        <section className="rounded-md border border-warn/30 bg-warn/5 px-2.5 py-2">
+          <p className="mb-1 font-semibold">To confirm before booking</p>
+          <ul className="list-disc space-y-0.5 pl-4 text-muted">
+            {preview.caveats.map((caveat) => (
+              <li key={caveat}>{caveat}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section>
         <p className="mb-1 font-semibold">Risks</p>
         <ul className="space-y-1">

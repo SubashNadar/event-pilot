@@ -56,7 +56,7 @@ type Action =
   | { type: "event"; msgId: string; event: AgentEvent; at: number }
   | { type: "reply"; msgId: string; text: string; question?: BriefQuestion | null; warnings?: BriefWarning[]; blocked?: boolean }
   | { type: "reset_run"; msgId: string; runId: string }
-  | { type: "stopped"; msgId: string; at: number }
+  | { type: "stopped"; msgId: string; at: number; reason?: string }
   | { type: "step_skipped"; msgId: string; stepId: string; at: number }
   | { type: "closed"; msgId: string }
   | { type: "connection"; state: ConnectionState }
@@ -113,15 +113,25 @@ const patchStep = (run: RunState, stepId: string, fn: (s: StepState) => StepStat
   steps: run.steps.map((s) => (s.id === stepId ? fn(s) : s)),
 });
 
+/** The server's reason when the owner pressed Stop; any other reason (such as a replacing edit) is shown as is. */
+const STOPPED_BY_OWNER = "You stopped the plan.";
+
 /** Marks unfinished work as stopped, keeping completed steps as they were. */
-function stopRun(run: RunState, at: number): RunState {
+function stopRun(run: RunState, at: number, reason?: string): RunState {
+  const replaced = reason && reason !== STOPPED_BY_OWNER ? reason : undefined;
   return {
     ...run,
     status: "stopped",
     endedAt: at,
+    stopReason: replaced,
     steps: run.steps.map((s) =>
       s.status === "running" || s.status === "verifying" || s.status === "pending" || s.status === "failed"
-        ? { ...s, status: "skipped", endedAt: s.startedAt ? at : undefined, error: s.startedAt ? "Stopped by you mid-step." : "Not run — you stopped the plan." }
+        ? {
+            ...s,
+            status: "skipped",
+            endedAt: s.startedAt ? at : undefined,
+            error: replaced ? (s.startedAt ? replaced : "Not run — the updated plan replaces this one.") : s.startedAt ? "Stopped by you mid-step." : "Not run — you stopped the plan.",
+          }
         : s,
     ),
   };
@@ -192,7 +202,7 @@ export function reduceRun(run: RunState, e: AgentEvent, at: number): RunState {
     case "run_completed":
       return { ...run, status: "completed", usage: e.usage, endedAt: at };
     case "run_cancelled":
-      return stopRun(run, at);
+      return stopRun(run, at, e.message);
     case "error":
       return {
         ...run,
@@ -241,7 +251,7 @@ function reducer(state: ChatState, a: Action): ChatState {
     case "reset_run":
       return mapRun(state, a.msgId, (r) => emptyRun(a.runId, r.startedAt));
     case "stopped":
-      return mapRun(state, a.msgId, (r) => (["completed", "stopped", "error"].includes(r.status) ? r : stopRun(r, a.at)));
+      return mapRun(state, a.msgId, (r) => (["completed", "stopped", "error"].includes(r.status) ? r : stopRun(r, a.at, a.reason)));
     case "step_skipped":
       return mapRun(state, a.msgId, (r) => ({
         ...patchStep(r, a.stepId, (s) => ({ ...s, status: "skipped", endedAt: s.endedAt ?? a.at })),
@@ -519,13 +529,24 @@ export function useAgentStream(): AgentApi {
     return msg?.role === "agent" ? msg.run.runId : "";
   };
 
-  const resolveStep = (msgId: string, stepId: string, choice: { optionId?: string; customText?: string }) => {
+  const resolveStep = async (msgId: string, stepId: string, choice: { optionId?: string; customText?: string }) => {
     // The approval step is the owner's decision on the plan, not a recovery choice.
-    if (stepId === "approval") {
-      const decision = choice.optionId === "approve" ? "approve" : "revise";
-      return api.decidePlan(runIdOf(msgId), decision, choice.customText ?? "");
+    const result =
+      stepId === "approval"
+        ? await api.decidePlan(runIdOf(msgId), choice.optionId === "approve" ? "approve" : "revise", choice.customText ?? "")
+        : await api.resolveStep(runIdOf(msgId), stepId, choice);
+    if (result.status === "edit_started" && result.run_id) {
+      // The server replaced this run with an edit run: mark this one replaced and follow the new one in its own turn.
+      closeStream();
+      dispatch({ type: "stopped", msgId, at: Date.now(), reason: "Replaced by the updated plan with your changes." });
+      dispatch({ type: "closed", msgId });
+      const now = Date.now();
+      const user: ChatMessage = { id: uid("u"), role: "user", content: choice.customText || "Apply the suggested change", createdAt: now };
+      const agent: AgentMessage = { id: uid("a"), role: "agent", createdAt: now, run: emptyRun(result.run_id, now) };
+      dispatch({ type: "user_sent", user, agent });
+      attachStream(agent.id, result.run_id);
     }
-    return api.resolveStep(runIdOf(msgId), stepId, choice);
+    return result;
   };
 
   const openSession = useCallback(

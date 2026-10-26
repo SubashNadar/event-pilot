@@ -110,6 +110,22 @@ def validate_patch(step_id: str, patch: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("; ".join(f"{'.'.join(map(str, e['loc'])) or 'patch'}: {e['msg']}" for e in error.errors())) from error
 
 
+def fresh_options(options: list[RecoveryOption], overrides: dict[str, Any], deterministic: bool = False) -> list[RecoveryOption]:
+    """Drop the options the owner has already applied: offering them again changes nothing, so the choice wouldn't count.
+
+    `deterministic` is set when the step's check failed on the tool's result. The same inputs give the same result,
+    so "Try again as is" can't succeed and isn't offered; the owner changes an input, writes their own, or skips."""
+    def in_effect(option: RecoveryOption) -> bool:
+        return bool(option.patch) and all(overrides.get(key) == value for key, value in option.patch.items())
+
+    fresh = [option for option in options if not in_effect(option)]
+    if deterministic:
+        return [option for option in fresh if option.action != "retry"]
+    if not any(option.action == "retry" for option in fresh):
+        fresh.insert(0, RecoveryOption(id="retry", label="Try again as is", description="Run the step again with the same inputs.", action="retry"))
+    return fresh
+
+
 def _skip_option(step_id: str) -> RecoveryOption:
     return RecoveryOption(id="skip", label=SKIP_LABELS.get(step_id, "Skip this step"), description="Continue without this step; the plan flags the gap as a risk.", action="skip")
 
@@ -124,6 +140,11 @@ def _finalise(step_id: str, options: list[RecoveryOption]) -> list[RecoveryOptio
             option.patch = validate_patch(step_id, option.patch)
         except ValueError:
             continue
+        if option.patch.get("allow_unverified") and len(option.patch) > 1:
+            # Accepting an unverified venue is its own, explicit choice: never a side effect of another option.
+            option.patch.pop("allow_unverified")
+            if not any(o.patch.get("allow_unverified") and len(o.patch) == 1 for o in options):
+                options.append(RecoveryOption(id="accept-unverified", label="Use an unverified venue", description="Continue with a venue outside the catalog; it is flagged in the plan.", patch={"allow_unverified": True}))
         if option.action == "retry_with" and not option.patch:
             option.action = "retry"
         option.label = option.label[:40]
@@ -221,8 +242,9 @@ def _rule_interpret(step_id: str, text: str) -> tuple[RecoveryOption | None, str
     if re.search(r"\bskip\b", lowered):
         return _skip_option(step_id), None
     patch: dict[str, Any] = {}
-    if guests := re.search(r"(\d{1,6})\s*(guests|people|pax|attendees)", lowered):
-        patch["attendees"] = int(guests.group(1))
+    count = re.search(r"(\d{1,6})\s*(?:guests|people|pax|attendees)", lowered) or re.search(r"(?:guest count|guests|attendees|people|pax)\s*(?:to|=|:|as)?\s*(\d{1,6})\b", lowered)
+    if count:
+        patch["attendees"] = int(count.group(1))
     if pct := re.search(r"(\d{1,2})\s*%", lowered):
         patch["venue_share_pct" if step_id == "logistics_agent" else "contingency_pct"] = int(pct.group(1))
     if step_id == "logistics_agent":
@@ -251,7 +273,7 @@ async def interpret_custom(step_id: str, text: str, event: EventBrief, overrides
             model = get_chat_model().with_structured_output(_Interpretation, method="function_calling")
             async with limited():
                 result = await model.ainvoke([
-                    SystemMessage(PLANNER_VOICE + " Map the owner's instruction for a failed step to input changes, using only the allowed keys. If it is unclear, ask one friendly question with a short example. " + DATA_RULE),
+                    SystemMessage(PLANNER_VOICE + " Map the owner's instruction for a failed step to input changes, using only the allowed keys. Assume nothing: if a needed value (a number, a place, or a choice) is missing or unclear, set understood to false and ask one friendly question that lists the values you need. Keep the current adjustments that the owner did not change. Set allow_unverified only when the owner explicitly accepts a venue outside the catalog. " + DATA_RULE),
                     HumanMessage(f"Step: {step_id}\nAllowed keys: {fields}\nBrief: {event.attendees} guests, {event.location}, budget INR {event.budget}\nCurrent adjustments: {overrides or 'none'}\nInstruction:\n{wrap_user(text)}"),
                 ], config=config)
             if result.skip:

@@ -81,8 +81,10 @@ export const decidePlan = (runId: string, decision: "approve" | "revise", feedba
   request<ResolveResult>(`/runs/${runId}/approval`, { method: "POST", body: JSON.stringify({ decision, feedback: feedback || null }) });
 
 export interface ResolveResult {
-  status: "resumed" | "queued" | "needs_clarification";
+  status: "resumed" | "queued" | "needs_clarification" | "answered" | "edit_started" | "attempts_exhausted";
+  /** A clarifying question, the answer to the owner's question, or why no more changes can be sent. */
   question?: string | null;
+  run_id?: string | null;
 }
 
 /** Answers a failed step: one of its suggested options, or the user's own words. */

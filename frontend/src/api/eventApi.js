@@ -1,4 +1,5 @@
 import { request } from '../lib/http';
+import { API_BASE_URL } from '../lib/config';
 
 export function createEvent(event) {
   return request('/events', {
@@ -38,8 +39,11 @@ export function updateEvent(eventId, event) {
   });
 }
 
-export function getPlan(eventId) {
-  return request(`/events/${eventId}/plan`);
+export async function getPlan(eventId) {
+  const response = await fetch(`${API_BASE_URL}/events/${eventId}/plan`);
+  if (response.status === 204) return null; // no plan yet
+  if (!response.ok) throw new Error(`Could not load the plan (HTTP ${response.status})`);
+  return response.json();
 }
 
 export function generatePlan(eventId) {
@@ -98,3 +102,8 @@ export function sendPlanChat(eventId, message, sessionId) {
     body: JSON.stringify({ message, session_id: sessionId || undefined })
   });
 }
+
+/** The owner's unsaved brief changes, kept so they come back after leaving the page. */
+export const getBriefDraft = eventId => request(`/events/${eventId}/draft`);
+export const saveBriefDraft = (eventId, fields) => request(`/events/${eventId}/draft`, { method: 'PUT', body: JSON.stringify(fields) });
+export const discardBriefDraft = eventId => request(`/events/${eventId}/draft`, { method: 'DELETE' });

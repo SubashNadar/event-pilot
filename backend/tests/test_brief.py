@@ -69,7 +69,7 @@ def test_validation_errors_and_date_suggestions(client):
 
 
 def test_unknown_city_warns_and_ready_when_complete(client):
-    answers = {"eventType": "Conference", "location": "Shillong", "attendees": "300", "budget": "12000000", "date": "2027-06-12", "objective": "Strong speaker line-up and networking"}
+    answers = {"eventType": "Conference", "location": "Coimbatore", "attendees": "300", "budget": "12000000", "date": "2027-06-12", "objective": "Strong speaker line-up and networking"}
     result = turn(client, message="North East Tech Summit", answers=answers)
     assert result["answers"]["name"] == "North East Tech Summit"
     assert result["ready"] and result["next"] is None

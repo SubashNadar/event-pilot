@@ -79,6 +79,13 @@ export interface PlanPreview {
   budget_lines: { category: string; amount: number }[];
   agenda: { time: string; activity: string; owner: string }[];
   risks: { level: string; title: string; recommended_action: string }[];
+  /** Things the planner can't verify (availability, quotes), or checks that did not run. */
+  caveats?: string[];
+  /** Review notes still open when the automatic re-plans ran out: the owner decides with these in view. */
+  open_issues?: string[];
+  /** Marketing's guest communication plan. */
+  communications?: { channels: string[]; checkpoints: string[]; invite_draft?: string } | null;
+  requirements?: string[];
 }
 
 export interface RecoveryProposal {
@@ -88,6 +95,8 @@ export interface RecoveryProposal {
   customPrompt: string;
   source: "llm" | "rules";
   preview?: PlanPreview | null;
+  /** Approval only: change requests left for this plan. */
+  changesLeft?: number | null;
 }
 
 export interface Usage {
@@ -183,7 +192,8 @@ export type ConnectionState = "idle" | "connected" | "reconnecting" | "reconnect
 export type ResolveChoice = { option_id: string } | { custom_text: string };
 
 export interface ResolveResult {
-  status: "resumed" | "queued" | "needs_clarification" | "edit_started";
+  status: "resumed" | "queued" | "needs_clarification" | "answered" | "edit_started" | "attempts_exhausted";
+  /** A clarifying question, or the answer when status is "answered". */
   question?: string | null;
   /** Set when the owner's change started a plan-edit run; the panel follows that run. */
   run_id?: string | null;

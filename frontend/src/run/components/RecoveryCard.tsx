@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import clsx from "clsx";
 import { ChevronDown, CornerDownLeft, Loader2, MessageCircleQuestion, RotateCcw, SkipForward, Sparkles } from "lucide-react";
 import type { ResolveChoice, ResolveResult, StepState } from "../types";
+import { RunActionsContext } from "../runActions";
 import PlanPreview from "./PlanPreview";
 
 interface Props {
@@ -24,6 +25,9 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
   const [question, setQuestion] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showCause, setShowCause] = useState(false);
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [exhausted, setExhausted] = useState(false);
+  const actions = useContext(RunActionsContext);
 
   if (!proposal) return null;
 
@@ -43,7 +47,18 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
     setError(null);
     try {
       const result = await onResolve(choice);
-      if (result.status === "needs_clarification") {
+      setAnswer(null);
+      if (result.status === "attempts_exhausted") {
+        setExhausted(true);
+        setQuestion(null);
+        setText("");
+        return;
+      }
+      if (result.status === "answered") {
+        setQuestion(null);
+        setAnswer(result.question ?? null);
+        setText("");
+      } else if (result.status === "needs_clarification") {
         setQuestion(result.question ?? "Could you say what to change?");
       } else {
         setQuestion(null);
@@ -60,6 +75,8 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
   const options = proposal.options.filter((o) => o.action !== "skip");
   const skip = proposal.options.find((o) => o.action === "skip");
   const disabled = !canResolve || busy !== null;
+  // The server's count, so a reload shows the same state. Approving is always possible; only send-backs run out.
+  const usedUp = review && (exhausted || proposal.changesLeft === 0);
 
   return (
     <div role="group" aria-label={`Recovery options for ${step.title}`} className={clsx("rounded-xl border", review ? "border-accent/30 bg-accent-soft/40" : "border-danger/25 bg-danger/[0.04]", compact ? "mt-2 px-3 py-2.5" : "px-3.5 py-3")}>
@@ -68,7 +85,7 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
         {proposal.summary}
       </p>
       {proposal.preview && <PlanPreview preview={proposal.preview} compact={compact} />}
-      {proposal.cause && (
+      {proposal.cause && !review && (
         <button type="button" onClick={() => setShowCause((s) => !s)} aria-expanded={showCause} className="mt-1 inline-flex items-center gap-1 text-[12px] text-muted hover:text-ink">
           <ChevronDown size={12} className={clsx("transition-transform duration-150", showCause && "rotate-180")} aria-hidden />
           {showCause ? "Hide error" : "Show error"}
@@ -77,7 +94,7 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
       {showCause && <p className="mt-1 break-words rounded-md bg-surface-2 px-2 py-1.5 font-mono text-[11.5px] text-muted">{proposal.cause}</p>}
 
       <div className="mt-2.5 flex flex-wrap gap-1.5">
-        {options.map((option) => (
+        {options.filter((option) => !(usedUp && option.id === "revise")).map((option) => (
           <button
             key={option.id}
             type="button"
@@ -96,7 +113,17 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
         ))}
       </div>
 
-      <form
+      {usedUp && (
+        <div className="mt-2.5 rounded-lg border border-danger/25 bg-danger/[0.04] px-3 py-2" role="status">
+          <p className="text-[12.5px] text-ink">You've used all your change requests for this plan. Approve it as it is, or restart the plan with your inputs.</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button type="button" onClick={() => actions.onEditBrief?.()} className="button secondary">Edit the brief again</button>
+            <button type="button" onClick={() => actions.onStartOver?.()} className="button secondary">Restart the plan with my inputs</button>
+          </div>
+        </div>
+      )}
+
+      {!usedUp && <form
         className="mt-2 flex items-center gap-2"
         onSubmit={(e) => {
           e.preventDefault();
@@ -132,7 +159,13 @@ export default function RecoveryCard({ step, canResolve, onResolve, compact = fa
             <span className="sm:hidden">Skip</span>
           </button>
         )}
-      </form>
+      </form>}
+
+      {answer && (
+        <p className="mt-2 flex items-start gap-1.5 text-[12.5px] text-ink" role="status">
+          <MessageCircleQuestion size={14} className="mt-px shrink-0 text-accent" aria-hidden /> {answer}
+        </p>
+      )}
 
       {question && (
         <p className="mt-2 flex items-start gap-1.5 text-[12.5px] text-info" role="status">

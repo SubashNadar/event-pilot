@@ -164,6 +164,8 @@ export interface RunState {
   answer: string;
   usage?: Usage;
   error?: string;
+  /** Why the run ended when the owner didn't stop it, such as their change replacing it with a new run. */
+  stopReason?: string;
   feedback: Feedback;
   /** The saved event this run plans; set once the run starts, used for the plan downloads. */
   eventId?: string;
